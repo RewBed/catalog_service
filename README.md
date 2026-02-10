@@ -135,6 +135,7 @@ docker compose up -d
 | `docker compose -f docker-compose.dev.yml up -d` | Start PostgreSQL for development |
 | `docker compose -f docker-compose.dev.yml down` | Stop PostgreSQL |
 | `docker compose build --no-cache` | Build Docker images for production |
+| `prisma-seed` | Dev database seed |
 
 ---
 
