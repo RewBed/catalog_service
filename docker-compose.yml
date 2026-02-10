@@ -40,10 +40,10 @@ services:
     command: >
       sh -c "npx prisma migrate deploy && node dist/src/main.js"
     environment:
-      - VIRTUAL_HOST=${SERVICE_DOMAIN}
-      - LETSENCRYPT_HOST=${SERVICE_DOMAIN}
-      - LETSENCRYPT_EMAIL=${SERVICE_ADMIN_EMAIL}
-      - VIRTUAL_PORT=${SERVICE_PORT}
+      - VIRTUAL_HOST=${AUTO_SSL_VIRTUAL_HOST}
+      - LETSENCRYPT_HOST=${AUTO_SSL_LETSENCRYPT_HOST}
+      - LETSENCRYPT_EMAIL=${AUTO_SSL_LETSENCRYPT_EMAIL}
+      - VIRTUAL_PORT=${AUTO_SSL_VIRTUAL_PORT}
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     networks:
