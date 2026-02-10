@@ -12,7 +12,9 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
     private readonly pool: Pool;
 
     constructor(private readonly configService: ConfigService) {
-        const connectionString = configService.get<string>('DATABASE_URL');
+        const connectionString = `postgresql://${configService.get<string>('POSTGRES_USER')}:${configService.get<string>('POSTGRES_PASSWORD')}@${configService.get<string>('POSTGRES_HOST')}:${configService.get<string>('POSTGRES_PORT')}/${configService.get<string>('POSTGRES_DB')}`
+        
+        configService.get<string>('DATABASE_URL');
 
         const pool = new Pool({
             connectionString,
