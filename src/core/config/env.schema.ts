@@ -10,9 +10,7 @@ export const envSchema = z.object({
     POSTGRES_PORT: z.preprocess((val) => Number(val), z.number()),
     POSTGRES_DB: z.string(),
     POSTGRES_USER: z.string(),
-    POSTGRES_PASSWORD: z.string(),
-
-    DATABASE_URL: z.string(),
+    POSTGRES_PASSWORD: z.string()
 });
 
 export type EnvConfig = z.infer<typeof envSchema>;
