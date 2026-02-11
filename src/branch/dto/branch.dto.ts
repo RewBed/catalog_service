@@ -21,13 +21,4 @@ export class BranchDto {
 
     @ApiPropertyOptional({ description: 'Телефон' })
     phone?: string;
-
-    @ApiProperty({ description: 'Активен ли филиал' })
-    isActive: boolean;
-
-    @ApiProperty({ description: 'Дата создания' })
-    createdAt: Date;
-
-    @ApiProperty({ description: 'Дата обновления' })
-    updatedAt: Date;
 }

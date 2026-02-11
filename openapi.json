@@ -270,6 +270,30 @@
           "Product"
         ]
       }
+    },
+    "/branch": {
+      "get": {
+        "operationId": "BranchController_index",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BranchDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Branch"
+        ]
+      }
     }
   },
   "info": {
@@ -429,6 +453,44 @@
           "description",
           "price",
           "stock"
+        ]
+      },
+      "BranchDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "ID филиала"
+          },
+          "name": {
+            "type": "string",
+            "description": "Название филиала"
+          },
+          "description": {
+            "type": "string",
+            "description": "Описание филиала"
+          },
+          "address": {
+            "type": "string",
+            "description": "Адрес филиала"
+          },
+          "city": {
+            "type": "string",
+            "description": "Город"
+          },
+          "region": {
+            "type": "string",
+            "description": "Регион"
+          },
+          "phone": {
+            "type": "string",
+            "description": "Телефон"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "address"
         ]
       }
     }

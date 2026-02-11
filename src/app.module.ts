@@ -5,6 +5,7 @@ import { HealthModule } from './health/health.module';
 import { LoggerModule } from './core/logger/logger.module';
 import { CategoryModule } from './category/category.module';
 import { ProductModule } from './product/product.module';
+import { BranchModule } from './branch/branch.module';
 
 @Module({
     imports: [
@@ -13,7 +14,8 @@ import { ProductModule } from './product/product.module';
         HealthModule, 
         LoggerModule, 
         CategoryModule, 
-        ProductModule
+        ProductModule,
+        BranchModule
     ],
     controllers: [],
     providers: [],
