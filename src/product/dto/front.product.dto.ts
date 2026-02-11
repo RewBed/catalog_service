@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { ImageProductDto } from './image.product.dto';
 
 export class FrontProductDto {
     @ApiProperty({ description: 'ID товарной позиции в филиале' })
@@ -24,4 +25,7 @@ export class FrontProductDto {
 
     @ApiProperty({ description: 'Количество на складе' })
     stock: number;
+
+    @ApiProperty( { type: [ImageProductDto], description: 'Список изрбражений' } )
+    images: ImageProductDto[] = []
 }

@@ -408,6 +408,23 @@
           "items"
         ]
       },
+      "ImageCategoryDto": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string",
+            "description": "ключ изображения"
+          },
+          "type": {
+            "type": "string",
+            "description": "Тип изображения"
+          }
+        },
+        "required": [
+          "url",
+          "type"
+        ]
+      },
       "CategoryDto": {
         "type": "object",
         "properties": {
@@ -428,6 +445,12 @@
           },
           "parentId": {
             "type": "number"
+          },
+          "images": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ImageCategoryDto"
+            }
           }
         },
         "required": [
@@ -436,7 +459,8 @@
           "fullName",
           "slug",
           "description",
-          "parentId"
+          "parentId",
+          "images"
         ]
       },
       "CategoryPaginationDto": {
@@ -455,6 +479,23 @@
         "required": [
           "meta",
           "items"
+        ]
+      },
+      "ImageProductDto": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string",
+            "description": "ключ изображения"
+          },
+          "type": {
+            "type": "string",
+            "description": "Тип изображения"
+          }
+        },
+        "required": [
+          "url",
+          "type"
         ]
       },
       "FrontProductDto": {
@@ -491,6 +532,13 @@
           "stock": {
             "type": "number",
             "description": "Количество на складе"
+          },
+          "images": {
+            "description": "Список изрбражений",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ImageProductDto"
+            }
           }
         },
         "required": [
@@ -501,7 +549,8 @@
           "slug",
           "description",
           "price",
-          "stock"
+          "stock",
+          "images"
         ]
       },
       "BranchDto": {

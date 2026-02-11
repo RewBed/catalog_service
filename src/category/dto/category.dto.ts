@@ -1,4 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
+import { ImageCategoryDto } from "./image.category.dto";
 
 export class CategoryDto {
 
@@ -19,4 +20,7 @@ export class CategoryDto {
 
     @ApiProperty()
     parentId?: number = 0;
+
+    @ApiProperty({ type: [ImageCategoryDto] })
+    images: ImageCategoryDto[] = []
 }

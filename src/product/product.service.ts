@@ -2,9 +2,10 @@ import { Injectable } from "@nestjs/common";
 import { PrismaService } from "src/core/database/prisma.service";
 import { FilterFrontProductDto } from "./dto/filter.front.product.dto";
 import { FrontProductDto } from "./dto/front.product.dto";
-import { BranchProduct, Product } from "generated/prisma/client";
+import { BranchProduct, Product, ProductImage } from "generated/prisma/client";
 import { FrontProductPaginationDto } from "./dto/front.product.pagination.dto";
 import { GetProductDto } from "./dto/get.product.dto";
+import { ImageProductDto } from "./dto/image.product.dto";
 
 @Injectable()
 export class ProductService {
@@ -43,14 +44,22 @@ export class ProductService {
                 },
             },
             include: {
-                productItem: true, // подтягиваем данные товара
+                productItem: {
+                    include: {
+                        images: {
+                            orderBy: {
+                                sortOrder: 'asc'
+                            }
+                        }
+                    }
+                },
             },
             skip: (page - 1) * limit,
             take: limit,
         });
 
         return {
-            items: branchProducts.map(this.branchProductToFront),
+            items: branchProducts.map(bp => this.branchProductToFront(bp)),
             meta: {
                 total: 0,
                 limit: limit,
@@ -83,7 +92,15 @@ export class ProductService {
         const branchProduct = await this.prisma.branchProduct.findFirst({
             where,
             include: {
-                productItem: true,
+                productItem: {
+                    include: {
+                        images: {
+                            orderBy: {
+                                sortOrder: 'asc'
+                            }
+                        }
+                    }
+                },
             },
         });
 
@@ -93,7 +110,7 @@ export class ProductService {
         return this.branchProductToFront(branchProduct);
     }
 
-    private branchProductToFront(branchProduct: BranchProduct & { productItem?: Product }): FrontProductDto {
+    private branchProductToFront(branchProduct: BranchProduct & {productItem?: Product & { images?: ProductImage[] }}): FrontProductDto {
         return {
             id: branchProduct.id,
             productId: branchProduct.productId,
@@ -102,7 +119,17 @@ export class ProductService {
             slug: branchProduct.productItem?.slug ?? '',
             description: branchProduct.productItem?.description ?? '',
             price: (branchProduct.price ?? branchProduct.productItem?.price ?? 0).toNumber(),
-            stock: branchProduct.stock
+            stock: branchProduct.stock,
+            images: branchProduct.productItem?.images?.map(img =>
+                this.productImageToDto(img)
+            ) ?? []
         };
+    }
+
+    private productImageToDto(productImage: ProductImage): ImageProductDto {
+        return {
+            url: productImage.url,
+            type: productImage.type
+        }
     }
 }

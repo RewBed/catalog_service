@@ -2,9 +2,10 @@ import { Injectable } from "@nestjs/common";
 import { FilterCategoriesDto } from "./dto/filter.categories.dto";
 import { PrismaService } from "src/core/database/prisma.service";
 import { CategoryPaginationDto } from "./dto/category.pagination.dto";
-import { Category } from "generated/prisma/client";
+import { Category, CategoryImage } from "generated/prisma/client";
 import { CategoryDto } from "./dto/category.dto";
 import { GetCategoryDto } from "./dto/get.category.dto";
+import { ImageCategoryDto } from "./dto/image.category.dto";
 
 @Injectable()
 export class CategoryService {
@@ -30,10 +31,17 @@ export class CategoryService {
             skip: (page - 1) * limit,
             take: limit,
             orderBy: { sortOrder: 'asc' },
+            include: {
+                images: {
+                    orderBy: {
+                        sortOrder: 'asc'
+                    }
+                }
+            }
         });
 
         return {
-            items: categories.map(this.toDo),
+            items: categories.map(cat => this.toDo(cat)),
             meta: {
                 limit: filter.limit,
                 page: filter.page,
@@ -50,7 +58,16 @@ export class CategoryService {
         if(id) where.id = id;
         if(slug) where.slug = slug;
 
-        const category = await this.prisma.category.findUnique({where});
+        const category = await this.prisma.category.findUnique({
+            where,
+            include: {
+                images: {
+                    orderBy: {
+                        sortOrder: 'asc'
+                    }
+                }
+            }
+        });
 
         if(!category)
             return null;
@@ -58,14 +75,22 @@ export class CategoryService {
         return this.toDo(category);
     }
 
-    private toDo(category: Category): CategoryDto {
+    private toDo(category: Category & {images: CategoryImage[]}): CategoryDto {
         return {
             id: category.id,
             name: category.name,
             fullName: category.fullName ?? undefined,
             slug: category.slug,
             description: category.description ?? undefined,
-            parentId: category.parentId ?? 0
+            parentId: category.parentId ?? 0,
+            images: category?.images?.map(img => this.categoryImageToDto(img)) ?? []
+        }
+    }
+
+    private categoryImageToDto(categoryImage: CategoryImage): ImageCategoryDto {
+        return {
+            url: categoryImage.url,
+            type: categoryImage.type
         }
     }
 }

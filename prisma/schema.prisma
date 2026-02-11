@@ -25,6 +25,7 @@ model Category {
     children Category[] @relation("CategoryHierarchy")
 
     products Product[]
+    images   CategoryImage[]
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
@@ -47,6 +48,7 @@ model Product {
     category   Category @relation(fields: [categoryId], references: [id])
 
     branchProducts BranchProduct[]
+    images ProductImage[]
 
     sortOrder Int @default(0)
 
@@ -94,6 +96,42 @@ model BranchProduct {
     @@index([productId])
     @@index([branchId])
     @@unique([productId, branchId]) // чтобы в филиале не было дублей
+}
+
+model ProductImage {
+    id        Int     @id @default(autoincrement())
+
+    productId Int
+    product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+    type      String  @db.VarChar(50)   // main, icon, gallery и т.д.
+    url       String  @db.Text          // можно хранить ключ вместо полного URL
+    sortOrder Int     @default(0)
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@index([productId])
+    @@index([type])
+    @@index([sortOrder])
+}
+
+model CategoryImage {
+    id         Int       @id @default(autoincrement())
+
+    categoryId Int
+    category   Category  @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+    type       String    @db.VarChar(50) // main, icon, banner и т.д.
+    url        String    @db.Text
+    sortOrder  Int       @default(0)
+
+    createdAt  DateTime  @default(now())
+    updatedAt  DateTime  @updatedAt
+
+    @@index([categoryId])
+    @@index([type])
+    @@index([sortOrder])
 }
 
 
