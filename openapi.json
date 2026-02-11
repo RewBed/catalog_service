@@ -180,6 +180,96 @@
           "Category"
         ]
       }
+    },
+    "/product": {
+      "get": {
+        "operationId": "ProductController_index",
+        "parameters": [
+          {
+            "name": "branchId",
+            "required": false,
+            "in": "query",
+            "description": "Фильтр по ID филиала",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "name",
+            "required": false,
+            "in": "query",
+            "description": "Фильтр по имени товара (частичное совпадение)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "minPrice",
+            "required": false,
+            "in": "query",
+            "description": "Минимальная цена",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "maxPrice",
+            "required": false,
+            "in": "query",
+            "description": "Максимальная цена",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "categoryId",
+            "required": false,
+            "in": "query",
+            "description": "Фильтр по категории",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "Номер страницы",
+            "schema": {
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Количество элементов на странице",
+            "schema": {
+              "default": 25,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FrontProductDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Product"
+        ]
+      }
     }
   },
   "info": {
@@ -292,6 +382,53 @@
         "required": [
           "meta",
           "items"
+        ]
+      },
+      "FrontProductDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "ID товарной позиции в филиале"
+          },
+          "productId": {
+            "type": "number",
+            "description": "ID глобального товара"
+          },
+          "name": {
+            "type": "string",
+            "description": "Название товара"
+          },
+          "fullName": {
+            "type": "string",
+            "description": "Полное название товара"
+          },
+          "slug": {
+            "type": "string",
+            "description": "Slug товара"
+          },
+          "description": {
+            "type": "string",
+            "description": "Описание товара"
+          },
+          "price": {
+            "type": "number",
+            "description": "Цена"
+          },
+          "stock": {
+            "type": "number",
+            "description": "Количество на складе"
+          }
+        },
+        "required": [
+          "id",
+          "productId",
+          "name",
+          "fullName",
+          "slug",
+          "description",
+          "price",
+          "stock"
         ]
       }
     }

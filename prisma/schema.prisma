@@ -1,9 +1,9 @@
 // prisma/schema.prisma
 
 generator client {
-    provider      = "prisma-client"
-    output        = "../generated/prisma"
-    moduleFormat  = "cjs"
+    provider     = "prisma-client"
+    output       = "../generated/prisma"
+    moduleFormat = "cjs"
 }
 
 datasource db {
@@ -11,21 +11,89 @@ datasource db {
 }
 
 model Category {
-    id          Int        @id @default(autoincrement())
-    name        String     @db.VarChar(150)
-    fullName    String?    @db.VarChar(250)
-    slug        String     @unique @db.VarChar(250)
-    description String?    @db.Text
+    id          Int     @id @default(autoincrement())
+    name        String  @db.VarChar(150)
+    fullName    String? @db.VarChar(250)
+    slug        String  @unique @db.VarChar(250)
+    description String? @db.Text
     parentId    Int?
 
-    sortOrder   Int?       @default(500)
+    sortOrder Int? @default(500)
 
     // self-relation (иерархия категорий)
-    parent      Category?  @relation("CategoryHierarchy", fields: [parentId], references: [id])
-    children    Category[] @relation("CategoryHierarchy")
+    parent   Category?  @relation("CategoryHierarchy", fields: [parentId], references: [id])
+    children Category[] @relation("CategoryHierarchy")
 
-    createdAt   DateTime   @default(now())
-    updatedAt   DateTime   @updatedAt
+    products Product[]
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
 
     @@index([parentId])
 }
+
+model Product {
+    id Int @id @default(autoincrement())
+
+    name     String  @db.VarChar(150)
+    fullName String? @db.VarChar(250)
+    slug     String  @unique @db.VarChar(250)
+
+    description String? @db.Text
+
+    price Decimal @db.Decimal(10, 2)
+
+    categoryId Int
+    category   Category @relation(fields: [categoryId], references: [id])
+
+    branchProducts BranchProduct[]
+
+    sortOrder Int @default(0)
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@index([categoryId])
+    @@index([sortOrder])
+}
+
+model Branch {
+    id          Int       @id @default(autoincrement())
+    name        String    @db.VarChar(150)
+    description String?   @db.Text
+    address     String    @db.VarChar(250)
+    city        String?   @db.VarChar(150)
+    region      String?   @db.VarChar(150)
+    phone       String?   @db.VarChar(50)
+    isActive    Boolean   @default(true)
+
+    branchProducts BranchProduct[] // связь с товарами филиала
+
+    createdAt   DateTime  @default(now())
+    updatedAt   DateTime  @updatedAt
+
+    @@index([isActive])
+}
+
+model BranchProduct {
+    id            Int         @id @default(autoincrement())
+
+    productId Int
+    productItem   Product     @relation(fields: [productId], references: [id])
+
+    branchId      Int
+    branch        Branch      @relation(fields: [branchId], references: [id])
+
+    price         Decimal     @db.Decimal(10, 2)
+    stock         Int         @default(0)
+    isActive      Boolean     @default(true)
+
+    createdAt     DateTime    @default(now())
+    updatedAt     DateTime    @updatedAt
+
+    @@index([productId])
+    @@index([branchId])
+    @@unique([productId, branchId]) // чтобы в филиале не было дублей
+}
+
+
