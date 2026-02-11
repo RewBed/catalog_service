@@ -72,7 +72,7 @@
         ]
       }
     },
-    "/category": {
+    "/categories": {
       "get": {
         "operationId": "CategoryController_index",
         "parameters": [
@@ -141,7 +141,7 @@
         ]
       }
     },
-    "/category/category": {
+    "/categories/category": {
       "get": {
         "operationId": "CategoryController_getItem",
         "parameters": [
@@ -181,7 +181,7 @@
         ]
       }
     },
-    "/product": {
+    "/products": {
       "get": {
         "operationId": "ProductController_index",
         "parameters": [
@@ -271,7 +271,56 @@
         ]
       }
     },
-    "/branch": {
+    "/products/product": {
+      "get": {
+        "operationId": "ProductController_getProduct",
+        "parameters": [
+          {
+            "name": "branchProductid",
+            "required": true,
+            "in": "query",
+            "description": "ID товара",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "slug",
+            "required": true,
+            "in": "query",
+            "description": "slug товара",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "branchId",
+            "required": true,
+            "in": "query",
+            "description": "филиал товара",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FrontProductDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Product"
+        ]
+      }
+    },
+    "/branches": {
       "get": {
         "operationId": "BranchController_index",
         "parameters": [],

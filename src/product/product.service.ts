@@ -4,6 +4,7 @@ import { FilterFrontProductDto } from "./dto/filter.front.product.dto";
 import { FrontProductDto } from "./dto/front.product.dto";
 import { BranchProduct, Product } from "generated/prisma/client";
 import { FrontProductPaginationDto } from "./dto/front.product.pagination.dto";
+import { GetProductDto } from "./dto/get.product.dto";
 
 @Injectable()
 export class ProductService {
@@ -56,6 +57,40 @@ export class ProductService {
                 page: page
             }
         };
+    }
+
+    async getItem(filter: GetProductDto): Promise<FrontProductDto | null> {
+        
+        const { branchProductid, slug, branchId } = filter;
+
+        const where: any = {};
+
+        if (branchProductid) {
+            // Поиск по id товарной позиции
+            where.id = branchProductid;
+            if (branchId !== undefined) {
+                where.branchId = branchId;
+            }
+        } 
+        else if (slug) {
+            // Поиск по slug в конкретном филиале
+            if (branchId !== undefined) {
+                where.branchId = branchId;
+            }
+            where.productItem = { slug };
+        }
+
+        const branchProduct = await this.prisma.branchProduct.findFirst({
+            where,
+            include: {
+                productItem: true,
+            },
+        });
+
+        if(!branchProduct)
+            return null;
+
+        return this.branchProductToFront(branchProduct);
     }
 
     private branchProductToFront(branchProduct: BranchProduct & { productItem?: Product }): FrontProductDto {

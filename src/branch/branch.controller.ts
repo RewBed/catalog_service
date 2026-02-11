@@ -3,7 +3,7 @@ import { BranchDto } from "./dto/branch.dto";
 import { BranchService } from "./branch.service";
 import { ApiOkResponse } from "@nestjs/swagger";
 
-@Controller('branch')
+@Controller('branches')
 export class BranchController {
 
     constructor(private readonly branchService: BranchService) {}
