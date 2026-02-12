@@ -6,6 +6,8 @@ import { LoggerModule } from './core/logger/logger.module';
 import { CategoryModule } from './category/category.module';
 import { ProductModule } from './product/product.module';
 import { BranchModule } from './branch/branch.module';
+import { OutboxModule } from './core/outbox/outbox.module';
+import { ImageEventsModule } from './image-events/image-events.module';
 
 @Module({
     imports: [
@@ -15,7 +17,9 @@ import { BranchModule } from './branch/branch.module';
         LoggerModule, 
         CategoryModule, 
         ProductModule,
-        BranchModule
+        BranchModule,
+        OutboxModule,
+        ImageEventsModule,
     ],
     controllers: [],
     providers: [],

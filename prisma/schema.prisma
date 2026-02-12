@@ -135,3 +135,27 @@ model CategoryImage {
 }
 
 
+model OutboxEvent {
+    id            String       @id @default(uuid())
+    topic         String
+    key           String?
+    eventType     String
+    eventVersion  Int          @default(1)
+    payload       Json
+    status        OutboxStatus @default(PENDING)
+    attempts      Int          @default(0)
+    lastError     String?
+    nextAttemptAt DateTime     @default(now())
+    publishedAt   DateTime?
+    createdAt     DateTime     @default(now())
+    updatedAt     DateTime     @updatedAt
+
+    @@index([status, nextAttemptAt, createdAt])
+}
+
+enum OutboxStatus {
+    PENDING
+    PROCESSING
+    SENT
+    FAILED
+}
