@@ -8,6 +8,7 @@ import { ProductModule } from './product/product.module';
 import { BranchModule } from './branch/branch.module';
 import { OutboxModule } from './core/outbox/outbox.module';
 import { ImageEventsModule } from './image-events/image-events.module';
+import { BranchProductModule } from './branch-product/branch-product.module';
 
 @Module({
     imports: [
@@ -18,6 +19,7 @@ import { ImageEventsModule } from './image-events/image-events.module';
         CategoryModule, 
         ProductModule,
         BranchModule,
+        BranchProductModule,
         OutboxModule,
         ImageEventsModule,
     ],

@@ -68,6 +68,7 @@ export class ProductService {
         const { branchProductid, slug, branchId } = filter;
 
         const where: any = {
+            isActive: true,
             branch: {
                 isActive: true,
             },
