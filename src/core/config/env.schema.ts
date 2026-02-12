@@ -12,6 +12,7 @@ export const envSchema = z.object({
     SERVICE_NAME: z.string(),
     SERVICE_PORT: z.preprocess((val) => Number(val), z.number()),
     GRPC_PORT: z.preprocess((val) => Number(val), z.number()),
+    AUTH_GRPC_URL: z.string(),
     LOG_LEVEL: z.enum(['debug', 'info', 'warn', 'error']).default('info'),
 
     POSTGRES_HOST: z.string(),
