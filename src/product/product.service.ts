@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+﻿import { Injectable } from "@nestjs/common";
 import { PrismaService } from "src/core/database/prisma.service";
 import { FilterFrontProductDto } from "./dto/filter.front.product.dto";
 import { FrontProductDto } from "./dto/front.product.dto";
@@ -25,7 +25,6 @@ export class ProductService {
             if(maxPrice !== undefined) where.price.lte = maxPrice;
         }
 
-        // поиск по имени и slug через product
         const branchProducts = await this.prisma.branchProduct.findMany({
             where: {
                 branchId: branchId ?? undefined,
@@ -34,12 +33,11 @@ export class ProductService {
                     gte: minPrice ?? undefined,
                     lte: maxPrice ?? undefined,
                 },
-                // Фильтр по полям связанной модели
                 productItem: {
-                    // через вложенный AND
                     AND: [
                         name ? { name: { contains: name } } : {},
                         categoryId ? { categoryId: categoryId } : {},
+                        { category: { deletedAt: null } },
                     ],
                 },
             },
@@ -69,24 +67,33 @@ export class ProductService {
     }
 
     async getItem(filter: GetProductDto): Promise<FrontProductDto | null> {
-        
+
         const { branchProductid, slug, branchId } = filter;
 
-        const where: any = {};
+        const where: any = {
+            productItem: {
+                category: {
+                    deletedAt: null,
+                },
+            },
+        };
 
         if (branchProductid) {
-            // Поиск по id товарной позиции
             where.id = branchProductid;
             if (branchId !== undefined) {
                 where.branchId = branchId;
             }
-        } 
+        }
         else if (slug) {
-            // Поиск по slug в конкретном филиале
             if (branchId !== undefined) {
                 where.branchId = branchId;
             }
-            where.productItem = { slug };
+            where.productItem = {
+                slug,
+                category: {
+                    deletedAt: null,
+                },
+            };
         }
 
         const branchProduct = await this.prisma.branchProduct.findFirst({

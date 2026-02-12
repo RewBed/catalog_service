@@ -139,6 +139,40 @@
         "tags": [
           "Category"
         ]
+      },
+      "post": {
+        "operationId": "CategoryController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCategoryDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CategoryDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Category"
+        ]
       }
     },
     "/categories/category": {
@@ -176,6 +210,77 @@
             }
           }
         },
+        "tags": [
+          "Category"
+        ]
+      }
+    },
+    "/categories/{id}": {
+      "patch": {
+        "operationId": "CategoryController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCategoryDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CategoryDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Category"
+        ]
+      },
+      "delete": {
+        "operationId": "CategoryController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
         "tags": [
           "Category"
         ]
@@ -480,6 +585,68 @@
           "meta",
           "items"
         ]
+      },
+      "CreateCategoryDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Category name"
+          },
+          "fullName": {
+            "type": "string",
+            "description": "Full category name"
+          },
+          "slug": {
+            "type": "string",
+            "description": "Unique category slug"
+          },
+          "description": {
+            "type": "string",
+            "description": "Category description"
+          },
+          "parentId": {
+            "type": "number",
+            "description": "Parent category id (0 means no parent)"
+          },
+          "sortOrder": {
+            "type": "number",
+            "description": "Sorting priority"
+          }
+        },
+        "required": [
+          "name",
+          "slug"
+        ]
+      },
+      "UpdateCategoryDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Category name"
+          },
+          "fullName": {
+            "type": "string",
+            "description": "Full category name"
+          },
+          "slug": {
+            "type": "string",
+            "description": "Unique category slug"
+          },
+          "description": {
+            "type": "string",
+            "description": "Category description"
+          },
+          "parentId": {
+            "type": "number",
+            "description": "Parent category id (0 means no parent)"
+          },
+          "sortOrder": {
+            "type": "number",
+            "description": "Sorting priority"
+          }
+        }
       },
       "ImageProductDto": {
         "type": "object",

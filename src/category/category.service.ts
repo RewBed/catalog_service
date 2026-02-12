@@ -1,11 +1,13 @@
-import { Injectable } from "@nestjs/common";
+import { BadRequestException, ConflictException, Injectable, NotFoundException } from "@nestjs/common";
 import { FilterCategoriesDto } from "./dto/filter.categories.dto";
 import { PrismaService } from "src/core/database/prisma.service";
 import { CategoryPaginationDto } from "./dto/category.pagination.dto";
-import { Category, CategoryImage } from "generated/prisma/client";
+import { Category, CategoryImage, Prisma } from "generated/prisma/client";
 import { CategoryDto } from "./dto/category.dto";
 import { GetCategoryDto } from "./dto/get.category.dto";
 import { ImageCategoryDto } from "./dto/image.category.dto";
+import { CreateCategoryDto } from "./dto/create.category.dto";
+import { UpdateCategoryDto } from "./dto/update.category.dto";
 
 @Injectable()
 export class CategoryService {
@@ -16,7 +18,9 @@ export class CategoryService {
 
         const { name, description, parentId, page, limit } = filter;
 
-        const where: any = {};
+        const where: any = {
+            deletedAt: null,
+        };
 
         if (name) where.name = { contains: name, mode: 'insensitive' };
         if (description) where.description = { contains: description, mode: 'insensitive' };
@@ -53,12 +57,14 @@ export class CategoryService {
     async getItem(filter: GetCategoryDto): Promise<CategoryDto | null> {
         const { id, slug } = filter;
 
-        const where: any = {}
+        const where: any = {
+            deletedAt: null,
+        };
 
         if(id) where.id = id;
         if(slug) where.slug = slug;
 
-        const category = await this.prisma.category.findUnique({
+        const category = await this.prisma.category.findFirst({
             where,
             include: {
                 images: {
@@ -73,6 +79,102 @@ export class CategoryService {
             return null;
 
         return this.toDo(category);
+    }
+
+    async create(payload: CreateCategoryDto): Promise<CategoryDto> {
+        const parentId = payload.parentId === 0 ? null : payload.parentId;
+
+        if (parentId) {
+            await this.ensureCategoryExists(parentId);
+        }
+
+        try {
+            const category = await this.prisma.category.create({
+                data: {
+                    name: payload.name,
+                    fullName: payload.fullName,
+                    slug: payload.slug,
+                    description: payload.description,
+                    parentId,
+                    sortOrder: payload.sortOrder,
+                },
+                include: {
+                    images: {
+                        orderBy: {
+                            sortOrder: 'asc',
+                        },
+                    },
+                },
+            });
+
+            return this.toDo(category);
+        } catch (error) {
+            this.handlePrismaError(error);
+        }
+    }
+
+    async update(id: number, payload: UpdateCategoryDto): Promise<CategoryDto> {
+        await this.ensureCategoryExists(id);
+
+        if (payload.parentId === id) {
+            throw new BadRequestException('Category cannot be a parent of itself');
+        }
+
+        const normalizedParentId = payload.parentId === 0 ? null : payload.parentId;
+        if (normalizedParentId) {
+            await this.ensureCategoryExists(normalizedParentId);
+        }
+
+        try {
+            const category = await this.prisma.category.update({
+                where: { id },
+                data: {
+                    ...(payload.name !== undefined ? { name: payload.name } : {}),
+                    ...(payload.fullName !== undefined ? { fullName: payload.fullName } : {}),
+                    ...(payload.slug !== undefined ? { slug: payload.slug } : {}),
+                    ...(payload.description !== undefined ? { description: payload.description } : {}),
+                    ...(payload.parentId !== undefined ? { parentId: normalizedParentId } : {}),
+                    ...(payload.sortOrder !== undefined ? { sortOrder: payload.sortOrder } : {}),
+                },
+                include: {
+                    images: {
+                        orderBy: {
+                            sortOrder: 'asc',
+                        },
+                    },
+                },
+            });
+
+            return this.toDo(category);
+        } catch (error) {
+            this.handlePrismaError(error);
+        }
+    }
+
+    async remove(id: number): Promise<void> {
+        await this.ensureCategoryExists(id);
+
+        try {
+            await this.prisma.$transaction([
+                this.prisma.category.updateMany({
+                    where: {
+                        parentId: id,
+                        deletedAt: null,
+                    },
+                    data: {
+                        parentId: null,
+                    },
+                }),
+                this.prisma.category.update({
+                    where: { id },
+                    data: {
+                        deletedAt: new Date(),
+                    },
+                }),
+            ]);
+        } catch (error) {
+            this.handlePrismaError(error);
+        }
     }
 
     private toDo(category: Category & {images: CategoryImage[]}): CategoryDto {
@@ -92,5 +194,33 @@ export class CategoryService {
             url: categoryImage.url,
             type: categoryImage.type
         }
+    }
+
+    private async ensureCategoryExists(id: number): Promise<void> {
+        const exists = await this.prisma.category.findUnique({
+            where: { id },
+            select: {
+                id: true,
+                deletedAt: true,
+            },
+        });
+
+        if (!exists || exists.deletedAt) {
+            throw new NotFoundException(`Category ${id} not found`);
+        }
+    }
+
+    private handlePrismaError(error: unknown): never {
+        if (error instanceof Prisma.PrismaClientKnownRequestError) {
+            if (error.code === 'P2002') {
+                throw new ConflictException('Category with this slug already exists');
+            }
+
+            if (error.code === 'P2003') {
+                throw new ConflictException('Category cannot be deleted or updated due to related entities');
+            }
+        }
+
+        throw error;
     }
 }
