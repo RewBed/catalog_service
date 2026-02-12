@@ -53,12 +53,14 @@ model Product {
     images ProductImage[]
 
     sortOrder Int @default(0)
+    deletedAt DateTime?
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
     @@index([categoryId])
     @@index([sortOrder])
+    @@index([deletedAt])
 }
 
 model Branch {

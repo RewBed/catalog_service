@@ -93,10 +93,13 @@ export class ImageEventsService {
     private async saveProductImage(productId: number, url: string, type: string): Promise<void> {
         const product = await this.prisma.product.findUnique({
             where: { id: productId },
-            select: { id: true },
+            select: {
+                id: true,
+                deletedAt: true,
+            },
         });
 
-        if (!product) {
+        if (!product || product.deletedAt) {
             this.logger.warn(`Товар ${productId} не найден, изображение не сохранено`);
             return;
         }
