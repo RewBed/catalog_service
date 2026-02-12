@@ -92,11 +92,11 @@ export class CategoryService {
             const category = await this.prisma.category.create({
                 data: {
                     name: payload.name,
-                    fullName: payload.fullName,
                     slug: payload.slug,
-                    description: payload.description,
-                    parentId,
-                    sortOrder: payload.sortOrder,
+                    ...(payload.fullName !== undefined ? { fullName: payload.fullName } : {}),
+                    ...(payload.description !== undefined ? { description: payload.description } : {}),
+                    ...(parentId !== undefined ? { parentId } : {}),
+                    ...(payload.sortOrder !== undefined ? { sortOrder: payload.sortOrder } : {}),
                 },
                 include: {
                     images: {

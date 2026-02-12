@@ -1,24 +1,27 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+﻿import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class BranchDto {
-    @ApiProperty({ description: 'ID филиала' })
+    @ApiProperty({ description: 'Branch id' })
     id: number;
 
-    @ApiProperty({ description: 'Название филиала' })
+    @ApiProperty({ description: 'Branch name' })
     name: string;
 
-    @ApiPropertyOptional({ description: 'Описание филиала' })
+    @ApiPropertyOptional({ description: 'Branch description' })
     description?: string;
 
-    @ApiProperty({ description: 'Адрес филиала' })
+    @ApiProperty({ description: 'Branch address' })
     address: string;
 
-    @ApiPropertyOptional({ description: 'Город' })
+    @ApiPropertyOptional({ description: 'City' })
     city?: string;
 
-    @ApiPropertyOptional({ description: 'Регион' })
+    @ApiPropertyOptional({ description: 'Region' })
     region?: string;
 
-    @ApiPropertyOptional({ description: 'Телефон' })
+    @ApiPropertyOptional({ description: 'Phone' })
     phone?: string;
+
+    @ApiPropertyOptional({ description: 'Branch active status' })
+    isActive?: boolean;
 }

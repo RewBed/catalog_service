@@ -29,6 +29,9 @@ export class ProductService {
             where: {
                 branchId: branchId ?? undefined,
                 isActive: true,
+                branch: {
+                    isActive: true,
+                },
                 price: {
                     gte: minPrice ?? undefined,
                     lte: maxPrice ?? undefined,
@@ -71,6 +74,9 @@ export class ProductService {
         const { branchProductid, slug, branchId } = filter;
 
         const where: any = {
+            branch: {
+                isActive: true,
+            },
             productItem: {
                 category: {
                     deletedAt: null,

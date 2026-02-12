@@ -447,6 +447,139 @@
         "tags": [
           "Branch"
         ]
+      },
+      "post": {
+        "operationId": "BranchController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateBranchDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BranchDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Branch"
+        ]
+      }
+    },
+    "/branches/{id}": {
+      "get": {
+        "operationId": "BranchController_getItem",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BranchDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Branch"
+        ]
+      },
+      "patch": {
+        "operationId": "BranchController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateBranchDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BranchDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Branch"
+        ]
+      },
+      "delete": {
+        "operationId": "BranchController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Branch"
+        ]
       }
     }
   },
@@ -725,31 +858,35 @@
         "properties": {
           "id": {
             "type": "number",
-            "description": "ID филиала"
+            "description": "Branch id"
           },
           "name": {
             "type": "string",
-            "description": "Название филиала"
+            "description": "Branch name"
           },
           "description": {
             "type": "string",
-            "description": "Описание филиала"
+            "description": "Branch description"
           },
           "address": {
             "type": "string",
-            "description": "Адрес филиала"
+            "description": "Branch address"
           },
           "city": {
             "type": "string",
-            "description": "Город"
+            "description": "City"
           },
           "region": {
             "type": "string",
-            "description": "Регион"
+            "description": "Region"
           },
           "phone": {
             "type": "string",
-            "description": "Телефон"
+            "description": "Phone"
+          },
+          "isActive": {
+            "type": "boolean",
+            "description": "Branch active status"
           }
         },
         "required": [
@@ -757,6 +894,76 @@
           "name",
           "address"
         ]
+      },
+      "CreateBranchDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Branch name"
+          },
+          "description": {
+            "type": "string",
+            "description": "Branch description"
+          },
+          "address": {
+            "type": "string",
+            "description": "Branch address"
+          },
+          "city": {
+            "type": "string",
+            "description": "City"
+          },
+          "region": {
+            "type": "string",
+            "description": "Region"
+          },
+          "phone": {
+            "type": "string",
+            "description": "Phone number"
+          },
+          "isActive": {
+            "type": "boolean",
+            "description": "Branch active status"
+          }
+        },
+        "required": [
+          "name",
+          "address"
+        ]
+      },
+      "UpdateBranchDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Branch name"
+          },
+          "description": {
+            "type": "string",
+            "description": "Branch description"
+          },
+          "address": {
+            "type": "string",
+            "description": "Branch address"
+          },
+          "city": {
+            "type": "string",
+            "description": "City"
+          },
+          "region": {
+            "type": "string",
+            "description": "Region"
+          },
+          "phone": {
+            "type": "string",
+            "description": "Phone number"
+          },
+          "isActive": {
+            "type": "boolean",
+            "description": "Branch active status"
+          }
+        }
       }
     }
   }
