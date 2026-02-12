@@ -1,20 +1,25 @@
-name: Deploy Dev
+name: Deploy Main via SSH
 
 on:
   push:
     branches:
-      - dev
+      - main
 
 jobs:
   deploy:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Docker Compose redeploy
-        run: |
-          cd 
-          docker compose down
-          docker compose build --no-cache
-          docker compose up -d
+      - name: Deploy on server via SSH
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          port: ${{ secrets.SSH_PORT }}
+          username: ${{ secrets.SSH_USER }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          script: |
+            set -e
+            cd "${{ secrets.SSH_PROJECT_DIR }}"
+            git pull origin main
+            docker compose down
+            docker compose build --no-cache
+            docker compose up -d
