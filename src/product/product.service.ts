@@ -1,13 +1,13 @@
 ﻿import { ConflictException, Injectable, NotFoundException } from "@nestjs/common";
 import { PrismaService } from "src/core/database/prisma.service";
-import { FilterFrontProductDto } from "./dto/filter.front.product.dto";
-import { BranchProduct, Prisma, Product, ProductImage } from "generated/prisma/client";
-import { FrontProductPaginationDto } from "./dto/front.product.pagination.dto";
+import { Prisma, Product, ProductImage } from "generated/prisma/client";
 import { ImageProductDto } from "./dto/image.product.dto";
 import { CreateProductDto } from "./dto/create.product.dto";
 import { UpdateProductDto } from "./dto/update.product.dto";
 import { ProductDto } from "./dto/product.dto";
 import { ProductWhereInput } from "generated/prisma/models";
+import { AdminProductPaginationDto } from "./dto/admin/admin.product.pagination.dto";
+import { AdminFilterProductDto } from "./controllers/admin-filter.product.dto";
 
 @Injectable()
 export class ProductService {
@@ -15,7 +15,7 @@ export class ProductService {
     constructor(private readonly prisma: PrismaService) {}
 
     // получения списка товаров по фильтру
-    async getFilteredProducts(filter: FilterFrontProductDto): Promise<FrontProductPaginationDto> {
+    async getFilteredProducts(filter: AdminFilterProductDto): Promise<AdminProductPaginationDto> {
         const { page, limit, name, minPrice, maxPrice, categoryId, isDeleted} = filter;
 
         console.log(isDeleted);
@@ -85,6 +85,7 @@ export class ProductService {
         return this.productToDto(product);
     }
 
+    // создание товара
     async createProduct(payload: CreateProductDto): Promise<ProductDto> {
         await this.ensureCategoryExists(payload.categoryId);
 
@@ -114,6 +115,7 @@ export class ProductService {
         }
     }
 
+    // обновление товара
     async updateProduct(id: number, payload: UpdateProductDto): Promise<ProductDto> {
         await this.ensureProductExists(id);
 
@@ -148,6 +150,7 @@ export class ProductService {
         }
     }
 
+    // удаление товара
     async removeProduct(id: number): Promise<void> {
         await this.ensureProductExists(id);
 
@@ -174,24 +177,7 @@ export class ProductService {
         }
     }
 
-    /*
-    private branchProductToFront(branchProduct: BranchProduct & {productItem?: Product & { images?: ProductImage[] }}): FrontProductDto {
-        return {
-            id: branchProduct.id,
-            productId: branchProduct.productId,
-            name: branchProduct.productItem?.name ?? 'Unknown',
-            fullName: branchProduct.productItem?.fullName ?? '',
-            slug: branchProduct.productItem?.slug ?? '',
-            description: branchProduct.productItem?.description ?? '',
-            price: (branchProduct.price ?? branchProduct.productItem?.price ?? 0).toNumber(),
-            stock: branchProduct.stock,
-            images: branchProduct.productItem?.images?.map((img) =>
-                this.productImageToDto(img),
-            ) ?? [],
-        };
-    }
-        */
-
+    // преобразование изображения товара в дто
     private productImageToDto(productImage: ProductImage): ImageProductDto {
         return {
             url: productImage.url,
@@ -199,6 +185,7 @@ export class ProductService {
         };
     }
 
+    // преобразование товара в дто
     private productToDto(product: Product & { images?: ProductImage[] }): ProductDto {
         return {
             id: product.id,

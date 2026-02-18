@@ -1,8 +1,8 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { PaginationDto } from "src/common/dto/pagination.dto";
-import { ProductDto } from "./product.dto";
+import { ProductDto } from "../product.dto";
 
-export class FrontProductPaginationDto extends PaginationDto {
+export class AdminProductPaginationDto extends PaginationDto {
     @ApiProperty({ type: [ProductDto] })
     items: ProductDto[]
 }

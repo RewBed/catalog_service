@@ -69,7 +69,7 @@ async function bootstrap() {
     }
 
     const config = new DocumentBuilder()
-        .setTitle('Base Service API')
+        .setTitle(`${configService.get<string>('SERVICE_NAME')} API`)
         .setDescription('REST API + GRPC endpoints')
         .setVersion('1.0')
         .addServer(`http://localhost:${configService.get<number>('SERVICE_PORT')}`)

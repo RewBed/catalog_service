@@ -286,9 +286,9 @@
         ]
       }
     },
-    "/products/admin/products": {
+    "/api/admin/products": {
       "get": {
-        "operationId": "ProductController_index",
+        "operationId": "AdminProductController_index",
         "parameters": [
           {
             "name": "name",
@@ -362,10 +362,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/FrontProductPaginationDto"
-                  }
+                  "$ref": "#/components/schemas/AdminProductPaginationDto"
                 }
               }
             }
@@ -377,13 +374,47 @@
           }
         ],
         "tags": [
-          "Product"
+          "AdminProduct"
+        ]
+      },
+      "post": {
+        "operationId": "AdminProductController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateProductDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "AdminProduct"
         ]
       }
     },
-    "/products/admin/products/product/{id}": {
+    "/api/admin/products/{id}": {
       "get": {
-        "operationId": "ProductController_getProduct",
+        "operationId": "AdminProductController_getProduct",
         "parameters": [
           {
             "name": "id",
@@ -412,11 +443,11 @@
           }
         ],
         "tags": [
-          "Product"
+          "AdminProduct"
         ]
       },
       "patch": {
-        "operationId": "ProductController_update",
+        "operationId": "AdminProductController_update",
         "parameters": [
           {
             "name": "id",
@@ -455,11 +486,11 @@
           }
         ],
         "tags": [
-          "Product"
+          "AdminProduct"
         ]
       },
       "delete": {
-        "operationId": "ProductController_remove",
+        "operationId": "AdminProductController_remove",
         "parameters": [
           {
             "name": "id",
@@ -481,43 +512,7 @@
           }
         ],
         "tags": [
-          "Product"
-        ]
-      }
-    },
-    "/products/admin/products/product": {
-      "post": {
-        "operationId": "ProductController_create",
-        "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateProductDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProductDto"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "bearer": []
-          }
-        ],
-        "tags": [
-          "Product"
+          "AdminProduct"
         ]
       }
     },
@@ -837,7 +832,7 @@
     }
   },
   "info": {
-    "title": "Base Service API",
+    "title": "catalog-service API",
     "description": "REST API + GRPC endpoints",
     "version": "1.0",
     "contact": {}
@@ -1103,7 +1098,7 @@
           "images"
         ]
       },
-      "FrontProductPaginationDto": {
+      "AdminProductPaginationDto": {
         "type": "object",
         "properties": {
           "meta": {

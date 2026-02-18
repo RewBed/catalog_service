@@ -2,7 +2,7 @@ import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsOptional, IsString, IsInt, Min, Max, IsBoolean } from 'class-validator';
 import { Transform, Type } from 'class-transformer';
 
-export class FilterFrontProductDto {
+export class AdminFilterProductDto {
     @ApiPropertyOptional({ description: 'Фильтр по имени товара (частичное совпадение)' })
     @IsOptional()
     @IsString()

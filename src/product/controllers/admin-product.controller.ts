@@ -1,43 +1,30 @@
+import { Body, Controller, Delete, Get, HttpCode, NotFoundException, Param, ParseIntPipe, Patch, Post, Query, UseGuards } from "@nestjs/common";
+import { ProductService } from "../product.service";
 import { ApiBearerAuth, ApiCreatedResponse, ApiNoContentResponse, ApiOkResponse } from "@nestjs/swagger";
-import { FilterFrontProductDto } from "./dto/filter.front.product.dto";
-import { FrontProductPaginationDto } from "./dto/front.product.pagination.dto";
-import { ProductService } from "./product.service";
 import { GrpcAuthGuard } from "src/common/auth";
-import { ProductDto } from "./dto/product.dto";
-import { CreateProductDto } from "./dto/create.product.dto";
-import { UpdateProductDto } from "./dto/update.product.dto";
-import {
-    Body,
-    Controller,
-    Delete,
-    Get,
-    HttpCode,
-    NotFoundException,
-    Param,
-    ParseIntPipe,
-    Patch,
-    Post,
-    Query,
-    UseGuards,
-} from "@nestjs/common";
+import { ProductDto } from "../dto/product.dto";
+import { CreateProductDto } from "../dto/create.product.dto";
+import { UpdateProductDto } from "../dto/update.product.dto";
+import { AdminProductPaginationDto } from "../dto/admin/admin.product.pagination.dto";
+import { AdminFilterProductDto } from "./admin-filter.product.dto";
 
-@Controller('products')
-export class ProductController {
+@Controller('api/admin/products')
+export class AdminProductController {
 
     constructor(private readonly productService: ProductService) {}
 
+    @Get()
     @ApiBearerAuth()
     @UseGuards(GrpcAuthGuard)
-    @ApiOkResponse({ type: [FrontProductPaginationDto] })
-    @Get('admin/products')
-    async index(@Query() query: FilterFrontProductDto): Promise<FrontProductPaginationDto> {
+    @ApiOkResponse({ type: AdminProductPaginationDto})
+    async index(@Query() query: AdminFilterProductDto): Promise<AdminProductPaginationDto> {
         return this.productService.getFilteredProducts(query);
     }
 
+    @Get(':id')
     @ApiBearerAuth()
     @UseGuards(GrpcAuthGuard)
     @ApiOkResponse({ type: ProductDto })
-    @Get('admin/products/product/:id')
     async getProduct(@Param('id', ParseIntPipe) id: number): Promise<ProductDto> {
 
         const product = await this.productService.getProductById(id);
@@ -48,18 +35,18 @@ export class ProductController {
         return product;
     }
 
+    @Post()
     @ApiBearerAuth()
     @UseGuards(GrpcAuthGuard)
     @ApiCreatedResponse({ type: ProductDto })
-    @Post('admin/products/product')
     async create(@Body() payload: CreateProductDto): Promise<ProductDto> {
         return this.productService.createProduct(payload);
     }
 
+    @Patch(':id')
     @ApiBearerAuth()
     @UseGuards(GrpcAuthGuard)
     @ApiOkResponse({ type: ProductDto })
-    @Patch('admin/products/product/:id')
     async update(@Param('id', ParseIntPipe) id: number, @Body() payload: UpdateProductDto): Promise<ProductDto> {
         return this.productService.updateProduct(id, payload);
     }
@@ -67,7 +54,7 @@ export class ProductController {
     @ApiBearerAuth()
     @UseGuards(GrpcAuthGuard)
     @ApiNoContentResponse()
-    @Delete('admin/products/product/:id')
+    @Delete(':id')
     @HttpCode(204)
     async remove(@Param('id', ParseIntPipe) id: number): Promise<void> {
         return this.productService.removeProduct(id);

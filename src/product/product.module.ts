@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
-import { ProductController } from './product.controller';
 import { ProductService } from './product.service';
 import { AuthGrpcClientModule } from 'src/common/auth';
+import { AdminProductController } from './controllers/admin-product.controller';
 
 @Module({
     imports: [AuthGrpcClientModule],
-    controllers: [ProductController],
+    controllers: [AdminProductController],
     providers: [ProductService],
 })
 export class ProductModule {}
