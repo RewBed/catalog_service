@@ -1,51 +1,51 @@
 ﻿import { ConflictException, Injectable, NotFoundException } from "@nestjs/common";
 import { PrismaService } from "src/core/database/prisma.service";
 import { FilterFrontProductDto } from "./dto/filter.front.product.dto";
-import { FrontProductDto } from "./dto/front.product.dto";
 import { BranchProduct, Prisma, Product, ProductImage } from "generated/prisma/client";
 import { FrontProductPaginationDto } from "./dto/front.product.pagination.dto";
-import { GetProductDto } from "./dto/get.product.dto";
 import { ImageProductDto } from "./dto/image.product.dto";
 import { CreateProductDto } from "./dto/create.product.dto";
 import { UpdateProductDto } from "./dto/update.product.dto";
 import { ProductDto } from "./dto/product.dto";
+import { ProductWhereInput } from "generated/prisma/models";
 
 @Injectable()
 export class ProductService {
 
     constructor(private readonly prisma: PrismaService) {}
 
+    // получения списка товаров по фильтру
     async getFilteredProducts(filter: FilterFrontProductDto): Promise<FrontProductPaginationDto> {
-        const { page, limit, branchId, name, minPrice, maxPrice, categoryId } = filter;
+        const { page, limit, name, minPrice, maxPrice, categoryId, isDeleted} = filter;
 
-        const branchProducts = await this.prisma.branchProduct.findMany({
-            where: {
-                branchId: branchId ?? undefined,
-                isActive: true,
-                branch: {
-                    isActive: true,
-                },
-                price: {
-                    gte: minPrice ?? undefined,
-                    lte: maxPrice ?? undefined,
-                },
-                productItem: {
-                    AND: [
-                        name ? { name: { contains: name } } : {},
-                        categoryId ? { categoryId: categoryId } : {},
-                        { deletedAt: null },
-                        { category: { deletedAt: null } },
-                    ],
-                },
-            },
+        console.log(isDeleted);
+
+        const where: ProductWhereInput = {};
+
+        if(name)
+            where.name = { contains: name };
+
+        if(minPrice || maxPrice) {
+            where.price = {
+                gte: minPrice ?? undefined,
+                lte: maxPrice ?? undefined,
+            }
+        }
+
+        if(categoryId)
+            where.categoryId = categoryId;
+
+        if(isDeleted)
+            where.deletedAt = { not: null }
+        else
+            where.deletedAt = null;
+
+        const products = await this.prisma.product.findMany({
+            where,
             include: {
-                productItem: {
-                    include: {
-                        images: {
-                            orderBy: {
-                                sortOrder: 'asc',
-                            },
-                        },
+                images: {
+                    orderBy: {
+                        sortOrder: 'asc',
                     },
                 },
             },
@@ -54,7 +54,7 @@ export class ProductService {
         });
 
         return {
-            items: branchProducts.map((bp) => this.branchProductToFront(bp)),
+            items: products.map((product) => this.productToDto(product)),
             meta: {
                 total: 0,
                 limit,
@@ -63,88 +63,11 @@ export class ProductService {
         };
     }
 
-    async getItem(filter: GetProductDto): Promise<FrontProductDto | null> {
-
-        const { branchProductid, slug, branchId } = filter;
-
-        const where: any = {
-            isActive: true,
-            branch: {
-                isActive: true,
-            },
-            productItem: {
-                deletedAt: null,
-                category: {
-                    deletedAt: null,
-                },
-            },
-        };
-
-        if (branchProductid) {
-            where.id = branchProductid;
-            if (branchId !== undefined) {
-                where.branchId = branchId;
-            }
-        } else if (slug) {
-            if (branchId !== undefined) {
-                where.branchId = branchId;
-            }
-            where.productItem = {
-                slug,
-                deletedAt: null,
-                category: {
-                    deletedAt: null,
-                },
-            };
-        }
-
-        const branchProduct = await this.prisma.branchProduct.findFirst({
-            where,
-            include: {
-                productItem: {
-                    include: {
-                        images: {
-                            orderBy: {
-                                sortOrder: 'asc',
-                            },
-                        },
-                    },
-                },
-            },
-        });
-
-        if (!branchProduct) {
-            return null;
-        }
-
-        return this.branchProductToFront(branchProduct);
-    }
-
-    async getAllProducts(): Promise<ProductDto[]> {
-        const products = await this.prisma.product.findMany({
-            where: {
-                deletedAt: null,
-            },
-            orderBy: {
-                sortOrder: 'asc',
-            },
-            include: {
-                images: {
-                    orderBy: {
-                        sortOrder: 'asc',
-                    },
-                },
-            },
-        });
-
-        return products.map((product) => this.productToDto(product));
-    }
-
+    // получение товара по ID
     async getProductById(id: number): Promise<ProductDto | null> {
         const product = await this.prisma.product.findFirst({
             where: {
-                id,
-                deletedAt: null,
+                id
             },
             include: {
                 images: {
@@ -251,6 +174,7 @@ export class ProductService {
         }
     }
 
+    /*
     private branchProductToFront(branchProduct: BranchProduct & {productItem?: Product & { images?: ProductImage[] }}): FrontProductDto {
         return {
             id: branchProduct.id,
@@ -266,6 +190,7 @@ export class ProductService {
             ) ?? [],
         };
     }
+        */
 
     private productImageToDto(productImage: ProductImage): ImageProductDto {
         return {

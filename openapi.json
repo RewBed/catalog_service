@@ -291,15 +291,6 @@
         "operationId": "ProductController_index",
         "parameters": [
           {
-            "name": "branchId",
-            "required": false,
-            "in": "query",
-            "description": "Фильтр по ID филиала",
-            "schema": {
-              "type": "number"
-            }
-          },
-          {
             "name": "name",
             "required": false,
             "in": "query",
@@ -354,6 +345,15 @@
               "default": 25,
               "type": "number"
             }
+          },
+          {
+            "name": "isDeleted",
+            "required": false,
+            "in": "query",
+            "description": "Показать удаленные товары",
+            "schema": {
+              "type": "boolean"
+            }
           }
         ],
         "responses": {
@@ -364,133 +364,26 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/FrontProductDto"
+                    "$ref": "#/components/schemas/FrontProductPaginationDto"
                   }
                 }
               }
             }
           }
         },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
         "tags": [
           "Product"
         ]
       }
     },
-    "/products/product": {
+    "/products/product/{id}": {
       "get": {
         "operationId": "ProductController_getProduct",
-        "parameters": [
-          {
-            "name": "branchProductid",
-            "required": true,
-            "in": "query",
-            "description": "ID товара",
-            "schema": {
-              "type": "number"
-            }
-          },
-          {
-            "name": "slug",
-            "required": true,
-            "in": "query",
-            "description": "slug товара",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "branchId",
-            "required": true,
-            "in": "query",
-            "description": "филиал товара",
-            "schema": {
-              "type": "number"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/FrontProductDto"
-                }
-              }
-            }
-          }
-        },
-        "tags": [
-          "Product"
-        ]
-      }
-    },
-    "/products/admin": {
-      "get": {
-        "operationId": "ProductController_adminIndex",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ProductDto"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "bearer": []
-          }
-        ],
-        "tags": [
-          "Product"
-        ]
-      },
-      "post": {
-        "operationId": "ProductController_create",
-        "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateProductDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProductDto"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "bearer": []
-          }
-        ],
-        "tags": [
-          "Product"
-        ]
-      }
-    },
-    "/products/admin/{id}": {
-      "get": {
-        "operationId": "ProductController_adminGetItem",
         "parameters": [
           {
             "name": "id",
@@ -580,6 +473,42 @@
         "responses": {
           "204": {
             "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Product"
+        ]
+      }
+    },
+    "/products/product": {
+      "post": {
+        "operationId": "ProductController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateProductDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductDto"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -746,6 +675,163 @@
         ],
         "tags": [
           "Branch"
+        ]
+      }
+    },
+    "/branch-products": {
+      "get": {
+        "operationId": "BranchProductController_index",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BranchProductDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "BranchProduct"
+        ]
+      },
+      "post": {
+        "operationId": "BranchProductController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateBranchProductDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BranchProductDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "BranchProduct"
+        ]
+      }
+    },
+    "/branch-products/{id}": {
+      "get": {
+        "operationId": "BranchProductController_getItem",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BranchProductDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "BranchProduct"
+        ]
+      },
+      "patch": {
+        "operationId": "BranchProductController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateBranchProductDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BranchProductDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "BranchProduct"
+        ]
+      },
+      "delete": {
+        "operationId": "BranchProductController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "BranchProduct"
         ]
       }
     }
@@ -965,61 +1051,6 @@
           "type"
         ]
       },
-      "FrontProductDto": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "number",
-            "description": "ID товарной позиции в филиале"
-          },
-          "productId": {
-            "type": "number",
-            "description": "ID глобального товара"
-          },
-          "name": {
-            "type": "string",
-            "description": "Название товара"
-          },
-          "fullName": {
-            "type": "string",
-            "description": "Полное название товара"
-          },
-          "slug": {
-            "type": "string",
-            "description": "Slug товара"
-          },
-          "description": {
-            "type": "string",
-            "description": "Описание товара"
-          },
-          "price": {
-            "type": "number",
-            "description": "Цена"
-          },
-          "stock": {
-            "type": "number",
-            "description": "Количество на складе"
-          },
-          "images": {
-            "description": "Список изрбражений",
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ImageProductDto"
-            }
-          }
-        },
-        "required": [
-          "id",
-          "productId",
-          "name",
-          "fullName",
-          "slug",
-          "description",
-          "price",
-          "stock",
-          "images"
-        ]
-      },
       "ProductDto": {
         "type": "object",
         "properties": {
@@ -1070,6 +1101,24 @@
           "categoryId",
           "sortOrder",
           "images"
+        ]
+      },
+      "FrontProductPaginationDto": {
+        "type": "object",
+        "properties": {
+          "meta": {
+            "$ref": "#/components/schemas/PaginationMeta"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProductDto"
+            }
+          }
+        },
+        "required": [
+          "meta",
+          "items"
         ]
       },
       "CreateProductDto": {
@@ -1253,6 +1302,90 @@
           "isActive": {
             "type": "boolean",
             "description": "Branch active status"
+          }
+        }
+      },
+      "BranchProductDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "Branch product id"
+          },
+          "productId": {
+            "type": "number",
+            "description": "Product id"
+          },
+          "branchId": {
+            "type": "number",
+            "description": "Branch id"
+          },
+          "price": {
+            "type": "number",
+            "description": "Price in branch"
+          },
+          "stock": {
+            "type": "number",
+            "description": "Stock in branch"
+          },
+          "isActive": {
+            "type": "boolean",
+            "description": "Active status"
+          }
+        },
+        "required": [
+          "id",
+          "productId",
+          "branchId",
+          "price",
+          "stock",
+          "isActive"
+        ]
+      },
+      "CreateBranchProductDto": {
+        "type": "object",
+        "properties": {
+          "productId": {
+            "type": "number",
+            "description": "Product id"
+          },
+          "branchId": {
+            "type": "number",
+            "description": "Branch id"
+          },
+          "price": {
+            "type": "number",
+            "description": "Price in branch"
+          },
+          "stock": {
+            "type": "number",
+            "description": "Stock in branch"
+          },
+          "isActive": {
+            "type": "boolean",
+            "description": "Active status"
+          }
+        },
+        "required": [
+          "productId",
+          "branchId",
+          "price"
+        ]
+      },
+      "UpdateBranchProductDto": {
+        "type": "object",
+        "properties": {
+          "price": {
+            "type": "number",
+            "description": "Price in branch"
+          },
+          "stock": {
+            "type": "number",
+            "description": "Stock in branch"
+          },
+          "isActive": {
+            "type": "boolean",
+            "description": "Active status"
           }
         }
       }

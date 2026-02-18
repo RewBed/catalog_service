@@ -21,7 +21,7 @@ class AtLeastOne implements ValidatorConstraintInterface {
 @ValidatorConstraint({ name: 'slugRequiresBranch', async: false })
 class SlugRequiresBranch implements ValidatorConstraintInterface {
     validate(_: any, args: ValidationArguments) {
-        const obj = args.object as GetProductDto;
+        const obj = args.object as GetBranchProductDto;
         // Если slug указан, branchId обязателен
         if (obj.slug && !obj.branchId) {
             return false;
@@ -34,7 +34,7 @@ class SlugRequiresBranch implements ValidatorConstraintInterface {
     }
 }
 
-export class GetProductDto {
+export class GetBranchProductDto {
     @ApiProperty({ description: "ID товара" })
     @IsOptional()
     @Type(() => Number)

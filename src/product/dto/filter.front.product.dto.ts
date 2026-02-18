@@ -1,13 +1,8 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsOptional, IsString, IsInt, Min, Max, IsBoolean } from 'class-validator';
-import { Type } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
 
 export class FilterFrontProductDto {
-    @ApiPropertyOptional({ description: 'Фильтр по ID филиала' })
-    @Type(() => Number)
-    @IsInt()
-    branchId: number;
-
     @ApiPropertyOptional({ description: 'Фильтр по имени товара (частичное совпадение)' })
     @IsOptional()
     @IsString()
@@ -48,4 +43,10 @@ export class FilterFrontProductDto {
     @IsInt()
     @Min(1)
     limit: number = 25;
+
+    @ApiPropertyOptional({ description: 'Показать удаленные товары' })
+    @IsOptional()
+    @Transform(({ value }) => value === true || value === 'true' || value === 1 || value === '1')
+    @IsBoolean()
+    isDeleted: boolean = false;
 }
