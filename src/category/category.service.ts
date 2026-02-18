@@ -60,10 +60,10 @@ export class CategoryService {
     // получения списка категорий с фильтрацией для админской версии
     async getAllAdmin(filter: AdminFilterCategoriesDto): Promise<AdminCategoryPaginationDto> {
 
-        const { name, description, parentId, page, limit } = filter;
+        const { name, description, parentId, page, limit, isDeleted } = filter;
 
         const where: any = {
-            deletedAt: null,
+            deletedAt: isDeleted ? { not: null } : null,
         };
 
         if (name) where.name = { contains: name, mode: 'insensitive' };

@@ -5,10 +5,9 @@ import { GrpcAuthGuard } from "src/common/auth";
 import { CreateCategoryDto } from "../dto/create.category.dto";
 import { UpdateCategoryDto } from "../dto/update.category.dto";
 import { AdminCategoryDto } from "../dto/admin/admin-category.dto";
-import { CategoryPaginationDto } from "../dto/category.pagination.dto";
 import { FilterCategoriesDto } from "../dto/filter.categories.dto";
-import { CategoryDto } from "../dto/category.dto";
 import { AdminCategoryPaginationDto } from "../dto/admin/admin-category.pagination.dto";
+import { AdminFilterCategoriesDto } from "../dto/admin/admin-filter.categories.dto";
 
 @Controller('api/admin/categories')
 export class AdminCategoryController {
@@ -19,7 +18,7 @@ export class AdminCategoryController {
     @ApiBearerAuth()
     @UseGuards(GrpcAuthGuard)
     @ApiOkResponse({ type: AdminCategoryPaginationDto })
-    async index(@Query() query: FilterCategoriesDto): Promise<AdminCategoryPaginationDto> {
+    async index(@Query() query: AdminFilterCategoriesDto): Promise<AdminCategoryPaginationDto> {
         return this.categoryService.getAllAdmin(query);
     }
 

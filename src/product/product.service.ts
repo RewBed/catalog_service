@@ -35,10 +35,7 @@ export class ProductService {
         if(categoryId)
             where.categoryId = categoryId;
 
-        if(isDeleted)
-            where.deletedAt = { not: null }
-        else
-            where.deletedAt = null;
+        where.deletedAt = isDeleted ? { not: null } : null;
 
         const products = await this.prisma.product.findMany({
             where,
