@@ -29,7 +29,7 @@ export class ProductController {
     @ApiBearerAuth()
     @UseGuards(GrpcAuthGuard)
     @ApiOkResponse({ type: [FrontProductPaginationDto] })
-    @Get()
+    @Get('admin/products')
     async index(@Query() query: FilterFrontProductDto): Promise<FrontProductPaginationDto> {
         return this.productService.getFilteredProducts(query);
     }
@@ -37,7 +37,7 @@ export class ProductController {
     @ApiBearerAuth()
     @UseGuards(GrpcAuthGuard)
     @ApiOkResponse({ type: ProductDto })
-    @Get('product/:id')
+    @Get('admin/products/product/:id')
     async getProduct(@Param('id', ParseIntPipe) id: number): Promise<ProductDto> {
 
         const product = await this.productService.getProductById(id);
@@ -51,7 +51,7 @@ export class ProductController {
     @ApiBearerAuth()
     @UseGuards(GrpcAuthGuard)
     @ApiCreatedResponse({ type: ProductDto })
-    @Post('product')
+    @Post('admin/products/product')
     async create(@Body() payload: CreateProductDto): Promise<ProductDto> {
         return this.productService.createProduct(payload);
     }
@@ -59,7 +59,7 @@ export class ProductController {
     @ApiBearerAuth()
     @UseGuards(GrpcAuthGuard)
     @ApiOkResponse({ type: ProductDto })
-    @Patch('product/:id')
+    @Patch('admin/products/product/:id')
     async update(@Param('id', ParseIntPipe) id: number, @Body() payload: UpdateProductDto): Promise<ProductDto> {
         return this.productService.updateProduct(id, payload);
     }
@@ -67,7 +67,7 @@ export class ProductController {
     @ApiBearerAuth()
     @UseGuards(GrpcAuthGuard)
     @ApiNoContentResponse()
-    @Delete('product/:id')
+    @Delete('admin/products/product/:id')
     @HttpCode(204)
     async remove(@Param('id', ParseIntPipe) id: number): Promise<void> {
         return this.productService.removeProduct(id);

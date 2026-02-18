@@ -286,7 +286,7 @@
         ]
       }
     },
-    "/products": {
+    "/products/admin/products": {
       "get": {
         "operationId": "ProductController_index",
         "parameters": [
@@ -381,7 +381,7 @@
         ]
       }
     },
-    "/products/product/{id}": {
+    "/products/admin/products/product/{id}": {
       "get": {
         "operationId": "ProductController_getProduct",
         "parameters": [
@@ -485,7 +485,7 @@
         ]
       }
     },
-    "/products/product": {
+    "/products/admin/products/product": {
       "post": {
         "operationId": "ProductController_create",
         "parameters": [],
