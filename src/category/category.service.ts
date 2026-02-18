@@ -4,16 +4,19 @@ import { PrismaService } from "src/core/database/prisma.service";
 import { CategoryPaginationDto } from "./dto/category.pagination.dto";
 import { Category, CategoryImage, Prisma } from "generated/prisma/client";
 import { CategoryDto } from "./dto/category.dto";
-import { GetCategoryDto } from "./dto/get.category.dto";
 import { ImageCategoryDto } from "./dto/image.category.dto";
 import { CreateCategoryDto } from "./dto/create.category.dto";
 import { UpdateCategoryDto } from "./dto/update.category.dto";
+import { AdminCategoryDto } from "./dto/admin/admin-category.dto";
+import { AdminFilterCategoriesDto } from "./dto/admin/admin-filter.categories.dto";
+import { AdminCategoryPaginationDto } from "./dto/admin/admin-category.pagination.dto";
 
 @Injectable()
 export class CategoryService {
 
     constructor(private readonly prisma: PrismaService) {}
 
+    // получения списка категорий с фильтрацией для публичной версии
     async getAll(filter: FilterCategoriesDto): Promise<CategoryPaginationDto> {
 
         const { name, description, parentId, page, limit } = filter;
@@ -54,18 +57,55 @@ export class CategoryService {
         }
     }
 
-    async getItem(filter: GetCategoryDto): Promise<CategoryDto | null> {
-        const { id, slug } = filter;
+    // получения списка категорий с фильтрацией для админской версии
+    async getAllAdmin(filter: AdminFilterCategoriesDto): Promise<AdminCategoryPaginationDto> {
+
+        const { name, description, parentId, page, limit } = filter;
 
         const where: any = {
             deletedAt: null,
         };
 
-        if(id) where.id = id;
-        if(slug) where.slug = slug;
+        if (name) where.name = { contains: name, mode: 'insensitive' };
+        if (description) where.description = { contains: description, mode: 'insensitive' };
+        if (parentId !== undefined) where.parentId = parentId;
+
+        // Считаем общее количество
+        const total = await this.prisma.category.count({ where });
+
+        // Получаем список категорий с пагинацией
+        const categories = await this.prisma.category.findMany({
+            where,
+            skip: (page - 1) * limit,
+            take: limit,
+            orderBy: { sortOrder: 'asc' },
+            include: {
+                images: {
+                    orderBy: {
+                        sortOrder: 'asc'
+                    }
+                }
+            }
+        });
+
+        return {
+            items: categories.map(cat => this.toDoAdmin(cat)),
+            meta: {
+                limit: filter.limit,
+                page: filter.page,
+                total: total
+            }
+        }
+    }
+
+    // получение категории по ID для публичной версии
+    async getItemById(id: number): Promise<CategoryDto | null> {
 
         const category = await this.prisma.category.findFirst({
-            where,
+            where: {
+                deletedAt: null,
+                id
+            },
             include: {
                 images: {
                     orderBy: {
@@ -81,7 +121,30 @@ export class CategoryService {
         return this.toDo(category);
     }
 
-    async create(payload: CreateCategoryDto): Promise<CategoryDto> {
+    async getItemByIdAdmin(id: number): Promise<AdminCategoryDto | null> {
+
+        const category = await this.prisma.category.findFirst({
+            where: {
+                deletedAt: null,
+                id
+            },
+            include: {
+                images: {
+                    orderBy: {
+                        sortOrder: 'asc'
+                    }
+                }
+            }
+        });
+
+        if(!category)
+            return null;
+
+        return this.toDoAdmin(category);
+    }
+
+    // создание категории
+    async create(payload: CreateCategoryDto): Promise<AdminCategoryDto> {
         const parentId = payload.parentId === 0 ? null : payload.parentId;
 
         if (parentId) {
@@ -107,13 +170,14 @@ export class CategoryService {
                 },
             });
 
-            return this.toDo(category);
+            return this.toDoAdmin(category);
         } catch (error) {
             this.handlePrismaError(error);
         }
     }
 
-    async update(id: number, payload: UpdateCategoryDto): Promise<CategoryDto> {
+    // обновление категории
+    async update(id: number, payload: UpdateCategoryDto): Promise<AdminCategoryDto> {
         await this.ensureCategoryExists(id);
 
         if (payload.parentId === id) {
@@ -145,12 +209,13 @@ export class CategoryService {
                 },
             });
 
-            return this.toDo(category);
+            return this.toDoAdmin(category);
         } catch (error) {
             this.handlePrismaError(error);
         }
     }
 
+    // удаление категории
     async remove(id: number): Promise<void> {
         await this.ensureCategoryExists(id);
 
@@ -174,6 +239,22 @@ export class CategoryService {
             ]);
         } catch (error) {
             this.handlePrismaError(error);
+        }
+    }
+
+    private toDoAdmin(category: Category & {images: CategoryImage[]}): AdminCategoryDto {
+        return {
+            id: category.id,
+            name: category.name,
+            fullName: category.fullName ?? undefined,
+            slug: category.slug,
+            description: category.description ?? undefined,
+            parentId: category.parentId ?? 0,
+            images: category?.images?.map(img => this.categoryImageToDto(img)) ?? [],
+            sortOrder: category?.sortOrder ?? 0,
+            createdAt: category?.createdAt,
+            updatedAt: category?.updatedAt,
+            deletedAt: category.deletedAt ?? null
         }
     }
 

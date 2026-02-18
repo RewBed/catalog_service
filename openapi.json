@@ -72,9 +72,9 @@
         ]
       }
     },
-    "/categories": {
+    "/api/categories": {
       "get": {
-        "operationId": "CategoryController_index",
+        "operationId": "PublicCategoryController_index",
         "parameters": [
           {
             "name": "name",
@@ -137,11 +137,115 @@
           }
         },
         "tags": [
-          "Category"
+          "PublicCategory"
+        ]
+      }
+    },
+    "/api/categories/{id}": {
+      "get": {
+        "operationId": "PublicCategoryController_getItemById",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CategoryDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "PublicCategory"
+        ]
+      }
+    },
+    "/api/admin/categories": {
+      "get": {
+        "operationId": "AdminCategoryController_index",
+        "parameters": [
+          {
+            "name": "name",
+            "required": false,
+            "in": "query",
+            "description": "Фильтр по имени категории",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "description",
+            "required": false,
+            "in": "query",
+            "description": "Фильтр по описанию категории",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "parentId",
+            "required": false,
+            "in": "query",
+            "description": "Фильтр по ID родительской категории",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "Номер страницы",
+            "schema": {
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Количество элементов на странице",
+            "schema": {
+              "default": 10,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminCategoryPaginationDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "AdminCategory"
         ]
       },
       "post": {
-        "operationId": "CategoryController_create",
+        "operationId": "AdminCategoryController_create",
         "parameters": [],
         "requestBody": {
           "required": true,
@@ -159,7 +263,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CategoryDto"
+                  "$ref": "#/components/schemas/AdminCategoryDto"
                 }
               }
             }
@@ -171,30 +275,20 @@
           }
         ],
         "tags": [
-          "Category"
+          "AdminCategory"
         ]
       }
     },
-    "/categories/category": {
+    "/api/admin/categories/{id}": {
       "get": {
-        "operationId": "CategoryController_getItem",
+        "operationId": "AdminCategoryController_getItemById",
         "parameters": [
           {
             "name": "id",
             "required": true,
-            "in": "query",
-            "description": "ID категории",
+            "in": "path",
             "schema": {
               "type": "number"
-            }
-          },
-          {
-            "name": "slug",
-            "required": true,
-            "in": "query",
-            "description": "slug категории",
-            "schema": {
-              "type": "string"
             }
           }
         ],
@@ -204,20 +298,18 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CategoryDto"
+                  "$ref": "#/components/schemas/AdminCategoryDto"
                 }
               }
             }
           }
         },
         "tags": [
-          "Category"
+          "AdminCategory"
         ]
-      }
-    },
-    "/categories/{id}": {
+      },
       "patch": {
-        "operationId": "CategoryController_update",
+        "operationId": "AdminCategoryController_update",
         "parameters": [
           {
             "name": "id",
@@ -244,7 +336,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CategoryDto"
+                  "$ref": "#/components/schemas/AdminCategoryDto"
                 }
               }
             }
@@ -256,11 +348,11 @@
           }
         ],
         "tags": [
-          "Category"
+          "AdminCategory"
         ]
       },
       "delete": {
-        "operationId": "CategoryController_remove",
+        "operationId": "AdminCategoryController_remove",
         "parameters": [
           {
             "name": "id",
@@ -282,7 +374,7 @@
           }
         ],
         "tags": [
-          "Category"
+          "AdminCategory"
         ]
       }
     },
@@ -959,6 +1051,82 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/CategoryDto"
+            }
+          }
+        },
+        "required": [
+          "meta",
+          "items"
+        ]
+      },
+      "AdminCategoryDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number"
+          },
+          "name": {
+            "type": "string"
+          },
+          "fullName": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "parentId": {
+            "type": "number"
+          },
+          "images": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ImageCategoryDto"
+            }
+          },
+          "sortOrder": {
+            "type": "number"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "updatedAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "deletedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "fullName",
+          "slug",
+          "description",
+          "parentId",
+          "images",
+          "sortOrder",
+          "createdAt",
+          "updatedAt",
+          "deletedAt"
+        ]
+      },
+      "AdminCategoryPaginationDto": {
+        "type": "object",
+        "properties": {
+          "meta": {
+            "$ref": "#/components/schemas/PaginationMeta"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AdminCategoryDto"
             }
           }
         },
