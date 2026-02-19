@@ -774,20 +774,101 @@
         ]
       }
     },
-    "/branch-products": {
+    "/api/branch-products": {
       "get": {
         "operationId": "BranchProductController_index",
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "branchId",
+            "required": false,
+            "in": "query",
+            "description": "Branch id",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "price",
+            "required": false,
+            "in": "query",
+            "description": "Price in branch",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "minPrice",
+            "required": false,
+            "in": "query",
+            "description": "Minimum price in branch",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "maxPrice",
+            "required": false,
+            "in": "query",
+            "description": "Maximum price in branch",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "name",
+            "required": false,
+            "in": "query",
+            "description": "Product name filter",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "description",
+            "required": false,
+            "in": "query",
+            "description": "Product description filter",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "categoryId",
+            "required": false,
+            "in": "query",
+            "description": "Product category id",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "Page number",
+            "schema": {
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Items per page",
+            "schema": {
+              "default": 25,
+              "type": "number"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/BranchProductDto"
-                  }
+                  "$ref": "#/components/schemas/BranchProductPaginationDto"
                 }
               }
             }
@@ -796,9 +877,256 @@
         "tags": [
           "BranchProduct"
         ]
+      }
+    },
+    "/api/branch-products/by-slug": {
+      "get": {
+        "operationId": "BranchProductController_getItemBySlug",
+        "parameters": [
+          {
+            "name": "slug",
+            "required": true,
+            "in": "query",
+            "description": "Product slug",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "branchId",
+            "required": true,
+            "in": "query",
+            "description": "Branch id",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BranchProductDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "BranchProduct"
+        ]
+      }
+    },
+    "/api/branch-products/{id}": {
+      "get": {
+        "operationId": "BranchProductController_getItem",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BranchProductDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "BranchProduct"
+        ]
+      }
+    },
+    "/api/admin/branch-products": {
+      "get": {
+        "operationId": "AdminBranchProductsController_index",
+        "parameters": [
+          {
+            "name": "id",
+            "required": false,
+            "in": "query",
+            "description": "Branch product id",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "productId",
+            "required": false,
+            "in": "query",
+            "description": "Product id",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "branchId",
+            "required": false,
+            "in": "query",
+            "description": "Branch id",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "price",
+            "required": false,
+            "in": "query",
+            "description": "Price in branch",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "minPrice",
+            "required": false,
+            "in": "query",
+            "description": "Minimum price in branch",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "maxPrice",
+            "required": false,
+            "in": "query",
+            "description": "Maximum price in branch",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "stock",
+            "required": false,
+            "in": "query",
+            "description": "Stock in branch",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "minStock",
+            "required": false,
+            "in": "query",
+            "description": "Minimum stock in branch",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "maxStock",
+            "required": false,
+            "in": "query",
+            "description": "Maximum stock in branch",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "isActive",
+            "required": false,
+            "in": "query",
+            "description": "Active status",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "createdAtFrom",
+            "required": false,
+            "in": "query",
+            "description": "Created at from",
+            "schema": {
+              "format": "date-time",
+              "type": "string"
+            }
+          },
+          {
+            "name": "createdAtTo",
+            "required": false,
+            "in": "query",
+            "description": "Created at to",
+            "schema": {
+              "format": "date-time",
+              "type": "string"
+            }
+          },
+          {
+            "name": "updatedAtFrom",
+            "required": false,
+            "in": "query",
+            "description": "Updated at from",
+            "schema": {
+              "format": "date-time",
+              "type": "string"
+            }
+          },
+          {
+            "name": "updatedAtTo",
+            "required": false,
+            "in": "query",
+            "description": "Updated at to",
+            "schema": {
+              "format": "date-time",
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "Page number",
+            "schema": {
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Items per page",
+            "schema": {
+              "default": 25,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminBranchProductPaginationDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "AdminBranchProducts"
+        ]
       },
       "post": {
-        "operationId": "BranchProductController_create",
+        "operationId": "AdminBranchProductsController_create",
         "parameters": [],
         "requestBody": {
           "required": true,
@@ -828,13 +1156,13 @@
           }
         ],
         "tags": [
-          "BranchProduct"
+          "AdminBranchProducts"
         ]
       }
     },
-    "/branch-products/{id}": {
+    "/api/admin/branch-products/{id}": {
       "get": {
-        "operationId": "BranchProductController_getItem",
+        "operationId": "AdminBranchProductsController_getItem",
         "parameters": [
           {
             "name": "id",
@@ -851,18 +1179,23 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/BranchProductDto"
+                  "$ref": "#/components/schemas/AdminBranchProductDto"
                 }
               }
             }
           }
         },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
         "tags": [
-          "BranchProduct"
+          "AdminBranchProducts"
         ]
       },
       "patch": {
-        "operationId": "BranchProductController_update",
+        "operationId": "AdminBranchProductsController_update",
         "parameters": [
           {
             "name": "id",
@@ -901,11 +1234,11 @@
           }
         ],
         "tags": [
-          "BranchProduct"
+          "AdminBranchProducts"
         ]
       },
       "delete": {
-        "operationId": "BranchProductController_remove",
+        "operationId": "AdminBranchProductsController_remove",
         "parameters": [
           {
             "name": "id",
@@ -927,7 +1260,7 @@
           }
         ],
         "tags": [
-          "BranchProduct"
+          "AdminBranchProducts"
         ]
       }
     }
@@ -1484,6 +1817,72 @@
             "type": "number",
             "description": "Branch product id"
           },
+          "branchId": {
+            "type": "number",
+            "description": "Branch id"
+          },
+          "price": {
+            "type": "number",
+            "description": "Price in branch"
+          },
+          "stock": {
+            "type": "number",
+            "description": "Stock in branch"
+          },
+          "name": {
+            "type": "string",
+            "description": "Product name"
+          },
+          "description": {
+            "type": "string",
+            "description": "Product description"
+          },
+          "slug": {
+            "type": "string",
+            "description": "Product slug"
+          },
+          "images": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ImageProductDto"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "branchId",
+          "price",
+          "stock",
+          "name",
+          "slug",
+          "images"
+        ]
+      },
+      "BranchProductPaginationDto": {
+        "type": "object",
+        "properties": {
+          "meta": {
+            "$ref": "#/components/schemas/PaginationMeta"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BranchProductDto"
+            }
+          }
+        },
+        "required": [
+          "meta",
+          "items"
+        ]
+      },
+      "AdminBranchProductDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "Branch product id"
+          },
           "productId": {
             "type": "number",
             "description": "Product id"
@@ -1503,6 +1902,16 @@
           "isActive": {
             "type": "boolean",
             "description": "Active status"
+          },
+          "createdAt": {
+            "type": "string",
+            "description": "Created at",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "description": "Updated at",
+            "format": "date-time"
           }
         },
         "required": [
@@ -1511,7 +1920,27 @@
           "branchId",
           "price",
           "stock",
-          "isActive"
+          "isActive",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "AdminBranchProductPaginationDto": {
+        "type": "object",
+        "properties": {
+          "meta": {
+            "$ref": "#/components/schemas/PaginationMeta"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AdminBranchProductDto"
+            }
+          }
+        },
+        "required": [
+          "meta",
+          "items"
         ]
       },
       "CreateBranchProductDto": {
