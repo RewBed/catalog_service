@@ -242,6 +242,30 @@ export class CategoryService {
         }
     }
 
+    async restore(id: number): Promise<AdminCategoryDto> {
+        await this.ensureCategoryExistsAny(id);
+
+        try {
+            const category = await this.prisma.category.update({
+                where: { id },
+                data: {
+                    deletedAt: null,
+                },
+                include: {
+                    images: {
+                        orderBy: {
+                            sortOrder: 'asc',
+                        },
+                    },
+                },
+            });
+
+            return this.toDoAdmin(category);
+        } catch (error) {
+            this.handlePrismaError(error);
+        }
+    }
+
     private toDoAdmin(category: Category & {images: CategoryImage[]}): AdminCategoryDto {
         return {
             id: category.id,
@@ -287,6 +311,17 @@ export class CategoryService {
         });
 
         if (!exists || exists.deletedAt) {
+            throw new NotFoundException(`Category ${id} not found`);
+        }
+    }
+
+    private async ensureCategoryExistsAny(id: number): Promise<void> {
+        const exists = await this.prisma.category.findUnique({
+            where: { id },
+            select: { id: true },
+        });
+
+        if (!exists) {
             throw new NotFoundException(`Category ${id} not found`);
         }
     }

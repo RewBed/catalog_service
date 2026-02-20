@@ -387,6 +387,41 @@
         ]
       }
     },
+    "/api/admin/categories/{id}/restore": {
+      "patch": {
+        "operationId": "AdminCategoryController_restore",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminCategoryDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "AdminCategory"
+        ]
+      }
+    },
     "/api/admin/products": {
       "get": {
         "operationId": "AdminProductController_index",
@@ -605,6 +640,41 @@
         "responses": {
           "204": {
             "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "AdminProduct"
+        ]
+      }
+    },
+    "/api/admin/products/{id}/restore": {
+      "patch": {
+        "operationId": "AdminProductController_restore",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductDto"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -871,6 +941,41 @@
         "responses": {
           "204": {
             "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "AdminBranch"
+        ]
+      }
+    },
+    "/api/admin/branches/{id}/restore": {
+      "patch": {
+        "operationId": "AdminBranchController_restore",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminBranchDto"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -1361,6 +1466,41 @@
         "responses": {
           "204": {
             "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "AdminBranchProducts"
+        ]
+      }
+    },
+    "/api/admin/branch-products/{id}/restore": {
+      "patch": {
+        "operationId": "AdminBranchProductsController_restore",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminBranchProductDto"
+                }
+              }
+            }
           }
         },
         "security": [

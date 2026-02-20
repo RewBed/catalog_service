@@ -58,4 +58,12 @@ export class AdminCategoryController {
     async remove(@Param('id', ParseIntPipe) id: number): Promise<void> {
         return this.categoryService.remove(id);
     }
+
+    @Patch(':id/restore')
+    @ApiBearerAuth()
+    @UseGuards(GrpcAuthGuard)
+    @ApiOkResponse({ type: AdminCategoryDto })
+    async restore(@Param('id', ParseIntPipe) id: number): Promise<AdminCategoryDto> {
+        return this.categoryService.restore(id);
+    }
 }

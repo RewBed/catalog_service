@@ -59,4 +59,12 @@ export class AdminProductController {
     async remove(@Param('id', ParseIntPipe) id: number): Promise<void> {
         return this.productService.removeProduct(id);
     }
+
+    @ApiBearerAuth()
+    @UseGuards(GrpcAuthGuard)
+    @ApiOkResponse({ type: ProductDto })
+    @Patch(':id/restore')
+    async restore(@Param('id', ParseIntPipe) id: number): Promise<ProductDto> {
+        return this.productService.restoreProduct(id);
+    }
 }

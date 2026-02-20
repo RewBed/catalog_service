@@ -75,4 +75,12 @@ export class AdminBranchController {
     async remove(@Param('id', ParseIntPipe) id: number): Promise<void> {
         return this.branchService.remove(id);
     }
+
+    @ApiBearerAuth()
+    @ApiOkResponse({ type: AdminBranchDto })
+    @UseGuards(GrpcAuthGuard)
+    @Patch(':id/restore')
+    async restore(@Param('id', ParseIntPipe) id: number): Promise<AdminBranchDto> {
+        return this.branchService.restore(id);
+    }
 }

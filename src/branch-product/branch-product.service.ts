@@ -325,6 +325,23 @@ export class BranchProductService {
         }
     }
 
+    async restore(id: number): Promise<AdminBranchProductDto> {
+        await this.ensureBranchProductExistsAny(id);
+
+        try {
+            const item = await this.prisma.branchProduct.update({
+                where: { id },
+                data: {
+                    isActive: true,
+                },
+            });
+
+            return this.toAdminDto(item);
+        } catch (error) {
+            this.handlePrismaError(error);
+        }
+    }
+
     private toDto(item: BranchProduct & { productItem?: Product & { images?: ProductImage[] } }): BranchProductDto {
         return {
             id: item.id,
@@ -400,6 +417,17 @@ export class BranchProductService {
         });
 
         if (!item || !item.isActive) {
+            throw new NotFoundException(`BranchProduct ${id} not found`);
+        }
+    }
+
+    private async ensureBranchProductExistsAny(id: number): Promise<void> {
+        const item = await this.prisma.branchProduct.findUnique({
+            where: { id },
+            select: { id: true },
+        });
+
+        if (!item) {
             throw new NotFoundException(`BranchProduct ${id} not found`);
         }
     }

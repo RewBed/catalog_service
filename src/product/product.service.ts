@@ -174,6 +174,30 @@ export class ProductService {
         }
     }
 
+    async restoreProduct(id: number): Promise<ProductDto> {
+        await this.ensureProductExistsAny(id);
+
+        try {
+            const product = await this.prisma.product.update({
+                where: { id },
+                data: {
+                    deletedAt: null,
+                },
+                include: {
+                    images: {
+                        orderBy: {
+                            sortOrder: 'asc',
+                        },
+                    },
+                },
+            });
+
+            return this.productToDto(product);
+        } catch (error) {
+            this.handlePrismaError(error);
+        }
+    }
+
     // преобразование изображения товара в дто
     private productImageToDto(productImage: ProductImage): ImageProductDto {
         return {
@@ -221,6 +245,17 @@ export class ProductService {
         });
 
         if (!product || product.deletedAt) {
+            throw new NotFoundException(`Product ${id} not found`);
+        }
+    }
+
+    private async ensureProductExistsAny(id: number): Promise<void> {
+        const product = await this.prisma.product.findUnique({
+            where: { id },
+            select: { id: true },
+        });
+
+        if (!product) {
             throw new NotFoundException(`Product ${id} not found`);
         }
     }

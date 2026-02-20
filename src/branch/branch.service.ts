@@ -151,6 +151,23 @@ export class BranchService {
         }
     }
 
+    async restore(id: number): Promise<AdminBranchDto> {
+        await this.ensureBranchExistsAny(id);
+
+        try {
+            const branch = await this.prisma.branch.update({
+                where: { id },
+                data: {
+                    isActive: true,
+                },
+            });
+
+            return this.toAdminDto(branch);
+        } catch (error) {
+            this.handlePrismaError(error);
+        }
+    }
+
     private toDto(branch: Branch): BranchDto {
         return {
             id: branch.id,
@@ -188,6 +205,17 @@ export class BranchService {
         });
 
         if (!branch || !branch.isActive) {
+            throw new NotFoundException(`Branch ${id} not found`);
+        }
+    }
+
+    private async ensureBranchExistsAny(id: number): Promise<void> {
+        const branch = await this.prisma.branch.findUnique({
+            where: { id },
+            select: { id: true },
+        });
+
+        if (!branch) {
             throw new NotFoundException(`Branch ${id} not found`);
         }
     }
