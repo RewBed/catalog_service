@@ -617,67 +617,51 @@
         ]
       }
     },
-    "/branches": {
+    "/api/branches": {
       "get": {
-        "operationId": "BranchController_index",
-        "parameters": [],
+        "operationId": "PublicBranchController_index",
+        "parameters": [
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "Page number",
+            "schema": {
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Items per page",
+            "schema": {
+              "default": 25,
+              "type": "number"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/BranchDto"
-                  }
+                  "$ref": "#/components/schemas/BranchPaginationDto"
                 }
               }
             }
           }
         },
         "tags": [
-          "Branch"
-        ]
-      },
-      "post": {
-        "operationId": "BranchController_create",
-        "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateBranchDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/BranchDto"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "bearer": []
-          }
-        ],
-        "tags": [
-          "Branch"
+          "PublicBranch"
         ]
       }
     },
-    "/branches/{id}": {
+    "/api/branches/{id}": {
       "get": {
-        "operationId": "BranchController_getItem",
+        "operationId": "PublicBranchController_getItem",
         "parameters": [
           {
             "name": "id",
@@ -701,11 +685,136 @@
           }
         },
         "tags": [
-          "Branch"
+          "PublicBranch"
+        ]
+      }
+    },
+    "/api/admin/branches": {
+      "get": {
+        "operationId": "AdminBranchController_index",
+        "parameters": [
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "Page number",
+            "schema": {
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Items per page",
+            "schema": {
+              "default": 25,
+              "type": "number"
+            }
+          },
+          {
+            "name": "isActive",
+            "required": false,
+            "in": "query",
+            "description": "Filter by active status",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminBranchPaginationDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "AdminBranch"
+        ]
+      },
+      "post": {
+        "operationId": "AdminBranchController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateBranchDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminBranchDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "AdminBranch"
+        ]
+      }
+    },
+    "/api/admin/branches/{id}": {
+      "get": {
+        "operationId": "AdminBranchController_getItem",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminBranchDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "AdminBranch"
         ]
       },
       "patch": {
-        "operationId": "BranchController_update",
+        "operationId": "AdminBranchController_update",
         "parameters": [
           {
             "name": "id",
@@ -732,7 +841,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/BranchDto"
+                  "$ref": "#/components/schemas/AdminBranchDto"
                 }
               }
             }
@@ -744,11 +853,11 @@
           }
         ],
         "tags": [
-          "Branch"
+          "AdminBranch"
         ]
       },
       "delete": {
-        "operationId": "BranchController_remove",
+        "operationId": "AdminBranchController_remove",
         "parameters": [
           {
             "name": "id",
@@ -770,7 +879,7 @@
           }
         ],
         "tags": [
-          "Branch"
+          "AdminBranch"
         ]
       }
     },
@@ -1728,16 +1837,101 @@
           "phone": {
             "type": "string",
             "description": "Phone"
-          },
-          "isActive": {
-            "type": "boolean",
-            "description": "Branch active status"
           }
         },
         "required": [
           "id",
           "name",
           "address"
+        ]
+      },
+      "BranchPaginationDto": {
+        "type": "object",
+        "properties": {
+          "meta": {
+            "$ref": "#/components/schemas/PaginationMeta"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BranchDto"
+            }
+          }
+        },
+        "required": [
+          "meta",
+          "items"
+        ]
+      },
+      "AdminBranchDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "Branch id"
+          },
+          "name": {
+            "type": "string",
+            "description": "Branch name"
+          },
+          "description": {
+            "type": "string",
+            "description": "Branch description"
+          },
+          "address": {
+            "type": "string",
+            "description": "Branch address"
+          },
+          "city": {
+            "type": "string",
+            "description": "City"
+          },
+          "region": {
+            "type": "string",
+            "description": "Region"
+          },
+          "phone": {
+            "type": "string",
+            "description": "Phone"
+          },
+          "isActive": {
+            "type": "boolean",
+            "description": "Branch active status"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "updatedAt": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "address",
+          "isActive",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "AdminBranchPaginationDto": {
+        "type": "object",
+        "properties": {
+          "meta": {
+            "$ref": "#/components/schemas/PaginationMeta"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AdminBranchDto"
+            }
+          }
+        },
+        "required": [
+          "meta",
+          "items"
         ]
       },
       "CreateBranchDto": {

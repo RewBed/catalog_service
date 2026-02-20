@@ -1,11 +1,12 @@
 import { Module } from "@nestjs/common";
-import { BranchController } from "./branch.controller";
 import { BranchService } from "./branch.service";
 import { AuthGrpcClientModule } from "src/common/auth";
+import { PublicBranchController } from "./controllers/public-branch.controller";
+import { AdminBranchController } from "./controllers/admin-branch.controller";
 
 @Module({
     imports: [AuthGrpcClientModule],
-    controllers: [BranchController],
+    controllers: [PublicBranchController, AdminBranchController],
     providers: [BranchService]
 })
 export class BranchModule {}

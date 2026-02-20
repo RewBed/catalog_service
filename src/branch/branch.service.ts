@@ -4,19 +4,41 @@ import { BranchDto } from "./dto/branch.dto";
 import { Branch, Prisma } from "generated/prisma/client";
 import { CreateBranchDto } from "./dto/create.branch.dto";
 import { UpdateBranchDto } from "./dto/update.branch.dto";
+import { AdminBranchDto } from "./dto/admin/admin-branch.dto";
+import { FilterBranchDto } from "./dto/filter.branch.dto";
+import { BranchPaginationDto } from "./dto/branch.pagination.dto";
+import { AdminFilterBranchDto } from "./dto/admin/admin-filter.branch.dto";
+import { AdminBranchPaginationDto } from "./dto/admin/admin-branch.pagination.dto";
 
 @Injectable()
 export class BranchService {
 
     constructor(private readonly prisma: PrismaService) {}
 
-    async getAll(): Promise<BranchDto[]> {
+    async getAll(filter: FilterBranchDto): Promise<BranchPaginationDto> {
+        const { page, limit } = filter;
+
+        const where: Prisma.BranchWhereInput = {
+            isActive: true,
+        };
+
+        const total = await this.prisma.branch.count({ where });
+
         const branches = await this.prisma.branch.findMany({
-            where: {
-                isActive: true,
-            },
+            where,
+            orderBy: { id: 'asc' },
+            skip: (page - 1) * limit,
+            take: limit,
         });
-        return branches.map(this.toDo);
+
+        return {
+            items: branches.map(this.toDto),
+            meta: {
+                total,
+                page,
+                limit,
+            },
+        };
     }
 
     async getItem(id: number): Promise<BranchDto | null> {
@@ -28,10 +50,50 @@ export class BranchService {
             return null;
         }
 
-        return this.toDo(branch);
+        return this.toDto(branch);
     }
 
-    async create(payload: CreateBranchDto): Promise<BranchDto> {
+    async getAllAdmin(filter: AdminFilterBranchDto): Promise<AdminBranchPaginationDto> {
+        const { page, limit, isActive } = filter;
+
+        const where: Prisma.BranchWhereInput = {};
+
+        if (isActive !== undefined) {
+            where.isActive = isActive;
+        }
+
+        const total = await this.prisma.branch.count({ where });
+
+        const branches = await this.prisma.branch.findMany({
+            where,
+            orderBy: { id: 'asc' },
+            skip: (page - 1) * limit,
+            take: limit,
+        });
+
+        return {
+            items: branches.map(this.toAdminDto),
+            meta: {
+                total,
+                page,
+                limit,
+            },
+        };
+    }
+
+    async getItemAdmin(id: number): Promise<AdminBranchDto | null> {
+        const branch = await this.prisma.branch.findUnique({
+            where: { id },
+        });
+
+        if (!branch) {
+            return null;
+        }
+
+        return this.toAdminDto(branch);
+    }
+
+    async create(payload: CreateBranchDto): Promise<AdminBranchDto> {
         try {
             const branch = await this.prisma.branch.create({
                 data: {
@@ -45,13 +107,13 @@ export class BranchService {
                 },
             });
 
-            return this.toDo(branch);
+            return this.toAdminDto(branch);
         } catch (error) {
             this.handlePrismaError(error);
         }
     }
 
-    async update(id: number, payload: UpdateBranchDto): Promise<BranchDto> {
+    async update(id: number, payload: UpdateBranchDto): Promise<AdminBranchDto> {
         await this.ensureBranchExists(id);
 
         try {
@@ -68,7 +130,7 @@ export class BranchService {
                 },
             });
 
-            return this.toDo(branch);
+            return this.toAdminDto(branch);
         } catch (error) {
             this.handlePrismaError(error);
         }
@@ -89,7 +151,19 @@ export class BranchService {
         }
     }
 
-    private toDo(branch: Branch): BranchDto {
+    private toDto(branch: Branch): BranchDto {
+        return {
+            id: branch.id,
+            name: branch.name,
+            description: branch.description ?? '',
+            address: branch.address ?? '',
+            city: branch.city ?? '',
+            region: branch.region ?? '',
+            phone: branch.phone ?? '',
+        }
+    }
+
+    private toAdminDto(branch: Branch): AdminBranchDto {
         return {
             id: branch.id,
             name: branch.name,
@@ -99,6 +173,8 @@ export class BranchService {
             region: branch.region ?? '',
             phone: branch.phone ?? '',
             isActive: branch.isActive,
+            createdAt: branch.createdAt,
+            updatedAt: branch.updatedAt,
         }
     }
 

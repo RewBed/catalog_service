@@ -21,7 +21,4 @@ export class BranchDto {
 
     @ApiPropertyOptional({ description: 'Phone' })
     phone?: string;
-
-    @ApiPropertyOptional({ description: 'Branch active status' })
-    isActive?: boolean;
 }
