@@ -687,6 +687,549 @@
         ]
       }
     },
+    "/api/admin/products/{productId}/variant-groups": {
+      "get": {
+        "operationId": "AdminProductVariantsController_index",
+        "parameters": [
+          {
+            "name": "productId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "isActive",
+            "required": false,
+            "in": "query",
+            "description": "Active status filter",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AdminProductVariantGroupDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "AdminProductVariants"
+        ]
+      },
+      "post": {
+        "operationId": "AdminProductVariantsController_createGroup",
+        "parameters": [
+          {
+            "name": "productId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateProductVariantGroupDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminProductVariantGroupDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "AdminProductVariants"
+        ]
+      }
+    },
+    "/api/admin/products/{productId}/variant-groups/{groupId}": {
+      "get": {
+        "operationId": "AdminProductVariantsController_getGroup",
+        "parameters": [
+          {
+            "name": "productId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "groupId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminProductVariantGroupDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "AdminProductVariants"
+        ]
+      },
+      "patch": {
+        "operationId": "AdminProductVariantsController_updateGroup",
+        "parameters": [
+          {
+            "name": "productId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "groupId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateProductVariantGroupDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminProductVariantGroupDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "AdminProductVariants"
+        ]
+      },
+      "delete": {
+        "operationId": "AdminProductVariantsController_removeGroup",
+        "parameters": [
+          {
+            "name": "productId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "groupId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "AdminProductVariants"
+        ]
+      }
+    },
+    "/api/admin/products/{productId}/variant-groups/{groupId}/restore": {
+      "patch": {
+        "operationId": "AdminProductVariantsController_restoreGroup",
+        "parameters": [
+          {
+            "name": "productId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "groupId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminProductVariantGroupDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "AdminProductVariants"
+        ]
+      }
+    },
+    "/api/admin/products/{productId}/variant-groups/{groupId}/options": {
+      "post": {
+        "operationId": "AdminProductVariantsController_createOption",
+        "parameters": [
+          {
+            "name": "productId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "groupId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateProductVariantOptionDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminProductVariantOptionDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "AdminProductVariants"
+        ]
+      }
+    },
+    "/api/admin/products/{productId}/variant-groups/{groupId}/options/{optionId}": {
+      "patch": {
+        "operationId": "AdminProductVariantsController_updateOption",
+        "parameters": [
+          {
+            "name": "productId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "groupId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "optionId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateProductVariantOptionDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminProductVariantOptionDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "AdminProductVariants"
+        ]
+      },
+      "delete": {
+        "operationId": "AdminProductVariantsController_removeOption",
+        "parameters": [
+          {
+            "name": "productId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "groupId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "optionId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "AdminProductVariants"
+        ]
+      }
+    },
+    "/api/admin/products/{productId}/variant-groups/{groupId}/options/{optionId}/restore": {
+      "patch": {
+        "operationId": "AdminProductVariantsController_restoreOption",
+        "parameters": [
+          {
+            "name": "productId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "groupId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "optionId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminProductVariantOptionDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "AdminProductVariants"
+        ]
+      }
+    },
+    "/api/products/{productId}/variant-groups": {
+      "get": {
+        "operationId": "ProductVariantController_index",
+        "parameters": [
+          {
+            "name": "productId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProductVariantGroupDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "ProductVariant"
+        ]
+      }
+    },
+    "/api/products/{productId}/variant-groups/price": {
+      "get": {
+        "operationId": "ProductVariantController_getPrice",
+        "parameters": [
+          {
+            "name": "productId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "optionIds",
+            "required": false,
+            "in": "query",
+            "description": "Selected option ids. Can be repeated (?optionIds=1&optionIds=2) or comma-separated (?optionIds=1,2)",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "number"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductVariantPriceDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "ProductVariant"
+        ]
+      }
+    },
     "/api/branches": {
       "get": {
         "operationId": "PublicBranchController_index",
@@ -1946,6 +2489,296 @@
             "description": "Sorting priority"
           }
         }
+      },
+      "AdminProductVariantOptionDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "Variant option id"
+          },
+          "name": {
+            "type": "string",
+            "description": "Variant option title"
+          },
+          "priceDelta": {
+            "type": "number",
+            "description": "Price delta added to base product price"
+          },
+          "sortOrder": {
+            "type": "number",
+            "description": "Sort order"
+          },
+          "groupId": {
+            "type": "number",
+            "description": "Variant group id"
+          },
+          "isActive": {
+            "type": "boolean",
+            "description": "Active status"
+          },
+          "createdAt": {
+            "type": "string",
+            "description": "Created at",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "description": "Updated at",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "priceDelta",
+          "sortOrder",
+          "groupId",
+          "isActive",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "AdminProductVariantGroupDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "Variant group id"
+          },
+          "productId": {
+            "type": "number",
+            "description": "Product id"
+          },
+          "name": {
+            "type": "string",
+            "description": "Variant group title, for example Size or Material"
+          },
+          "isRequired": {
+            "type": "boolean",
+            "description": "Whether one option from this group must be selected"
+          },
+          "sortOrder": {
+            "type": "number",
+            "description": "Sort order"
+          },
+          "isActive": {
+            "type": "boolean",
+            "description": "Active status"
+          },
+          "options": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AdminProductVariantOptionDto"
+            }
+          },
+          "createdAt": {
+            "type": "string",
+            "description": "Created at",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "description": "Updated at",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "productId",
+          "name",
+          "isRequired",
+          "sortOrder",
+          "isActive",
+          "options",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "CreateProductVariantGroupDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Variant group title, for example Size or Material"
+          },
+          "isRequired": {
+            "type": "boolean",
+            "description": "Whether one option from this group must be selected"
+          },
+          "sortOrder": {
+            "type": "number",
+            "description": "Sort order"
+          },
+          "isActive": {
+            "type": "boolean",
+            "description": "Active status"
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "UpdateProductVariantGroupDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Variant group title, for example Size or Material"
+          },
+          "isRequired": {
+            "type": "boolean",
+            "description": "Whether one option from this group must be selected"
+          },
+          "sortOrder": {
+            "type": "number",
+            "description": "Sort order"
+          },
+          "isActive": {
+            "type": "boolean",
+            "description": "Active status"
+          }
+        }
+      },
+      "CreateProductVariantOptionDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Variant option title, for example 100 cm or oak"
+          },
+          "priceDelta": {
+            "type": "number",
+            "description": "Price delta for this option"
+          },
+          "sortOrder": {
+            "type": "number",
+            "description": "Sort order"
+          },
+          "isActive": {
+            "type": "boolean",
+            "description": "Active status"
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "UpdateProductVariantOptionDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Variant option title, for example 100 cm or oak"
+          },
+          "priceDelta": {
+            "type": "number",
+            "description": "Price delta for this option"
+          },
+          "sortOrder": {
+            "type": "number",
+            "description": "Sort order"
+          },
+          "isActive": {
+            "type": "boolean",
+            "description": "Active status"
+          }
+        }
+      },
+      "ProductVariantOptionDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "Variant option id"
+          },
+          "name": {
+            "type": "string",
+            "description": "Variant option title"
+          },
+          "priceDelta": {
+            "type": "number",
+            "description": "Price delta added to base product price"
+          },
+          "sortOrder": {
+            "type": "number",
+            "description": "Sort order"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "priceDelta",
+          "sortOrder"
+        ]
+      },
+      "ProductVariantGroupDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "Variant group id"
+          },
+          "name": {
+            "type": "string",
+            "description": "Variant group title, for example Size or Material"
+          },
+          "isRequired": {
+            "type": "boolean",
+            "description": "Whether one option from this group must be selected"
+          },
+          "sortOrder": {
+            "type": "number",
+            "description": "Sort order"
+          },
+          "options": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProductVariantOptionDto"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "isRequired",
+          "sortOrder",
+          "options"
+        ]
+      },
+      "ProductVariantPriceDto": {
+        "type": "object",
+        "properties": {
+          "productId": {
+            "type": "number",
+            "description": "Product id"
+          },
+          "basePrice": {
+            "type": "number",
+            "description": "Base product price"
+          },
+          "optionsPrice": {
+            "type": "number",
+            "description": "Total delta of selected options"
+          },
+          "finalPrice": {
+            "type": "number",
+            "description": "Final price with selected options"
+          },
+          "selectedOptions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProductVariantOptionDto"
+            }
+          }
+        },
+        "required": [
+          "productId",
+          "basePrice",
+          "optionsPrice",
+          "finalPrice",
+          "selectedOptions"
+        ]
       },
       "BranchDto": {
         "type": "object",

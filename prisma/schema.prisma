@@ -51,6 +51,7 @@ model Product {
 
     branchProducts BranchProduct[]
     images ProductImage[]
+    variantGroups ProductVariantGroup[]
 
     sortOrder Int @default(0)
     deletedAt DateTime?
@@ -61,6 +62,46 @@ model Product {
     @@index([categoryId])
     @@index([sortOrder])
     @@index([deletedAt])
+}
+
+model ProductVariantGroup {
+    id        Int     @id @default(autoincrement())
+
+    productId Int
+    product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+    name      String  @db.VarChar(150) // size, material, color and so on
+    sortOrder Int     @default(0)
+    isRequired Boolean @default(false)
+    isActive  Boolean @default(true)
+
+    options   ProductVariantOption[]
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@index([productId])
+    @@index([isActive])
+    @@unique([productId, name])
+}
+
+model ProductVariantOption {
+    id         Int     @id @default(autoincrement())
+
+    groupId    Int
+    group      ProductVariantGroup @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
+    name       String  @db.VarChar(150) // 120 cm, oak, etc.
+    priceDelta Decimal @default(0) @db.Decimal(10, 2)
+    sortOrder  Int     @default(0)
+    isActive   Boolean @default(true)
+
+    createdAt  DateTime @default(now())
+    updatedAt  DateTime @updatedAt
+
+    @@index([groupId])
+    @@index([isActive])
+    @@unique([groupId, name])
 }
 
 model Branch {
