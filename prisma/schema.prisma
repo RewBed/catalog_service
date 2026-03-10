@@ -198,6 +198,17 @@ model OutboxEvent {
     @@index([status, nextAttemptAt, createdAt])
 }
 
+model InboxEvent {
+    eventId      String   @id @db.VarChar(128)
+    topic        String   @db.VarChar(150)
+    eventType    String   @db.VarChar(100)
+    eventVersion Int
+    externalId   String?  @db.VarChar(255)
+    processedAt  DateTime @default(now())
+
+    @@index([topic, processedAt])
+}
+
 enum OutboxStatus {
     PENDING
     PROCESSING
