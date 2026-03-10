@@ -18,7 +18,9 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "prisma-seed": "tsx prisma/seed.ts"
+    "prisma-seed": "tsx prisma/seed.ts",
+    "http:smoke": "tsx scripts/openapi-http-smoke.ts",
+    "http:smoke:generic": "tsx scripts/openapi-http-smoke-generic.ts"
   },
   "dependencies": {
     "@grpc/grpc-js": "^1.14.3",

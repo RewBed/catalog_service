@@ -1,52 +1,64 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsOptional, IsString, IsInt, Min, Max, IsBoolean } from 'class-validator';
+import { IsOptional, IsString, IsInt, Min, IsBoolean } from 'class-validator';
 import { Transform, Type } from 'class-transformer';
 
 export class AdminFilterProductDto {
-    @ApiPropertyOptional({ description: 'Фильтр по имени товара (частичное совпадение)' })
-    @IsOptional()
-    @IsString()
-    name?: string;
+  @ApiPropertyOptional({
+    description: 'Filter by product name (partial match)',
+    example: 'oak',
+  })
+  @IsOptional()
+  @IsString()
+  name?: string;
 
-    @ApiPropertyOptional({ description: 'Минимальная цена' })
-    @IsOptional()
-    @Type(() => Number)
-    @IsInt()
-    @Min(0)
-    minPrice?: number;
+  @ApiPropertyOptional({ description: 'Minimum price', example: 10000 })
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(0)
+  minPrice?: number;
 
-    @ApiPropertyOptional({ description: 'Максимальная цена' })
-    @IsOptional()
-    @Type(() => Number)
-    @IsInt()
-    @Min(0)
-    maxPrice?: number;
+  @ApiPropertyOptional({ description: 'Maximum price', example: 50000 })
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(0)
+  maxPrice?: number;
 
-    @ApiPropertyOptional({ description: 'Фильтр по категории' })
-    @IsOptional()
-    @Type(() => Number)
-    @IsInt()
-    @Min(1)
-    categoryId?: number;
+  @ApiPropertyOptional({ description: 'Category filter', example: 3 })
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
+  categoryId?: number;
 
-    // Пагинация
-    @ApiPropertyOptional({ description: 'Номер страницы', default: 1 })
-    @IsOptional()
-    @Type(() => Number)
-    @IsInt()
-    @Min(1)
-    page: number = 1;
+  @ApiPropertyOptional({ description: 'Page number', default: 1, example: 1 })
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
+  page: number = 1;
 
-    @ApiPropertyOptional({ description: 'Количество элементов на странице', default: 25 })
-    @IsOptional()
-    @Type(() => Number)
-    @IsInt()
-    @Min(1)
-    limit: number = 25;
+  @ApiPropertyOptional({
+    description: 'Items per page',
+    default: 25,
+    example: 25,
+  })
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
+  limit: number = 25;
 
-    @ApiPropertyOptional({ description: 'Показать удаленные товары' })
-    @IsOptional()
-    @Transform(({ value }) => value === true || value === 'true' || value === 1 || value === '1')
-    @IsBoolean()
-    isDeleted: boolean = false;
+  @ApiPropertyOptional({
+    description: 'Include soft-deleted products',
+    example: false,
+  })
+  @IsOptional()
+  @Transform(
+    ({ value }) =>
+      value === true || value === 'true' || value === 1 || value === '1',
+  )
+  @IsBoolean()
+  isDeleted: boolean = false;
 }

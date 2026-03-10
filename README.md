@@ -109,7 +109,7 @@ GET http://localhost:3000/health/ready
 - Package: `health`
 - Service: `HealthService`
 - Method: `Check`
-- URL: `localhost:50051`  
+- URL: `localhost:50051`
 - TLS: **OFF**
 
 ---
@@ -127,15 +127,45 @@ docker compose up -d
 
 ## 10. Useful commands
 
-| Command | Purpose |
-|---------|---------|
-| `npm run start:dev` | Start NestJS locally with hot-reload |
-| `npx prisma generate` | Generate Prisma client |
-| `npx prisma migrate deploy` | Apply migrations to database |
-| `docker compose -f docker-compose.dev.yml up -d` | Start PostgreSQL for development |
-| `docker compose -f docker-compose.dev.yml down` | Stop PostgreSQL |
-| `docker compose build --no-cache` | Build Docker images for production |
-| `prisma-seed` | Dev database seed |
+| Command                                                                | Purpose                                               |
+| ---------------------------------------------------------------------- | ----------------------------------------------------- |
+| `npm run start:dev`                                                    | Start NestJS locally with hot-reload                  |
+| `npx prisma generate`                                                  | Generate Prisma client                                |
+| `npx prisma migrate deploy`                                            | Apply migrations to database                          |
+| `docker compose -f docker-compose.dev.yml up -d`                       | Start PostgreSQL for development                      |
+| `docker compose -f docker-compose.dev.yml down`                        | Stop PostgreSQL                                       |
+| `docker compose build --no-cache`                                      | Build Docker images for production                    |
+| `prisma-seed`                                                          | Dev database seed                                     |
+| `npm run http:smoke -- --base-url http://localhost:3002 --token <JWT>` | Run OpenAPI HTTP smoke against all documented methods |
+
+---
+
+## HTTP smoke run
+
+Command:
+
+```bash
+npm run http:smoke -- --base-url http://localhost:3002 --token <JWT>
+```
+
+Runner features:
+
+- Executes all HTTP methods from `openapi.json`
+- Prioritizes `POST` creation endpoints and then uses created ids/slugs in dependent methods
+- Shows real-time status list in terminal (`PEND/RUN/PASS/FAIL/SKIP`)
+- Marks dependent endpoints as `SKIP` when required entities were not created
+- Writes JSON report with full request/response details to `reports/http-smoke-latest.json`
+- Generates visual HTML report at `reports/http-smoke-latest.html` with status highlighting
+
+Optional flags:
+
+```bash
+--spec openapi.json
+--timeout-ms 20000
+--report reports/my-run.json
+--html-report reports/my-run.html
+--fail-fast
+```
 
 ---
 
@@ -144,4 +174,3 @@ docker compose up -d
 - Always make sure `DATABASE_URL` in `.env` points to the correct database.
 - gRPC port must be available locally (`50051`) for development testing.
 - For production, configure proper ports and TLS if needed.
-

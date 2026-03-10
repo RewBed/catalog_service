@@ -80,8 +80,9 @@
             "name": "name",
             "required": false,
             "in": "query",
-            "description": "Фильтр по имени категории",
+            "description": "Filter by category name",
             "schema": {
+              "example": "table",
               "type": "string"
             }
           },
@@ -89,8 +90,9 @@
             "name": "description",
             "required": false,
             "in": "query",
-            "description": "Фильтр по описанию категории",
+            "description": "Filter by category description",
             "schema": {
+              "example": "dining",
               "type": "string"
             }
           },
@@ -98,8 +100,9 @@
             "name": "parentId",
             "required": false,
             "in": "query",
-            "description": "Фильтр по ID родительской категории",
+            "description": "Filter by parent category id",
             "schema": {
+              "example": 3,
               "type": "number"
             }
           },
@@ -107,9 +110,10 @@
             "name": "page",
             "required": false,
             "in": "query",
-            "description": "Номер страницы",
+            "description": "Page number",
             "schema": {
               "default": 1,
+              "example": 1,
               "type": "number"
             }
           },
@@ -117,9 +121,10 @@
             "name": "limit",
             "required": false,
             "in": "query",
-            "description": "Количество элементов на странице",
+            "description": "Items per page",
             "schema": {
-              "default": 10,
+              "default": 25,
+              "example": 25,
               "type": "number"
             }
           }
@@ -179,8 +184,9 @@
             "name": "name",
             "required": false,
             "in": "query",
-            "description": "Фильтр по имени категории",
+            "description": "Filter by category name",
             "schema": {
+              "example": "table",
               "type": "string"
             }
           },
@@ -188,8 +194,9 @@
             "name": "description",
             "required": false,
             "in": "query",
-            "description": "Фильтр по описанию категории",
+            "description": "Filter by category description",
             "schema": {
+              "example": "dining",
               "type": "string"
             }
           },
@@ -197,8 +204,9 @@
             "name": "parentId",
             "required": false,
             "in": "query",
-            "description": "Фильтр по ID родительской категории",
+            "description": "Filter by parent category id",
             "schema": {
+              "example": 3,
               "type": "number"
             }
           },
@@ -206,9 +214,10 @@
             "name": "page",
             "required": false,
             "in": "query",
-            "description": "Номер страницы",
+            "description": "Page number",
             "schema": {
               "default": 1,
+              "example": 1,
               "type": "number"
             }
           },
@@ -216,9 +225,10 @@
             "name": "limit",
             "required": false,
             "in": "query",
-            "description": "Количество элементов на странице",
+            "description": "Items per page",
             "schema": {
-              "default": 10,
+              "default": 25,
+              "example": 25,
               "type": "number"
             }
           },
@@ -226,8 +236,9 @@
             "name": "isDeleted",
             "required": false,
             "in": "query",
-            "description": "Показать удаленные товары",
+            "description": "Include soft-deleted categories",
             "schema": {
+              "example": false,
               "type": "boolean"
             }
           }
@@ -430,8 +441,9 @@
             "name": "name",
             "required": false,
             "in": "query",
-            "description": "Фильтр по имени товара (частичное совпадение)",
+            "description": "Filter by product name (partial match)",
             "schema": {
+              "example": "oak",
               "type": "string"
             }
           },
@@ -439,8 +451,9 @@
             "name": "minPrice",
             "required": false,
             "in": "query",
-            "description": "Минимальная цена",
+            "description": "Minimum price",
             "schema": {
+              "example": 10000,
               "type": "number"
             }
           },
@@ -448,8 +461,9 @@
             "name": "maxPrice",
             "required": false,
             "in": "query",
-            "description": "Максимальная цена",
+            "description": "Maximum price",
             "schema": {
+              "example": 50000,
               "type": "number"
             }
           },
@@ -457,8 +471,9 @@
             "name": "categoryId",
             "required": false,
             "in": "query",
-            "description": "Фильтр по категории",
+            "description": "Category filter",
             "schema": {
+              "example": 3,
               "type": "number"
             }
           },
@@ -466,9 +481,10 @@
             "name": "page",
             "required": false,
             "in": "query",
-            "description": "Номер страницы",
+            "description": "Page number",
             "schema": {
               "default": 1,
+              "example": 1,
               "type": "number"
             }
           },
@@ -476,9 +492,10 @@
             "name": "limit",
             "required": false,
             "in": "query",
-            "description": "Количество элементов на странице",
+            "description": "Items per page",
             "schema": {
               "default": 25,
+              "example": 25,
               "type": "number"
             }
           },
@@ -486,8 +503,9 @@
             "name": "isDeleted",
             "required": false,
             "in": "query",
-            "description": "Показать удаленные товары",
+            "description": "Include soft-deleted products",
             "schema": {
+              "example": false,
               "type": "boolean"
             }
           }
@@ -709,6 +727,7 @@
             "in": "query",
             "description": "Active status filter",
             "schema": {
+              "example": true,
               "type": "boolean"
             }
           }
@@ -1221,6 +1240,10 @@
             "in": "query",
             "description": "Selected option ids. Can be repeated (?optionIds=1&optionIds=2) or comma-separated (?optionIds=1,2)",
             "schema": {
+              "example": [
+                201,
+                303
+              ],
               "type": "array",
               "items": {
                 "type": "number"
@@ -1257,6 +1280,7 @@
             "description": "Page number",
             "schema": {
               "default": 1,
+              "example": 1,
               "type": "number"
             }
           },
@@ -1267,6 +1291,7 @@
             "description": "Items per page",
             "schema": {
               "default": 25,
+              "example": 25,
               "type": "number"
             }
           }
@@ -1329,6 +1354,7 @@
             "description": "Page number",
             "schema": {
               "default": 1,
+              "example": 1,
               "type": "number"
             }
           },
@@ -1339,6 +1365,7 @@
             "description": "Items per page",
             "schema": {
               "default": 25,
+              "example": 25,
               "type": "number"
             }
           },
@@ -1348,6 +1375,7 @@
             "in": "query",
             "description": "Filter by active status",
             "schema": {
+              "example": true,
               "type": "boolean"
             }
           }
@@ -1557,6 +1585,7 @@
             "in": "query",
             "description": "Branch id",
             "schema": {
+              "example": 5,
               "type": "number"
             }
           },
@@ -1566,6 +1595,7 @@
             "in": "query",
             "description": "Price in branch",
             "schema": {
+              "example": 25990,
               "type": "number"
             }
           },
@@ -1575,6 +1605,7 @@
             "in": "query",
             "description": "Minimum price in branch",
             "schema": {
+              "example": 10000,
               "type": "number"
             }
           },
@@ -1584,6 +1615,7 @@
             "in": "query",
             "description": "Maximum price in branch",
             "schema": {
+              "example": 50000,
               "type": "number"
             }
           },
@@ -1593,6 +1625,7 @@
             "in": "query",
             "description": "Product name filter",
             "schema": {
+              "example": "oak",
               "type": "string"
             }
           },
@@ -1602,6 +1635,7 @@
             "in": "query",
             "description": "Product description filter",
             "schema": {
+              "example": "dining",
               "type": "string"
             }
           },
@@ -1611,6 +1645,7 @@
             "in": "query",
             "description": "Product category id",
             "schema": {
+              "example": 3,
               "type": "number"
             }
           },
@@ -1621,6 +1656,7 @@
             "description": "Page number",
             "schema": {
               "default": 1,
+              "example": 1,
               "type": "number"
             }
           },
@@ -1631,6 +1667,7 @@
             "description": "Items per page",
             "schema": {
               "default": 25,
+              "example": 25,
               "type": "number"
             }
           }
@@ -1662,6 +1699,7 @@
             "in": "query",
             "description": "Product slug",
             "schema": {
+              "example": "oak-dining-table-120",
               "type": "string"
             }
           },
@@ -1671,6 +1709,7 @@
             "in": "query",
             "description": "Branch id",
             "schema": {
+              "example": 5,
               "type": "number"
             }
           }
@@ -1732,6 +1771,7 @@
             "in": "query",
             "description": "Branch product id",
             "schema": {
+              "example": 7001,
               "type": "number"
             }
           },
@@ -1741,6 +1781,7 @@
             "in": "query",
             "description": "Product id",
             "schema": {
+              "example": 101,
               "type": "number"
             }
           },
@@ -1750,6 +1791,7 @@
             "in": "query",
             "description": "Branch id",
             "schema": {
+              "example": 5,
               "type": "number"
             }
           },
@@ -1759,6 +1801,7 @@
             "in": "query",
             "description": "Price in branch",
             "schema": {
+              "example": 25990,
               "type": "number"
             }
           },
@@ -1768,6 +1811,7 @@
             "in": "query",
             "description": "Minimum price in branch",
             "schema": {
+              "example": 10000,
               "type": "number"
             }
           },
@@ -1777,6 +1821,7 @@
             "in": "query",
             "description": "Maximum price in branch",
             "schema": {
+              "example": 50000,
               "type": "number"
             }
           },
@@ -1786,6 +1831,7 @@
             "in": "query",
             "description": "Stock in branch",
             "schema": {
+              "example": 20,
               "type": "number"
             }
           },
@@ -1795,6 +1841,7 @@
             "in": "query",
             "description": "Minimum stock in branch",
             "schema": {
+              "example": 1,
               "type": "number"
             }
           },
@@ -1804,6 +1851,7 @@
             "in": "query",
             "description": "Maximum stock in branch",
             "schema": {
+              "example": 100,
               "type": "number"
             }
           },
@@ -1813,6 +1861,7 @@
             "in": "query",
             "description": "Active status",
             "schema": {
+              "example": true,
               "type": "boolean"
             }
           },
@@ -1823,6 +1872,7 @@
             "description": "Created at from",
             "schema": {
               "format": "date-time",
+              "example": "2026-03-01T00:00:00.000Z",
               "type": "string"
             }
           },
@@ -1833,6 +1883,7 @@
             "description": "Created at to",
             "schema": {
               "format": "date-time",
+              "example": "2026-03-31T23:59:59.999Z",
               "type": "string"
             }
           },
@@ -1843,6 +1894,7 @@
             "description": "Updated at from",
             "schema": {
               "format": "date-time",
+              "example": "2026-03-01T00:00:00.000Z",
               "type": "string"
             }
           },
@@ -1853,6 +1905,7 @@
             "description": "Updated at to",
             "schema": {
               "format": "date-time",
+              "example": "2026-03-31T23:59:59.999Z",
               "type": "string"
             }
           },
@@ -1863,6 +1916,7 @@
             "description": "Page number",
             "schema": {
               "default": 1,
+              "example": 1,
               "type": "number"
             }
           },
@@ -1873,6 +1927,7 @@
             "description": "Items per page",
             "schema": {
               "default": 25,
+              "example": 25,
               "type": "number"
             }
           }
@@ -2091,13 +2146,19 @@
         "type": "object",
         "properties": {
           "total": {
-            "type": "number"
+            "type": "number",
+            "description": "Total items count",
+            "example": 124
           },
           "page": {
-            "type": "number"
+            "type": "number",
+            "description": "Current page",
+            "example": 1
           },
           "limit": {
-            "type": "number"
+            "type": "number",
+            "description": "Items per page",
+            "example": 25
           }
         },
         "required": [
@@ -2111,7 +2172,8 @@
         "properties": {
           "test": {
             "type": "string",
-            "description": "test string"
+            "description": "Health marker",
+            "example": "ok"
           }
         },
         "required": [
@@ -2122,9 +2184,24 @@
         "type": "object",
         "properties": {
           "meta": {
-            "$ref": "#/components/schemas/PaginationMeta"
+            "description": "Pagination metadata",
+            "example": {
+              "total": 124,
+              "page": 1,
+              "limit": 25
+            },
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PaginationMeta"
+              }
+            ]
           },
           "items": {
+            "example": [
+              {
+                "test": "ok"
+              }
+            ],
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/HealthDto"
@@ -2141,11 +2218,13 @@
         "properties": {
           "url": {
             "type": "string",
-            "description": "ключ изображения"
+            "description": "Image URL",
+            "example": "https://cdn.example.com/categories/wooden-tables/main.jpg"
           },
           "type": {
             "type": "string",
-            "description": "Тип изображения"
+            "description": "Image type",
+            "example": "main"
           }
         },
         "required": [
@@ -2157,24 +2236,40 @@
         "type": "object",
         "properties": {
           "id": {
-            "type": "number"
+            "type": "number",
+            "example": 12
           },
           "name": {
-            "type": "string"
+            "type": "string",
+            "example": "Wooden Tables"
           },
           "fullName": {
-            "type": "string"
+            "type": "string",
+            "example": "Dining Tables and Wooden Sets"
           },
           "slug": {
-            "type": "string"
+            "type": "string",
+            "example": "wooden-tables"
           },
           "description": {
-            "type": "string"
+            "type": "string",
+            "example": "Tables for kitchen and dining rooms"
           },
           "parentId": {
-            "type": "number"
+            "type": "number",
+            "example": 3
           },
           "images": {
+            "example": [
+              {
+                "url": "https://cdn.example.com/categories/wooden-tables/main.jpg",
+                "type": "main"
+              },
+              {
+                "url": "https://cdn.example.com/categories/wooden-tables/banner.jpg",
+                "type": "banner"
+              }
+            ],
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/ImageCategoryDto"
@@ -2195,9 +2290,35 @@
         "type": "object",
         "properties": {
           "meta": {
-            "$ref": "#/components/schemas/PaginationMeta"
+            "description": "Pagination metadata",
+            "example": {
+              "total": 124,
+              "page": 1,
+              "limit": 25
+            },
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PaginationMeta"
+              }
+            ]
           },
           "items": {
+            "example": [
+              {
+                "id": 12,
+                "name": "Wooden Tables",
+                "fullName": "Dining Tables and Wooden Sets",
+                "slug": "wooden-tables",
+                "description": "Tables for kitchen and dining rooms",
+                "parentId": 3,
+                "images": [
+                  {
+                    "url": "https://cdn.example.com/categories/wooden-tables/main.jpg",
+                    "type": "main"
+                  }
+                ]
+              }
+            ],
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/CategoryDto"
@@ -2213,44 +2334,64 @@
         "type": "object",
         "properties": {
           "id": {
-            "type": "number"
+            "type": "number",
+            "example": 12
           },
           "name": {
-            "type": "string"
+            "type": "string",
+            "example": "Wooden Tables"
           },
           "fullName": {
-            "type": "string"
+            "type": "string",
+            "example": "Dining Tables and Wooden Sets"
           },
           "slug": {
-            "type": "string"
+            "type": "string",
+            "example": "wooden-tables"
           },
           "description": {
-            "type": "string"
+            "type": "string",
+            "example": "Tables for kitchen and dining rooms"
           },
           "parentId": {
-            "type": "number"
+            "type": "number",
+            "example": 3
           },
           "images": {
+            "example": [
+              {
+                "url": "https://cdn.example.com/categories/wooden-tables/main.jpg",
+                "type": "main"
+              },
+              {
+                "url": "https://cdn.example.com/categories/wooden-tables/banner.jpg",
+                "type": "banner"
+              }
+            ],
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/ImageCategoryDto"
             }
           },
           "sortOrder": {
-            "type": "number"
+            "type": "number",
+            "example": 120
           },
           "createdAt": {
+            "type": "string",
             "format": "date-time",
-            "type": "string"
+            "example": "2026-03-10T08:15:20.000Z"
           },
           "updatedAt": {
+            "type": "string",
             "format": "date-time",
-            "type": "string"
+            "example": "2026-03-10T09:40:03.000Z"
           },
           "deletedAt": {
             "type": "string",
             "format": "date-time",
-            "nullable": true
+            "nullable": true,
+            "example": null
           }
         },
         "required": [
@@ -2271,9 +2412,39 @@
         "type": "object",
         "properties": {
           "meta": {
-            "$ref": "#/components/schemas/PaginationMeta"
+            "description": "Pagination metadata",
+            "example": {
+              "total": 124,
+              "page": 1,
+              "limit": 25
+            },
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PaginationMeta"
+              }
+            ]
           },
           "items": {
+            "example": [
+              {
+                "id": 12,
+                "name": "Wooden Tables",
+                "fullName": "Dining Tables and Wooden Sets",
+                "slug": "wooden-tables",
+                "description": "Tables for kitchen and dining rooms",
+                "parentId": 3,
+                "sortOrder": 120,
+                "createdAt": "2026-03-10T08:15:20.000Z",
+                "updatedAt": "2026-03-10T09:40:03.000Z",
+                "deletedAt": null,
+                "images": [
+                  {
+                    "url": "https://cdn.example.com/categories/wooden-tables/main.jpg",
+                    "type": "main"
+                  }
+                ]
+              }
+            ],
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/AdminCategoryDto"
@@ -2290,27 +2461,33 @@
         "properties": {
           "name": {
             "type": "string",
-            "description": "Category name"
+            "description": "Category name",
+            "example": "Wooden Tables"
           },
           "fullName": {
             "type": "string",
-            "description": "Full category name"
+            "description": "Full category name",
+            "example": "Dining Tables and Wooden Sets"
           },
           "slug": {
             "type": "string",
-            "description": "Unique category slug"
+            "description": "Unique category slug",
+            "example": "wooden-tables"
           },
           "description": {
             "type": "string",
-            "description": "Category description"
+            "description": "Category description",
+            "example": "Tables for kitchen and dining rooms"
           },
           "parentId": {
             "type": "number",
-            "description": "Parent category id (0 means no parent)"
+            "description": "Parent category id (0 means no parent)",
+            "example": 3
           },
           "sortOrder": {
             "type": "number",
-            "description": "Sorting priority"
+            "description": "Sorting priority",
+            "example": 120
           }
         },
         "required": [
@@ -2323,27 +2500,33 @@
         "properties": {
           "name": {
             "type": "string",
-            "description": "Category name"
+            "description": "Category name",
+            "example": "Wooden Tables Premium"
           },
           "fullName": {
             "type": "string",
-            "description": "Full category name"
+            "description": "Full category name",
+            "example": "Premium Dining Tables and Wooden Sets"
           },
           "slug": {
             "type": "string",
-            "description": "Unique category slug"
+            "description": "Unique category slug",
+            "example": "wooden-tables-premium"
           },
           "description": {
             "type": "string",
-            "description": "Category description"
+            "description": "Category description",
+            "example": "Updated collection of dining tables"
           },
           "parentId": {
             "type": "number",
-            "description": "Parent category id (0 means no parent)"
+            "description": "Parent category id (0 means no parent)",
+            "example": 4
           },
           "sortOrder": {
             "type": "number",
-            "description": "Sorting priority"
+            "description": "Sorting priority",
+            "example": 80
           }
         }
       },
@@ -2352,11 +2535,13 @@
         "properties": {
           "url": {
             "type": "string",
-            "description": "ключ изображения"
+            "description": "Image URL",
+            "example": "https://cdn.example.com/products/oak-dining-table-120/main.jpg"
           },
           "type": {
             "type": "string",
-            "description": "Тип изображения"
+            "description": "Image type",
+            "example": "main"
           }
         },
         "required": [
@@ -2369,37 +2554,55 @@
         "properties": {
           "id": {
             "type": "number",
-            "description": "Product id"
+            "description": "Product id",
+            "example": 101
           },
           "name": {
             "type": "string",
-            "description": "Product name"
+            "description": "Product name",
+            "example": "Oak Dining Table 120"
           },
           "fullName": {
             "type": "string",
-            "description": "Full product name"
+            "description": "Full product name",
+            "example": "Solid Oak Dining Table 120 x 80 cm"
           },
           "slug": {
             "type": "string",
-            "description": "Product slug"
+            "description": "Product slug",
+            "example": "oak-dining-table-120"
           },
           "description": {
             "type": "string",
-            "description": "Product description"
+            "description": "Product description",
+            "example": "Natural solid oak dining table with matte finish"
           },
           "price": {
             "type": "number",
-            "description": "Product price"
+            "description": "Product price",
+            "example": 24990
           },
           "categoryId": {
             "type": "number",
-            "description": "Category id"
+            "description": "Category id",
+            "example": 3
           },
           "sortOrder": {
             "type": "number",
-            "description": "Sorting priority"
+            "description": "Sorting priority",
+            "example": 10
           },
           "images": {
+            "example": [
+              {
+                "url": "https://cdn.example.com/products/oak-dining-table-120/main.jpg",
+                "type": "main"
+              },
+              {
+                "url": "https://cdn.example.com/products/oak-dining-table-120/icon.jpg",
+                "type": "icon"
+              }
+            ],
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/ImageProductDto"
@@ -2420,9 +2623,37 @@
         "type": "object",
         "properties": {
           "meta": {
-            "$ref": "#/components/schemas/PaginationMeta"
+            "description": "Pagination metadata",
+            "example": {
+              "total": 124,
+              "page": 1,
+              "limit": 25
+            },
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PaginationMeta"
+              }
+            ]
           },
           "items": {
+            "example": [
+              {
+                "id": 101,
+                "name": "Oak Dining Table 120",
+                "fullName": "Solid Oak Dining Table 120 x 80 cm",
+                "slug": "oak-dining-table-120",
+                "description": "Natural solid oak dining table with matte finish",
+                "price": 24990,
+                "categoryId": 3,
+                "sortOrder": 10,
+                "images": [
+                  {
+                    "url": "https://cdn.example.com/products/oak-dining-table-120/main.jpg",
+                    "type": "main"
+                  }
+                ]
+              }
+            ],
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/ProductDto"
@@ -2439,19 +2670,23 @@
         "properties": {
           "name": {
             "type": "string",
-            "description": "Variant option title, for example 100 cm or oak"
+            "description": "Variant option title, for example 100 cm or oak",
+            "example": "120 cm"
           },
           "priceDelta": {
             "type": "number",
-            "description": "Price delta for this option"
+            "description": "Price delta for this option",
+            "example": 300
           },
           "sortOrder": {
             "type": "number",
-            "description": "Sort order"
+            "description": "Sort order",
+            "example": 2
           },
           "isActive": {
             "type": "boolean",
-            "description": "Active status"
+            "description": "Active status",
+            "example": true
           }
         },
         "required": [
@@ -2463,21 +2698,39 @@
         "properties": {
           "name": {
             "type": "string",
-            "description": "Variant group title, for example Size or Material"
+            "description": "Variant group title, for example Size or Material",
+            "example": "Size"
           },
           "isRequired": {
             "type": "boolean",
-            "description": "Whether one option from this group must be selected"
+            "description": "Whether one option from this group must be selected",
+            "example": true
           },
           "sortOrder": {
             "type": "number",
-            "description": "Sort order"
+            "description": "Sort order",
+            "example": 1
           },
           "isActive": {
             "type": "boolean",
-            "description": "Active status"
+            "description": "Active status",
+            "example": true
           },
           "options": {
+            "example": [
+              {
+                "name": "80 cm",
+                "priceDelta": 0,
+                "sortOrder": 1,
+                "isActive": true
+              },
+              {
+                "name": "120 cm",
+                "priceDelta": 300,
+                "sortOrder": 2,
+                "isActive": true
+              }
+            ],
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/CreateProductVariantOptionInlineDto"
@@ -2493,31 +2746,38 @@
         "properties": {
           "name": {
             "type": "string",
-            "description": "Product name"
+            "description": "Product name",
+            "example": "Oak Dining Table 120"
           },
           "fullName": {
             "type": "string",
-            "description": "Full product name"
+            "description": "Full product name",
+            "example": "Solid Oak Dining Table 120 x 80 cm"
           },
           "slug": {
             "type": "string",
-            "description": "Product slug"
+            "description": "Product slug",
+            "example": "oak-dining-table-120"
           },
           "description": {
             "type": "string",
-            "description": "Product description"
+            "description": "Product description",
+            "example": "Natural solid oak dining table with matte finish"
           },
           "price": {
             "type": "number",
-            "description": "Product price"
+            "description": "Product price",
+            "example": 24990
           },
           "categoryId": {
             "type": "number",
-            "description": "Category id"
+            "description": "Category id",
+            "example": 3
           },
           "sortOrder": {
             "type": "number",
-            "description": "Sorting priority"
+            "description": "Sorting priority",
+            "example": 10
           },
           "variantGroups": {
             "description": "Product variant groups with optional nested options",
@@ -2570,23 +2830,28 @@
         "properties": {
           "id": {
             "type": "number",
-            "description": "Variant option id. If omitted, option will be created"
+            "description": "Variant option id. If omitted, option will be created",
+            "example": 201
           },
           "name": {
             "type": "string",
-            "description": "Variant option title, for example 100 cm or oak"
+            "description": "Variant option title, for example 100 cm or oak",
+            "example": "140 cm"
           },
           "priceDelta": {
             "type": "number",
-            "description": "Price delta for this option"
+            "description": "Price delta for this option",
+            "example": 600
           },
           "sortOrder": {
             "type": "number",
-            "description": "Sort order"
+            "description": "Sort order",
+            "example": 3
           },
           "isActive": {
             "type": "boolean",
-            "description": "Active status"
+            "description": "Active status",
+            "example": true
           }
         }
       },
@@ -2595,25 +2860,43 @@
         "properties": {
           "id": {
             "type": "number",
-            "description": "Variant group id. If omitted, group will be created"
+            "description": "Variant group id. If omitted, group will be created",
+            "example": 12
           },
           "name": {
             "type": "string",
-            "description": "Variant group title, for example Size or Material"
+            "description": "Variant group title, for example Size or Material",
+            "example": "Size"
           },
           "isRequired": {
             "type": "boolean",
-            "description": "Whether one option from this group must be selected"
+            "description": "Whether one option from this group must be selected",
+            "example": true
           },
           "sortOrder": {
             "type": "number",
-            "description": "Sort order"
+            "description": "Sort order",
+            "example": 1
           },
           "isActive": {
             "type": "boolean",
-            "description": "Active status"
+            "description": "Active status",
+            "example": true
           },
           "options": {
+            "example": [
+              {
+                "id": 201,
+                "priceDelta": 250,
+                "sortOrder": 1
+              },
+              {
+                "name": "160 cm",
+                "priceDelta": 900,
+                "sortOrder": 4,
+                "isActive": true
+              }
+            ],
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/UpdateProductVariantOptionInlineDto"
@@ -2626,31 +2909,38 @@
         "properties": {
           "name": {
             "type": "string",
-            "description": "Product name"
+            "description": "Product name",
+            "example": "Oak Dining Table 140"
           },
           "fullName": {
             "type": "string",
-            "description": "Full product name"
+            "description": "Full product name",
+            "example": "Solid Oak Dining Table 140 x 80 cm"
           },
           "slug": {
             "type": "string",
-            "description": "Product slug"
+            "description": "Product slug",
+            "example": "oak-dining-table-140"
           },
           "description": {
             "type": "string",
-            "description": "Product description"
+            "description": "Product description",
+            "example": "Updated model with larger top and reinforced legs"
           },
           "price": {
             "type": "number",
-            "description": "Product price"
+            "description": "Product price",
+            "example": 27990
           },
           "categoryId": {
             "type": "number",
-            "description": "Category id"
+            "description": "Category id",
+            "example": 3
           },
           "sortOrder": {
             "type": "number",
-            "description": "Sorting priority"
+            "description": "Sorting priority",
+            "example": 12
           },
           "variantGroups": {
             "description": "Variant groups update payload. With id updates existing group, without id creates new one",
@@ -2693,37 +2983,45 @@
         "properties": {
           "id": {
             "type": "number",
-            "description": "Variant option id"
+            "description": "Variant option id",
+            "example": 201
           },
           "name": {
             "type": "string",
-            "description": "Variant option title"
+            "description": "Variant option title",
+            "example": "120 cm"
           },
           "priceDelta": {
             "type": "number",
-            "description": "Price delta added to base product price"
+            "description": "Price delta added to base product price",
+            "example": 300
           },
           "sortOrder": {
             "type": "number",
-            "description": "Sort order"
+            "description": "Sort order",
+            "example": 2
           },
           "groupId": {
             "type": "number",
-            "description": "Variant group id"
+            "description": "Variant group id",
+            "example": 12
           },
           "isActive": {
             "type": "boolean",
-            "description": "Active status"
+            "description": "Active status",
+            "example": true
           },
           "createdAt": {
             "type": "string",
             "description": "Created at",
-            "format": "date-time"
+            "format": "date-time",
+            "example": "2026-03-10T07:40:00.000Z"
           },
           "updatedAt": {
             "type": "string",
             "description": "Updated at",
-            "format": "date-time"
+            "format": "date-time",
+            "example": "2026-03-10T09:11:45.000Z"
           }
         },
         "required": [
@@ -2742,29 +3040,57 @@
         "properties": {
           "id": {
             "type": "number",
-            "description": "Variant group id"
+            "description": "Variant group id",
+            "example": 12
           },
           "productId": {
             "type": "number",
-            "description": "Product id"
+            "description": "Product id",
+            "example": 101
           },
           "name": {
             "type": "string",
-            "description": "Variant group title, for example Size or Material"
+            "description": "Variant group title, for example Size or Material",
+            "example": "Size"
           },
           "isRequired": {
             "type": "boolean",
-            "description": "Whether one option from this group must be selected"
+            "description": "Whether one option from this group must be selected",
+            "example": true
           },
           "sortOrder": {
             "type": "number",
-            "description": "Sort order"
+            "description": "Sort order",
+            "example": 1
           },
           "isActive": {
             "type": "boolean",
-            "description": "Active status"
+            "description": "Active status",
+            "example": true
           },
           "options": {
+            "example": [
+              {
+                "id": 200,
+                "groupId": 12,
+                "name": "80 cm",
+                "priceDelta": 0,
+                "sortOrder": 1,
+                "isActive": true,
+                "createdAt": "2026-03-10T07:40:00.000Z",
+                "updatedAt": "2026-03-10T09:11:45.000Z"
+              },
+              {
+                "id": 201,
+                "groupId": 12,
+                "name": "120 cm",
+                "priceDelta": 300,
+                "sortOrder": 2,
+                "isActive": true,
+                "createdAt": "2026-03-10T07:45:00.000Z",
+                "updatedAt": "2026-03-10T09:15:00.000Z"
+              }
+            ],
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/AdminProductVariantOptionDto"
@@ -2773,12 +3099,14 @@
           "createdAt": {
             "type": "string",
             "description": "Created at",
-            "format": "date-time"
+            "format": "date-time",
+            "example": "2026-03-10T07:35:00.000Z"
           },
           "updatedAt": {
             "type": "string",
             "description": "Updated at",
-            "format": "date-time"
+            "format": "date-time",
+            "example": "2026-03-10T09:20:00.000Z"
           }
         },
         "required": [
@@ -2798,19 +3126,23 @@
         "properties": {
           "name": {
             "type": "string",
-            "description": "Variant group title, for example Size or Material"
+            "description": "Variant group title, for example Size or Material",
+            "example": "Size"
           },
           "isRequired": {
             "type": "boolean",
-            "description": "Whether one option from this group must be selected"
+            "description": "Whether one option from this group must be selected",
+            "example": true
           },
           "sortOrder": {
             "type": "number",
-            "description": "Sort order"
+            "description": "Sort order",
+            "example": 1
           },
           "isActive": {
             "type": "boolean",
-            "description": "Active status"
+            "description": "Active status",
+            "example": true
           }
         },
         "required": [
@@ -2822,19 +3154,23 @@
         "properties": {
           "name": {
             "type": "string",
-            "description": "Variant group title, for example Size or Material"
+            "description": "Variant group title, for example Size or Material",
+            "example": "Material"
           },
           "isRequired": {
             "type": "boolean",
-            "description": "Whether one option from this group must be selected"
+            "description": "Whether one option from this group must be selected",
+            "example": false
           },
           "sortOrder": {
             "type": "number",
-            "description": "Sort order"
+            "description": "Sort order",
+            "example": 2
           },
           "isActive": {
             "type": "boolean",
-            "description": "Active status"
+            "description": "Active status",
+            "example": true
           }
         }
       },
@@ -2843,19 +3179,23 @@
         "properties": {
           "name": {
             "type": "string",
-            "description": "Variant option title, for example 100 cm or oak"
+            "description": "Variant option title, for example 100 cm or oak",
+            "example": "120 cm"
           },
           "priceDelta": {
             "type": "number",
-            "description": "Price delta for this option"
+            "description": "Price delta for this option",
+            "example": 300
           },
           "sortOrder": {
             "type": "number",
-            "description": "Sort order"
+            "description": "Sort order",
+            "example": 2
           },
           "isActive": {
             "type": "boolean",
-            "description": "Active status"
+            "description": "Active status",
+            "example": true
           }
         },
         "required": [
@@ -2867,19 +3207,23 @@
         "properties": {
           "name": {
             "type": "string",
-            "description": "Variant option title, for example 100 cm or oak"
+            "description": "Variant option title, for example 100 cm or oak",
+            "example": "140 cm"
           },
           "priceDelta": {
             "type": "number",
-            "description": "Price delta for this option"
+            "description": "Price delta for this option",
+            "example": 600
           },
           "sortOrder": {
             "type": "number",
-            "description": "Sort order"
+            "description": "Sort order",
+            "example": 3
           },
           "isActive": {
             "type": "boolean",
-            "description": "Active status"
+            "description": "Active status",
+            "example": true
           }
         }
       },
@@ -2888,19 +3232,23 @@
         "properties": {
           "id": {
             "type": "number",
-            "description": "Variant option id"
+            "description": "Variant option id",
+            "example": 201
           },
           "name": {
             "type": "string",
-            "description": "Variant option title"
+            "description": "Variant option title",
+            "example": "120 cm"
           },
           "priceDelta": {
             "type": "number",
-            "description": "Price delta added to base product price"
+            "description": "Price delta added to base product price",
+            "example": 300
           },
           "sortOrder": {
             "type": "number",
-            "description": "Sort order"
+            "description": "Sort order",
+            "example": 2
           }
         },
         "required": [
@@ -2915,21 +3263,39 @@
         "properties": {
           "id": {
             "type": "number",
-            "description": "Variant group id"
+            "description": "Variant group id",
+            "example": 12
           },
           "name": {
             "type": "string",
-            "description": "Variant group title, for example Size or Material"
+            "description": "Variant group title, for example Size or Material",
+            "example": "Size"
           },
           "isRequired": {
             "type": "boolean",
-            "description": "Whether one option from this group must be selected"
+            "description": "Whether one option from this group must be selected",
+            "example": true
           },
           "sortOrder": {
             "type": "number",
-            "description": "Sort order"
+            "description": "Sort order",
+            "example": 1
           },
           "options": {
+            "example": [
+              {
+                "id": 200,
+                "name": "80 cm",
+                "priceDelta": 0,
+                "sortOrder": 1
+              },
+              {
+                "id": 201,
+                "name": "120 cm",
+                "priceDelta": 300,
+                "sortOrder": 2
+              }
+            ],
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/ProductVariantOptionDto"
@@ -2949,21 +3315,39 @@
         "properties": {
           "productId": {
             "type": "number",
-            "description": "Product id"
+            "description": "Product id",
+            "example": 101
           },
           "basePrice": {
             "type": "number",
-            "description": "Base product price"
+            "description": "Base product price",
+            "example": 24990
           },
           "optionsPrice": {
             "type": "number",
-            "description": "Total delta of selected options"
+            "description": "Total delta of selected options",
+            "example": 800
           },
           "finalPrice": {
             "type": "number",
-            "description": "Final price with selected options"
+            "description": "Final price with selected options",
+            "example": 25790
           },
           "selectedOptions": {
+            "example": [
+              {
+                "id": 201,
+                "name": "120 cm",
+                "priceDelta": 300,
+                "sortOrder": 2
+              },
+              {
+                "id": 303,
+                "name": "Oak",
+                "priceDelta": 500,
+                "sortOrder": 1
+              }
+            ],
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/ProductVariantOptionDto"
@@ -2983,31 +3367,38 @@
         "properties": {
           "id": {
             "type": "number",
-            "description": "Branch id"
+            "description": "Branch id",
+            "example": 5
           },
           "name": {
             "type": "string",
-            "description": "Branch name"
+            "description": "Branch name",
+            "example": "Moscow Center Branch"
           },
           "description": {
             "type": "string",
-            "description": "Branch description"
+            "description": "Branch description",
+            "example": "Main retail branch in city center"
           },
           "address": {
             "type": "string",
-            "description": "Branch address"
+            "description": "Branch address",
+            "example": "Tverskaya St, 7"
           },
           "city": {
             "type": "string",
-            "description": "City"
+            "description": "City",
+            "example": "Moscow"
           },
           "region": {
             "type": "string",
-            "description": "Region"
+            "description": "Region",
+            "example": "Moscow City"
           },
           "phone": {
             "type": "string",
-            "description": "Phone"
+            "description": "Phone",
+            "example": "+7 495 555-12-34"
           }
         },
         "required": [
@@ -3020,9 +3411,30 @@
         "type": "object",
         "properties": {
           "meta": {
-            "$ref": "#/components/schemas/PaginationMeta"
+            "description": "Pagination metadata",
+            "example": {
+              "total": 124,
+              "page": 1,
+              "limit": 25
+            },
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PaginationMeta"
+              }
+            ]
           },
           "items": {
+            "example": [
+              {
+                "id": 5,
+                "name": "Moscow Center Branch",
+                "description": "Main retail branch in city center",
+                "address": "Tverskaya St, 7",
+                "city": "Moscow",
+                "region": "Moscow City",
+                "phone": "+7 495 555-12-34"
+              }
+            ],
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/BranchDto"
@@ -3039,43 +3451,53 @@
         "properties": {
           "id": {
             "type": "number",
-            "description": "Branch id"
+            "description": "Branch id",
+            "example": 5
           },
           "name": {
             "type": "string",
-            "description": "Branch name"
+            "description": "Branch name",
+            "example": "Moscow Center Branch"
           },
           "description": {
             "type": "string",
-            "description": "Branch description"
+            "description": "Branch description",
+            "example": "Main retail branch in city center"
           },
           "address": {
             "type": "string",
-            "description": "Branch address"
+            "description": "Branch address",
+            "example": "Tverskaya St, 7"
           },
           "city": {
             "type": "string",
-            "description": "City"
+            "description": "City",
+            "example": "Moscow"
           },
           "region": {
             "type": "string",
-            "description": "Region"
+            "description": "Region",
+            "example": "Moscow City"
           },
           "phone": {
             "type": "string",
-            "description": "Phone"
+            "description": "Phone",
+            "example": "+7 495 555-12-34"
           },
           "isActive": {
             "type": "boolean",
-            "description": "Branch active status"
+            "description": "Branch active status",
+            "example": true
           },
           "createdAt": {
+            "type": "string",
             "format": "date-time",
-            "type": "string"
+            "example": "2026-03-10T08:21:11.000Z"
           },
           "updatedAt": {
+            "type": "string",
             "format": "date-time",
-            "type": "string"
+            "example": "2026-03-10T10:05:30.000Z"
           }
         },
         "required": [
@@ -3091,9 +3513,33 @@
         "type": "object",
         "properties": {
           "meta": {
-            "$ref": "#/components/schemas/PaginationMeta"
+            "description": "Pagination metadata",
+            "example": {
+              "total": 124,
+              "page": 1,
+              "limit": 25
+            },
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PaginationMeta"
+              }
+            ]
           },
           "items": {
+            "example": [
+              {
+                "id": 5,
+                "name": "Moscow Center Branch",
+                "description": "Main retail branch in city center",
+                "address": "Tverskaya St, 7",
+                "city": "Moscow",
+                "region": "Moscow City",
+                "phone": "+7 495 555-12-34",
+                "isActive": true,
+                "createdAt": "2026-03-10T08:21:11.000Z",
+                "updatedAt": "2026-03-10T10:05:30.000Z"
+              }
+            ],
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/AdminBranchDto"
@@ -3110,31 +3556,38 @@
         "properties": {
           "name": {
             "type": "string",
-            "description": "Branch name"
+            "description": "Branch name",
+            "example": "Moscow Center Branch"
           },
           "description": {
             "type": "string",
-            "description": "Branch description"
+            "description": "Branch description",
+            "example": "Main retail branch in city center"
           },
           "address": {
             "type": "string",
-            "description": "Branch address"
+            "description": "Branch address",
+            "example": "Tverskaya St, 7"
           },
           "city": {
             "type": "string",
-            "description": "City"
+            "description": "City",
+            "example": "Moscow"
           },
           "region": {
             "type": "string",
-            "description": "Region"
+            "description": "Region",
+            "example": "Moscow City"
           },
           "phone": {
             "type": "string",
-            "description": "Phone number"
+            "description": "Phone number",
+            "example": "+7 495 555-12-34"
           },
           "isActive": {
             "type": "boolean",
-            "description": "Branch active status"
+            "description": "Branch active status",
+            "example": true
           }
         },
         "required": [
@@ -3147,31 +3600,38 @@
         "properties": {
           "name": {
             "type": "string",
-            "description": "Branch name"
+            "description": "Branch name",
+            "example": "Moscow Center Branch Renovated"
           },
           "description": {
             "type": "string",
-            "description": "Branch description"
+            "description": "Branch description",
+            "example": "Updated retail branch with expanded pickup area"
           },
           "address": {
             "type": "string",
-            "description": "Branch address"
+            "description": "Branch address",
+            "example": "Tverskaya St, 9"
           },
           "city": {
             "type": "string",
-            "description": "City"
+            "description": "City",
+            "example": "Moscow"
           },
           "region": {
             "type": "string",
-            "description": "Region"
+            "description": "Region",
+            "example": "Moscow City"
           },
           "phone": {
             "type": "string",
-            "description": "Phone number"
+            "description": "Phone number",
+            "example": "+7 495 555-98-76"
           },
           "isActive": {
             "type": "boolean",
-            "description": "Branch active status"
+            "description": "Branch active status",
+            "example": true
           }
         }
       },
@@ -3180,33 +3640,50 @@
         "properties": {
           "id": {
             "type": "number",
-            "description": "Branch product id"
+            "description": "Branch product id",
+            "example": 7001
           },
           "branchId": {
             "type": "number",
-            "description": "Branch id"
+            "description": "Branch id",
+            "example": 5
           },
           "price": {
             "type": "number",
-            "description": "Price in branch"
+            "description": "Price in branch",
+            "example": 25990
           },
           "stock": {
             "type": "number",
-            "description": "Stock in branch"
+            "description": "Stock in branch",
+            "example": 20
           },
           "name": {
             "type": "string",
-            "description": "Product name"
+            "description": "Product name",
+            "example": "Oak Dining Table 120"
           },
           "description": {
             "type": "string",
-            "description": "Product description"
+            "description": "Product description",
+            "example": "Solid oak dining table, 120 cm width"
           },
           "slug": {
             "type": "string",
-            "description": "Product slug"
+            "description": "Product slug",
+            "example": "oak-dining-table-120"
           },
           "images": {
+            "example": [
+              {
+                "url": "https://cdn.example.com/products/oak-dining-table-120/main.jpg",
+                "type": "main"
+              },
+              {
+                "url": "https://cdn.example.com/products/oak-dining-table-120/gallery-1.jpg",
+                "type": "gallery"
+              }
+            ],
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/ImageProductDto"
@@ -3227,9 +3704,36 @@
         "type": "object",
         "properties": {
           "meta": {
-            "$ref": "#/components/schemas/PaginationMeta"
+            "description": "Pagination metadata",
+            "example": {
+              "total": 124,
+              "page": 1,
+              "limit": 25
+            },
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PaginationMeta"
+              }
+            ]
           },
           "items": {
+            "example": [
+              {
+                "id": 7001,
+                "branchId": 5,
+                "price": 25990,
+                "stock": 20,
+                "name": "Oak Dining Table 120",
+                "description": "Solid oak dining table, 120 cm width",
+                "slug": "oak-dining-table-120",
+                "images": [
+                  {
+                    "url": "https://cdn.example.com/products/oak-dining-table-120/main.jpg",
+                    "type": "main"
+                  }
+                ]
+              }
+            ],
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/BranchProductDto"
@@ -3246,37 +3750,45 @@
         "properties": {
           "id": {
             "type": "number",
-            "description": "Branch product id"
+            "description": "Branch product id",
+            "example": 7001
           },
           "productId": {
             "type": "number",
-            "description": "Product id"
+            "description": "Product id",
+            "example": 101
           },
           "branchId": {
             "type": "number",
-            "description": "Branch id"
+            "description": "Branch id",
+            "example": 5
           },
           "price": {
             "type": "number",
-            "description": "Price in branch"
+            "description": "Price in branch",
+            "example": 25990
           },
           "stock": {
             "type": "number",
-            "description": "Stock in branch"
+            "description": "Stock in branch",
+            "example": 20
           },
           "isActive": {
             "type": "boolean",
-            "description": "Active status"
+            "description": "Active status",
+            "example": true
           },
           "createdAt": {
             "type": "string",
             "description": "Created at",
-            "format": "date-time"
+            "format": "date-time",
+            "example": "2026-03-10T08:45:17.000Z"
           },
           "updatedAt": {
             "type": "string",
             "description": "Updated at",
-            "format": "date-time"
+            "format": "date-time",
+            "example": "2026-03-10T10:01:44.000Z"
           }
         },
         "required": [
@@ -3294,9 +3806,31 @@
         "type": "object",
         "properties": {
           "meta": {
-            "$ref": "#/components/schemas/PaginationMeta"
+            "description": "Pagination metadata",
+            "example": {
+              "total": 124,
+              "page": 1,
+              "limit": 25
+            },
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PaginationMeta"
+              }
+            ]
           },
           "items": {
+            "example": [
+              {
+                "id": 7001,
+                "productId": 101,
+                "branchId": 5,
+                "price": 25990,
+                "stock": 20,
+                "isActive": true,
+                "createdAt": "2026-03-10T08:45:17.000Z",
+                "updatedAt": "2026-03-10T10:01:44.000Z"
+              }
+            ],
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/AdminBranchProductDto"
@@ -3313,23 +3847,28 @@
         "properties": {
           "productId": {
             "type": "number",
-            "description": "Product id"
+            "description": "Product id",
+            "example": 101
           },
           "branchId": {
             "type": "number",
-            "description": "Branch id"
+            "description": "Branch id",
+            "example": 5
           },
           "price": {
             "type": "number",
-            "description": "Price in branch"
+            "description": "Price in branch",
+            "example": 25990
           },
           "stock": {
             "type": "number",
-            "description": "Stock in branch"
+            "description": "Stock in branch",
+            "example": 20
           },
           "isActive": {
             "type": "boolean",
-            "description": "Active status"
+            "description": "Active status",
+            "example": true
           }
         },
         "required": [
@@ -3343,15 +3882,18 @@
         "properties": {
           "price": {
             "type": "number",
-            "description": "Price in branch"
+            "description": "Price in branch",
+            "example": 24990
           },
           "stock": {
             "type": "number",
-            "description": "Stock in branch"
+            "description": "Stock in branch",
+            "example": 35
           },
           "isActive": {
             "type": "boolean",
-            "description": "Active status"
+            "description": "Active status",
+            "example": true
           }
         }
       }
