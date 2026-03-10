@@ -1,6 +1,6 @@
 import { Body, Controller, Delete, Get, HttpCode, NotFoundException, Param, ParseIntPipe, Patch, Post, Query, UseGuards } from "@nestjs/common";
 import { ProductService } from "../product.service";
-import { ApiBearerAuth, ApiCreatedResponse, ApiNoContentResponse, ApiOkResponse } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiCreatedResponse, ApiNoContentResponse, ApiOkResponse, ApiOperation, ApiTags } from "@nestjs/swagger";
 import { GrpcAuthGuard } from "src/common/auth";
 import { ProductDto } from "../dto/product.dto";
 import { CreateProductDto } from "../dto/create.product.dto";
@@ -9,6 +9,7 @@ import { AdminProductPaginationDto } from "../dto/admin/admin.product.pagination
 import { AdminFilterProductDto } from "./admin-filter.product.dto";
 
 @Controller('api/admin/products')
+@ApiTags('Admin Products')
 export class AdminProductController {
 
     constructor(private readonly productService: ProductService) {}
@@ -38,6 +39,10 @@ export class AdminProductController {
     @Post()
     @ApiBearerAuth()
     @UseGuards(GrpcAuthGuard)
+    @ApiOperation({
+        summary: 'Create product',
+        description: 'Supports optional nested variant groups and options in variantGroups[]',
+    })
     @ApiCreatedResponse({ type: ProductDto })
     async create(@Body() payload: CreateProductDto): Promise<ProductDto> {
         return this.productService.createProduct(payload);
@@ -46,6 +51,11 @@ export class AdminProductController {
     @Patch(':id')
     @ApiBearerAuth()
     @UseGuards(GrpcAuthGuard)
+    @ApiOperation({
+        summary: 'Update product',
+        description:
+            'Supports optional nested variantGroups[] updates: with id updates existing group/option, without id creates new one',
+    })
     @ApiOkResponse({ type: ProductDto })
     async update(@Param('id', ParseIntPipe) id: number, @Body() payload: UpdateProductDto): Promise<ProductDto> {
         return this.productService.updateProduct(id, payload);

@@ -510,10 +510,11 @@
           }
         ],
         "tags": [
-          "AdminProduct"
+          "Admin Products"
         ]
       },
       "post": {
+        "description": "Supports optional nested variant groups and options in variantGroups[]",
         "operationId": "AdminProductController_create",
         "parameters": [],
         "requestBody": {
@@ -543,8 +544,9 @@
             "bearer": []
           }
         ],
+        "summary": "Create product",
         "tags": [
-          "AdminProduct"
+          "Admin Products"
         ]
       }
     },
@@ -579,10 +581,11 @@
           }
         ],
         "tags": [
-          "AdminProduct"
+          "Admin Products"
         ]
       },
       "patch": {
+        "description": "Supports optional nested variantGroups[] updates: with id updates existing group/option, without id creates new one",
         "operationId": "AdminProductController_update",
         "parameters": [
           {
@@ -621,8 +624,9 @@
             "bearer": []
           }
         ],
+        "summary": "Update product",
         "tags": [
-          "AdminProduct"
+          "Admin Products"
         ]
       },
       "delete": {
@@ -648,7 +652,7 @@
           }
         ],
         "tags": [
-          "AdminProduct"
+          "Admin Products"
         ]
       }
     },
@@ -683,7 +687,7 @@
           }
         ],
         "tags": [
-          "AdminProduct"
+          "Admin Products"
         ]
       }
     },
@@ -729,8 +733,9 @@
             "bearer": []
           }
         ],
+        "summary": "Get variant groups for product (admin)",
         "tags": [
-          "AdminProductVariants"
+          "Admin Product Variants"
         ]
       },
       "post": {
@@ -772,8 +777,9 @@
             "bearer": []
           }
         ],
+        "summary": "Create variant group for product (admin)",
         "tags": [
-          "AdminProductVariants"
+          "Admin Product Variants"
         ]
       }
     },
@@ -815,8 +821,9 @@
             "bearer": []
           }
         ],
+        "summary": "Get one variant group (admin)",
         "tags": [
-          "AdminProductVariants"
+          "Admin Product Variants"
         ]
       },
       "patch": {
@@ -866,8 +873,9 @@
             "bearer": []
           }
         ],
+        "summary": "Update variant group (admin)",
         "tags": [
-          "AdminProductVariants"
+          "Admin Product Variants"
         ]
       },
       "delete": {
@@ -900,8 +908,9 @@
             "bearer": []
           }
         ],
+        "summary": "Soft delete variant group (admin)",
         "tags": [
-          "AdminProductVariants"
+          "Admin Product Variants"
         ]
       }
     },
@@ -943,8 +952,9 @@
             "bearer": []
           }
         ],
+        "summary": "Restore variant group (admin)",
         "tags": [
-          "AdminProductVariants"
+          "Admin Product Variants"
         ]
       }
     },
@@ -996,8 +1006,9 @@
             "bearer": []
           }
         ],
+        "summary": "Create variant option in group (admin)",
         "tags": [
-          "AdminProductVariants"
+          "Admin Product Variants"
         ]
       }
     },
@@ -1057,8 +1068,9 @@
             "bearer": []
           }
         ],
+        "summary": "Update variant option (admin)",
         "tags": [
-          "AdminProductVariants"
+          "Admin Product Variants"
         ]
       },
       "delete": {
@@ -1099,8 +1111,9 @@
             "bearer": []
           }
         ],
+        "summary": "Soft delete variant option (admin)",
         "tags": [
-          "AdminProductVariants"
+          "Admin Product Variants"
         ]
       }
     },
@@ -1150,8 +1163,9 @@
             "bearer": []
           }
         ],
+        "summary": "Restore variant option (admin)",
         "tags": [
-          "AdminProductVariants"
+          "Admin Product Variants"
         ]
       }
     },
@@ -1183,8 +1197,9 @@
             }
           }
         },
+        "summary": "Get active variant groups for product",
         "tags": [
-          "ProductVariant"
+          "Product Variants"
         ]
       }
     },
@@ -1225,8 +1240,9 @@
             }
           }
         },
+        "summary": "Calculate final product price by selected option ids",
         "tags": [
-          "ProductVariant"
+          "Product Variants"
         ]
       }
     },
@@ -2418,6 +2434,60 @@
           "items"
         ]
       },
+      "CreateProductVariantOptionInlineDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Variant option title, for example 100 cm or oak"
+          },
+          "priceDelta": {
+            "type": "number",
+            "description": "Price delta for this option"
+          },
+          "sortOrder": {
+            "type": "number",
+            "description": "Sort order"
+          },
+          "isActive": {
+            "type": "boolean",
+            "description": "Active status"
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "CreateProductVariantGroupInlineDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Variant group title, for example Size or Material"
+          },
+          "isRequired": {
+            "type": "boolean",
+            "description": "Whether one option from this group must be selected"
+          },
+          "sortOrder": {
+            "type": "number",
+            "description": "Sort order"
+          },
+          "isActive": {
+            "type": "boolean",
+            "description": "Active status"
+          },
+          "options": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CreateProductVariantOptionInlineDto"
+            }
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
       "CreateProductDto": {
         "type": "object",
         "properties": {
@@ -2448,6 +2518,44 @@
           "sortOrder": {
             "type": "number",
             "description": "Sorting priority"
+          },
+          "variantGroups": {
+            "description": "Product variant groups with optional nested options",
+            "example": [
+              {
+                "name": "Size",
+                "isRequired": true,
+                "sortOrder": 1,
+                "options": [
+                  {
+                    "name": "80 cm",
+                    "priceDelta": 0,
+                    "sortOrder": 1
+                  },
+                  {
+                    "name": "120 cm",
+                    "priceDelta": 300,
+                    "sortOrder": 2
+                  }
+                ]
+              },
+              {
+                "name": "Material",
+                "isRequired": false,
+                "sortOrder": 2,
+                "options": [
+                  {
+                    "name": "Oak",
+                    "priceDelta": 500,
+                    "sortOrder": 1
+                  }
+                ]
+              }
+            ],
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CreateProductVariantGroupInlineDto"
+            }
           }
         },
         "required": [
@@ -2456,6 +2564,62 @@
           "price",
           "categoryId"
         ]
+      },
+      "UpdateProductVariantOptionInlineDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "Variant option id. If omitted, option will be created"
+          },
+          "name": {
+            "type": "string",
+            "description": "Variant option title, for example 100 cm or oak"
+          },
+          "priceDelta": {
+            "type": "number",
+            "description": "Price delta for this option"
+          },
+          "sortOrder": {
+            "type": "number",
+            "description": "Sort order"
+          },
+          "isActive": {
+            "type": "boolean",
+            "description": "Active status"
+          }
+        }
+      },
+      "UpdateProductVariantGroupInlineDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "Variant group id. If omitted, group will be created"
+          },
+          "name": {
+            "type": "string",
+            "description": "Variant group title, for example Size or Material"
+          },
+          "isRequired": {
+            "type": "boolean",
+            "description": "Whether one option from this group must be selected"
+          },
+          "sortOrder": {
+            "type": "number",
+            "description": "Sort order"
+          },
+          "isActive": {
+            "type": "boolean",
+            "description": "Active status"
+          },
+          "options": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UpdateProductVariantOptionInlineDto"
+            }
+          }
+        }
       },
       "UpdateProductDto": {
         "type": "object",
@@ -2487,6 +2651,40 @@
           "sortOrder": {
             "type": "number",
             "description": "Sorting priority"
+          },
+          "variantGroups": {
+            "description": "Variant groups update payload. With id updates existing group, without id creates new one",
+            "example": [
+              {
+                "id": 10,
+                "name": "Size",
+                "options": [
+                  {
+                    "id": 100,
+                    "priceDelta": 250
+                  },
+                  {
+                    "name": "140 cm",
+                    "priceDelta": 600,
+                    "sortOrder": 3
+                  }
+                ]
+              },
+              {
+                "name": "Color",
+                "isRequired": false,
+                "options": [
+                  {
+                    "name": "White",
+                    "priceDelta": 0
+                  }
+                ]
+              }
+            ],
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UpdateProductVariantGroupInlineDto"
+            }
           }
         }
       },

@@ -17,6 +17,9 @@ import {
     ApiCreatedResponse,
     ApiNoContentResponse,
     ApiOkResponse,
+    ApiOperation,
+    ApiParam,
+    ApiTags,
 } from '@nestjs/swagger';
 import { GrpcAuthGuard } from 'src/common/auth';
 import { ProductVariantService } from '../product-variant.service';
@@ -29,10 +32,13 @@ import { AdminProductVariantOptionDto } from '../dto/variant/admin-product-varia
 import { AdminFilterProductVariantGroupDto } from '../dto/variant/admin-filter-product-variant-group.dto';
 
 @Controller('api/admin/products/:productId/variant-groups')
+@ApiTags('Admin Product Variants')
 export class AdminProductVariantsController {
     constructor(private readonly productVariantService: ProductVariantService) {}
 
     @ApiBearerAuth()
+    @ApiOperation({ summary: 'Get variant groups for product (admin)' })
+    @ApiParam({ name: 'productId', type: Number })
     @ApiOkResponse({ type: [AdminProductVariantGroupDto] })
     @UseGuards(GrpcAuthGuard)
     @Get()
@@ -44,6 +50,9 @@ export class AdminProductVariantsController {
     }
 
     @ApiBearerAuth()
+    @ApiOperation({ summary: 'Get one variant group (admin)' })
+    @ApiParam({ name: 'productId', type: Number })
+    @ApiParam({ name: 'groupId', type: Number })
     @ApiOkResponse({ type: AdminProductVariantGroupDto })
     @UseGuards(GrpcAuthGuard)
     @Get(':groupId')
@@ -61,6 +70,8 @@ export class AdminProductVariantsController {
     }
 
     @ApiBearerAuth()
+    @ApiOperation({ summary: 'Create variant group for product (admin)' })
+    @ApiParam({ name: 'productId', type: Number })
     @ApiCreatedResponse({ type: AdminProductVariantGroupDto })
     @UseGuards(GrpcAuthGuard)
     @Post()
@@ -72,6 +83,9 @@ export class AdminProductVariantsController {
     }
 
     @ApiBearerAuth()
+    @ApiOperation({ summary: 'Update variant group (admin)' })
+    @ApiParam({ name: 'productId', type: Number })
+    @ApiParam({ name: 'groupId', type: Number })
     @ApiOkResponse({ type: AdminProductVariantGroupDto })
     @UseGuards(GrpcAuthGuard)
     @Patch(':groupId')
@@ -84,6 +98,9 @@ export class AdminProductVariantsController {
     }
 
     @ApiBearerAuth()
+    @ApiOperation({ summary: 'Soft delete variant group (admin)' })
+    @ApiParam({ name: 'productId', type: Number })
+    @ApiParam({ name: 'groupId', type: Number })
     @ApiNoContentResponse()
     @UseGuards(GrpcAuthGuard)
     @Delete(':groupId')
@@ -96,6 +113,9 @@ export class AdminProductVariantsController {
     }
 
     @ApiBearerAuth()
+    @ApiOperation({ summary: 'Restore variant group (admin)' })
+    @ApiParam({ name: 'productId', type: Number })
+    @ApiParam({ name: 'groupId', type: Number })
     @ApiOkResponse({ type: AdminProductVariantGroupDto })
     @UseGuards(GrpcAuthGuard)
     @Patch(':groupId/restore')
@@ -107,6 +127,9 @@ export class AdminProductVariantsController {
     }
 
     @ApiBearerAuth()
+    @ApiOperation({ summary: 'Create variant option in group (admin)' })
+    @ApiParam({ name: 'productId', type: Number })
+    @ApiParam({ name: 'groupId', type: Number })
     @ApiCreatedResponse({ type: AdminProductVariantOptionDto })
     @UseGuards(GrpcAuthGuard)
     @Post(':groupId/options')
@@ -119,6 +142,10 @@ export class AdminProductVariantsController {
     }
 
     @ApiBearerAuth()
+    @ApiOperation({ summary: 'Update variant option (admin)' })
+    @ApiParam({ name: 'productId', type: Number })
+    @ApiParam({ name: 'groupId', type: Number })
+    @ApiParam({ name: 'optionId', type: Number })
     @ApiOkResponse({ type: AdminProductVariantOptionDto })
     @UseGuards(GrpcAuthGuard)
     @Patch(':groupId/options/:optionId')
@@ -132,6 +159,10 @@ export class AdminProductVariantsController {
     }
 
     @ApiBearerAuth()
+    @ApiOperation({ summary: 'Soft delete variant option (admin)' })
+    @ApiParam({ name: 'productId', type: Number })
+    @ApiParam({ name: 'groupId', type: Number })
+    @ApiParam({ name: 'optionId', type: Number })
     @ApiNoContentResponse()
     @UseGuards(GrpcAuthGuard)
     @Delete(':groupId/options/:optionId')
@@ -145,6 +176,10 @@ export class AdminProductVariantsController {
     }
 
     @ApiBearerAuth()
+    @ApiOperation({ summary: 'Restore variant option (admin)' })
+    @ApiParam({ name: 'productId', type: Number })
+    @ApiParam({ name: 'groupId', type: Number })
+    @ApiParam({ name: 'optionId', type: Number })
     @ApiOkResponse({ type: AdminProductVariantOptionDto })
     @UseGuards(GrpcAuthGuard)
     @Patch(':groupId/options/:optionId/restore')
