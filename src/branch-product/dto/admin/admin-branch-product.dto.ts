@@ -1,4 +1,5 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { AdminProductVariantGroupDto } from 'src/product/dto/variant/admin-product-variant-group.dto';
 
 export class AdminBranchProductDto {
   @ApiProperty({ description: 'Branch product id', example: 7001 })
@@ -6,6 +7,12 @@ export class AdminBranchProductDto {
 
   @ApiProperty({ description: 'Product id', example: 101 })
   productId: number;
+
+  @ApiProperty({ description: 'Product category name', example: 'Dining Tables' })
+  categoryName: string;
+
+  @ApiPropertyOptional({ description: 'Product SKU (article)', example: 'TBL-OAK-120' })
+  sku?: string;
 
   @ApiProperty({ description: 'Branch id', example: 5 })
   branchId: number;
@@ -34,4 +41,10 @@ export class AdminBranchProductDto {
     example: '2026-03-10T10:01:44.000Z',
   })
   updatedAt: Date;
+
+  @ApiPropertyOptional({
+    type: [AdminProductVariantGroupDto],
+    description: 'Product variant groups. Returned in detailed admin endpoint by id',
+  })
+  variantGroups?: AdminProductVariantGroupDto[];
 }

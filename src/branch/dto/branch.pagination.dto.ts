@@ -14,6 +14,11 @@ export class BranchPaginationDto extends PaginationDto {
         city: 'Moscow',
         region: 'Moscow City',
         phone: '+7 495 555-12-34',
+        email: 'moscow@gearo.ru',
+        workingHours: 'Mon-Sat 9:00-20:00',
+        latitude: 55.7558,
+        longitude: 37.6173,
+        bannerImage: 'f6a1c6b6f3d741f4ad3c1a2a',
       },
     ],
   })

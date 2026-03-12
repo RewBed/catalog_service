@@ -24,4 +24,34 @@ export class BranchDto {
 
   @ApiPropertyOptional({ description: 'Phone', example: '+7 495 555-12-34' })
   phone?: string;
+
+  @ApiPropertyOptional({
+    description: 'Email',
+    example: 'moscow@gearo.ru',
+  })
+  email?: string;
+
+  @ApiPropertyOptional({
+    description: 'Working hours',
+    example: 'Mon-Sat 9:00-20:00',
+  })
+  workingHours?: string;
+
+  @ApiPropertyOptional({
+    description: 'Latitude',
+    example: 55.7558,
+  })
+  latitude?: number;
+
+  @ApiPropertyOptional({
+    description: 'Longitude',
+    example: 37.6173,
+  })
+  longitude?: number;
+
+  @ApiPropertyOptional({
+    description: 'Banner image external id',
+    example: 'f6a1c6b6f3d741f4ad3c1a2a',
+  })
+  bannerImage?: string;
 }

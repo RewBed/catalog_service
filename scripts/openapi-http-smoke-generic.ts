@@ -89,6 +89,8 @@ type RunContext = {
   idsByResource: Record<string, number[]>;
   slugsByResource: Record<string, string[]>;
   childIdsByParentId: Record<string, number[]>;
+  groupIdsByProductId: Record<string, number[]>;
+  optionIdsByGroupId: Record<string, number[]>;
 };
 
 type ExtractedOperation = {
@@ -456,7 +458,10 @@ function buildExampleFromMedia(
 
 function applyContextToPayload(value: unknown, context: RunContext): unknown {
   if (Array.isArray(value)) {
-    return value.map((item) => applyContextToPayload(item, context));
+    const normalized = value
+      .map((item) => applyContextToPayload(item, context))
+      .filter((item) => item !== undefined);
+    return normalized;
   }
 
   if (value && typeof value === 'object') {
@@ -465,8 +470,6 @@ function applyContextToPayload(value: unknown, context: RunContext): unknown {
     for (const [key, item] of Object.entries(value)) {
       const lowerKey = key.toLowerCase();
       const canUseContext =
-        (Object.prototype.hasOwnProperty.call(context.values, key) &&
-          lowerKey !== 'id') ||
         (lowerKey.endsWith('id') && lowerKey !== 'id') ||
         lowerKey.endsWith('ids') ||
         lowerKey.includes('slug');
@@ -478,7 +481,27 @@ function applyContextToPayload(value: unknown, context: RunContext): unknown {
       if (contextual !== undefined) {
         out[key] = contextual;
       } else {
-        out[key] = applyContextToPayload(item, context);
+        // Prevent dangling relation ids from examples when there is no context yet.
+        if (
+          lowerKey !== 'id' &&
+          lowerKey.endsWith('id') &&
+          typeof item === 'number'
+        ) {
+          continue;
+        }
+
+        if (
+          lowerKey.endsWith('ids') &&
+          Array.isArray(item) &&
+          item.every((nested) => typeof nested === 'number')
+        ) {
+          continue;
+        }
+
+        const normalized = applyContextToPayload(item, context);
+        if (normalized !== undefined) {
+          out[key] = normalized;
+        }
       }
     }
 
@@ -527,6 +550,9 @@ function normalizeResourceKey(value: string): string {
 }
 
 function singularizeWord(word: string): string {
+  if (/(ches|shes|xes|zes)$/.test(word)) {
+    return word.slice(0, -2);
+  }
   if (word.endsWith('ies')) {
     return `${word.slice(0, -3)}y`;
   }
@@ -783,6 +809,34 @@ function operationWeight(operation: ExtractedOperation): number {
   const restorePenalty = operation.path.endsWith('/restore') ? 30 : 0;
 
   if (operation.method === 'post') {
+    // Create foundational resources first, then dependent ones.
+    if (operation.path === '/api/admin/categories') {
+      return 6 + healthBoost;
+    }
+
+    if (operation.path === '/api/admin/branches') {
+      return 7 + healthBoost;
+    }
+
+    if (operation.path === '/api/admin/products') {
+      return 8 + healthBoost;
+    }
+
+    if (operation.path === '/api/admin/products/{productId}/variant-groups') {
+      return 12 + pathParams * 2 + healthBoost;
+    }
+
+    if (
+      operation.path ===
+      '/api/admin/products/{productId}/variant-groups/{groupId}/options'
+    ) {
+      return 14 + pathParams * 2 + healthBoost;
+    }
+
+    if (operation.path === '/api/admin/branch-products') {
+      return 16 + healthBoost;
+    }
+
     return 10 + pathParams * 2 + restorePenalty + healthBoost;
   }
 
@@ -811,7 +865,7 @@ function contextValueForParam(
   path: string,
   context: RunContext,
 ): unknown {
-  if (Object.prototype.hasOwnProperty.call(context.values, name)) {
+  if (name !== 'id' && Object.prototype.hasOwnProperty.call(context.values, name)) {
     return deepClone(context.values[name]);
   }
 
@@ -824,11 +878,6 @@ function contextValueForParam(
     ]);
     if (id !== undefined) {
       return id;
-    }
-
-    const fallbackId = context.values.id;
-    if (typeof fallbackId === 'number') {
-      return fallbackId;
     }
   }
 
@@ -854,11 +903,6 @@ function contextValueForParam(
     if (id !== undefined) {
       return id;
     }
-
-    const fallbackId = context.values.id;
-    if (typeof fallbackId === 'number') {
-      return fallbackId;
-    }
   }
 
   if (lower.includes('slug')) {
@@ -878,6 +922,52 @@ function contextValueForParam(
   }
 
   return undefined;
+}
+
+function latestChildIdForParent(
+  context: RunContext,
+  parentId: number,
+): number | undefined {
+  if (!Number.isFinite(parentId) || parentId <= 0) {
+    return undefined;
+  }
+
+  const children = context.childIdsByParentId[String(parentId)] || [];
+  const validChildren = children.filter(
+    (item) => typeof item === 'number' && Number.isFinite(item) && item > 0,
+  );
+
+  return latestFromArray(validChildren);
+}
+
+function latestMappedId(
+  mapping: Record<string, number[]>,
+  parentId: number,
+): number | undefined {
+  if (!Number.isFinite(parentId) || parentId <= 0) {
+    return undefined;
+  }
+
+  const children = mapping[String(parentId)] || [];
+  const validChildren = children.filter(
+    (item) => typeof item === 'number' && Number.isFinite(item) && item > 0,
+  );
+
+  return latestFromArray(validChildren);
+}
+
+function latestGroupIdForProduct(
+  context: RunContext,
+  productId: number,
+): number | undefined {
+  return latestMappedId(context.groupIdsByProductId, productId);
+}
+
+function latestOptionIdForGroup(
+  context: RunContext,
+  groupId: number,
+): number | undefined {
+  return latestMappedId(context.optionIdsByGroupId, groupId);
 }
 
 function resolveParameter(
@@ -916,7 +1006,45 @@ function buildRequest(
 
   for (const raw of operation.parameters) {
     const parameter = resolveParameter(raw, doc);
-    let value = contextValueForParam(parameter.name, operation.path, context);
+    const isOptionalQuery =
+      parameter.in === 'query' && parameter.required !== true;
+    let value: unknown;
+
+    if (
+      parameter.name === 'groupId' &&
+      typeof selectedParams.productId === 'number'
+    ) {
+      value =
+        latestGroupIdForProduct(context, selectedParams.productId) ??
+        latestChildIdForParent(context, selectedParams.productId);
+    }
+
+    if (
+      value === undefined &&
+      parameter.name === 'optionId' &&
+      typeof selectedParams.groupId === 'number'
+    ) {
+      value =
+        latestOptionIdForGroup(context, selectedParams.groupId) ??
+        latestChildIdForParent(context, selectedParams.groupId);
+    }
+
+    if (value === undefined) {
+      value = contextValueForParam(parameter.name, operation.path, context);
+    }
+
+    if (value === undefined && isOptionalQuery) {
+      const schema = parameter.schema || {};
+      const lowerName = parameter.name.toLowerCase();
+      const shouldUseOptionalByDefault =
+        schema.default !== undefined ||
+        lowerName === 'page' ||
+        lowerName === 'limit';
+
+      if (!shouldUseOptionalByDefault) {
+        continue;
+      }
+    }
 
     if (value === undefined && parameter.example !== undefined) {
       value = deepClone(parameter.example);
@@ -974,6 +1102,34 @@ function buildRequest(
 
     if (value !== undefined && value !== null) {
       url.searchParams.append(key, String(value));
+    }
+  }
+
+  if (
+    operation.path === '/api/products/{productId}/variant-groups/price' &&
+    typeof selectedParams.productId === 'number'
+  ) {
+    const groupIds = context.groupIdsByProductId[String(selectedParams.productId)] || [];
+    const optionIds = groupIds
+      .map((groupId) =>
+        typeof groupId === 'number'
+          ? latestOptionIdForGroup(context, groupId) ??
+            latestChildIdForParent(context, groupId)
+          : undefined,
+      )
+      .filter(
+        (optionId): optionId is number =>
+          typeof optionId === 'number' &&
+          Number.isFinite(optionId) &&
+          optionId > 0,
+      );
+
+    if (optionIds.length > 0) {
+      selectedParams.optionIds = optionIds;
+      url.searchParams.delete('optionIds');
+      for (const optionId of optionIds) {
+        url.searchParams.append('optionIds', String(optionId));
+      }
     }
   }
 
@@ -1138,7 +1294,9 @@ function appendRunSuffixToPayload(
   }
 
   if (Array.isArray(value)) {
-    return value.map((item) => appendRunSuffixToPayload(item, runTag, keyHint));
+    return value.map((item, index) =>
+      appendRunSuffixToPayload(item, `${runTag}${index.toString(36)}`, keyHint),
+    );
   }
 
   if (value && typeof value === 'object') {
@@ -1165,16 +1323,55 @@ function rememberChildId(
   parentId: number,
   childId: number,
 ): void {
-  if (!Number.isFinite(parentId) || !Number.isFinite(childId)) {
+  rememberMappedChildId(context.childIdsByParentId, parentId, childId);
+}
+
+function rememberMappedChildId(
+  mapping: Record<string, number[]>,
+  parentId: number,
+  childId: number,
+): void {
+  if (
+    !Number.isFinite(parentId) ||
+    !Number.isFinite(childId) ||
+    parentId <= 0 ||
+    childId <= 0
+  ) {
     return;
   }
 
   const key = String(parentId);
-  const ids = context.childIdsByParentId[key] || [];
+  const ids = mapping[key] || [];
   if (!ids.includes(childId)) {
     ids.push(childId);
   }
-  context.childIdsByParentId[key] = ids;
+  mapping[key] = ids;
+}
+
+function rememberVariantGroupRelation(
+  context: RunContext,
+  productId: number,
+  groupId: number,
+): void {
+  rememberMappedChildId(context.groupIdsByProductId, productId, groupId);
+}
+
+function rememberVariantOptionRelation(
+  context: RunContext,
+  groupId: number,
+  optionId: number,
+): void {
+  rememberMappedChildId(context.optionIdsByGroupId, groupId, optionId);
+}
+
+function isVariantGroupResource(resourceHint: string | undefined): boolean {
+  const normalized = singularizeResource(normalizeResourceKey(resourceHint || ''));
+  return normalized === 'variant-group';
+}
+
+function isVariantOptionResource(resourceHint: string | undefined): boolean {
+  const normalized = singularizeResource(normalizeResourceKey(resourceHint || ''));
+  return normalized === 'option';
 }
 
 function normalizeNestedEntityIds(
@@ -1259,10 +1456,80 @@ function normalizeRequestForOperation(
   if (isMutationMethod) {
     const mutationTag = createOperationTag(context.runTag, operation.index);
     normalized.body = appendRunSuffixToPayload(normalized.body, mutationTag);
-    normalized.body = normalizeNestedEntityIds(normalized.body, context);
+    const parentIdHint =
+      typeof normalized.selectedParams.productId === 'number'
+        ? normalized.selectedParams.productId
+        : typeof normalized.selectedParams.id === 'number'
+          ? normalized.selectedParams.id
+          : undefined;
+    normalized.body = normalizeNestedEntityIds(
+      normalized.body,
+      context,
+      parentIdHint,
+    );
+
+    if (operation.path === '/api/admin/products/{id}') {
+      normalized.body = sanitizeAdminProductPatchPayload(normalized.body);
+    }
   }
 
   return normalized;
+}
+
+function sanitizeAdminProductPatchPayload(value: unknown): unknown {
+  if (!value || typeof value !== 'object') {
+    return value;
+  }
+
+  const body = value as Record<string, unknown>;
+  if (!Array.isArray(body.variantGroups)) {
+    return body;
+  }
+
+  body.variantGroups = body.variantGroups
+    .map((group) => {
+      if (!group || typeof group !== 'object') {
+        return group;
+      }
+
+      const outGroup = { ...(group as Record<string, unknown>) };
+      const groupName =
+        typeof outGroup.name === 'string' ? outGroup.name.trim() : '';
+      const creatingGroup = groupName.length > 0;
+
+      if (creatingGroup) {
+        delete outGroup.id;
+      }
+
+      if (Array.isArray(outGroup.options)) {
+        outGroup.options = outGroup.options
+          .map((option) => {
+            if (!option || typeof option !== 'object') {
+              return option;
+            }
+
+            const outOption = { ...(option as Record<string, unknown>) };
+            const optionName =
+              typeof outOption.name === 'string' ? outOption.name.trim() : '';
+
+            if (creatingGroup || optionName.length > 0) {
+              delete outOption.id;
+            }
+
+            if (optionName.length === 0 && outOption.id === undefined) {
+              return undefined;
+            }
+
+            return outOption;
+          })
+          .filter((item) => item !== undefined);
+      }
+
+      return outGroup;
+    })
+    .filter((item) => item !== undefined);
+
+  return body;
 }
 
 function expectedSuccessStatuses(responses: Record<string, unknown>): number[] {
@@ -1304,7 +1571,7 @@ function rememberResourceId(
   resourceHint: string | undefined,
   id: number,
 ): void {
-  if (!Number.isFinite(id)) {
+  if (!Number.isFinite(id) || id <= 0) {
     return;
   }
 
@@ -1328,7 +1595,7 @@ function rememberResourceId(
 
   const lastWord = singular.split('-').pop() || '';
   const lastWordCamel = toCamelCaseFromKebab(lastWord);
-  if (lastWordCamel) {
+  if (lastWordCamel && !singular.includes('-')) {
     context.values[`${lastWordCamel}Id`] = id;
   }
 
@@ -1364,7 +1631,7 @@ function rememberResourceSlug(
 
   const lastWord = singular.split('-').pop() || '';
   const lastWordCamel = toCamelCaseFromKebab(lastWord);
-  if (lastWordCamel) {
+  if (lastWordCamel && !singular.includes('-')) {
     context.values[`${lastWordCamel}Slug`] = slug;
   }
 
@@ -1397,6 +1664,21 @@ function updateContext(
     }
   }
 
+  const selectedProductId =
+    typeof selectedParams.productId === 'number' ? selectedParams.productId : undefined;
+  const selectedGroupId =
+    typeof selectedParams.groupId === 'number' ? selectedParams.groupId : undefined;
+  const selectedOptionId =
+    typeof selectedParams.optionId === 'number' ? selectedParams.optionId : undefined;
+
+  if (selectedProductId !== undefined && selectedGroupId !== undefined) {
+    rememberVariantGroupRelation(context, selectedProductId, selectedGroupId);
+  }
+
+  if (selectedGroupId !== undefined && selectedOptionId !== undefined) {
+    rememberVariantOptionRelation(context, selectedGroupId, selectedOptionId);
+  }
+
   if (body === undefined || body === null) {
     return;
   }
@@ -1405,6 +1687,55 @@ function updateContext(
   const entities = extractEntities(body, rootResource);
 
   for (const { entity, resourceHint } of entities) {
+    const entityId =
+      typeof entity.id === 'number' && Number.isFinite(entity.id) && entity.id > 0
+        ? entity.id
+        : undefined;
+    const explicitEntityProductId =
+      typeof entity.productId === 'number' &&
+      Number.isFinite(entity.productId) &&
+      entity.productId > 0
+        ? entity.productId
+        : undefined;
+    const explicitEntityGroupId =
+      typeof entity.groupId === 'number' &&
+      Number.isFinite(entity.groupId) &&
+      entity.groupId > 0
+        ? entity.groupId
+        : undefined;
+
+    const variantPath = operation.path.includes('/variant-groups');
+    const variantGroupResource = isVariantGroupResource(resourceHint);
+    const variantOptionResource = isVariantOptionResource(resourceHint);
+    const relatedProductId =
+      explicitEntityProductId !== undefined
+        ? explicitEntityProductId
+        : variantGroupResource
+          ? selectedProductId
+          : undefined;
+    const relatedGroupId =
+      explicitEntityGroupId !== undefined
+        ? explicitEntityGroupId
+        : variantOptionResource
+          ? selectedGroupId
+          : undefined;
+
+    if (
+      entityId !== undefined &&
+      relatedProductId !== undefined &&
+      (variantGroupResource || (variantPath && explicitEntityProductId !== undefined))
+    ) {
+      rememberVariantGroupRelation(context, relatedProductId, entityId);
+    }
+
+    if (
+      entityId !== undefined &&
+      relatedGroupId !== undefined &&
+      (variantOptionResource || (variantPath && explicitEntityGroupId !== undefined))
+    ) {
+      rememberVariantOptionRelation(context, relatedGroupId, entityId);
+    }
+
     for (const [key, value] of Object.entries(entity)) {
       if (isScalarValue(value)) {
         context.values[key] = value;
@@ -1819,6 +2150,8 @@ async function run(): Promise<void> {
     idsByResource: {},
     slugsByResource: {},
     childIdsByParentId: {},
+    groupIdsByProductId: {},
+    optionIdsByGroupId: {},
   };
   const states: OperationRunState[] = operations.map((operation) => ({
     operation,

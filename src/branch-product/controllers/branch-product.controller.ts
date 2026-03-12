@@ -1,4 +1,4 @@
-import { ApiOkResponse } from '@nestjs/swagger';
+import { ApiOkResponse, ApiOperation } from '@nestjs/swagger';
 import { BranchProductService } from '../branch-product.service';
 import { BranchProductDto } from '../dto/branch-product.dto';
 import { BranchProductPaginationDto } from '../dto/branch-product.pagination.dto';
@@ -17,13 +17,54 @@ import {
 export class BranchProductController {
     constructor(private readonly branchProductService: BranchProductService) {}
 
-    @ApiOkResponse({ type: BranchProductPaginationDto })
+    @ApiOperation({ operationId: 'getPublicBranchProducts' })
+    @ApiOkResponse({
+        type: BranchProductPaginationDto,
+        links: {
+            getBranchProductByIdFromList: {
+                operationId: 'getPublicBranchProductById',
+                parameters: {
+                    id: '$response.body#/items/0/id',
+                },
+            },
+            getBranchProductBySlugFromList: {
+                operationId: 'getPublicBranchProductBySlug',
+                parameters: {
+                    slug: '$response.body#/items/0/slug',
+                    branchId: '$response.body#/items/0/branchId',
+                },
+            },
+            getProductVariantGroupsFromBranchProductList: {
+                operationId: 'getPublicProductVariantGroups',
+                parameters: {
+                    productId: '$response.body#/items/0/productId',
+                },
+            },
+        },
+    })
     @Get()
     async index(@Query() query: FilterBranchProductDto): Promise<BranchProductPaginationDto> {
         return this.branchProductService.getAll(query);
     }
 
-    @ApiOkResponse({ type: BranchProductDto })
+    @ApiOperation({ operationId: 'getPublicBranchProductBySlug' })
+    @ApiOkResponse({
+        type: BranchProductDto,
+        links: {
+            getBranchProductByIdFromSlug: {
+                operationId: 'getPublicBranchProductById',
+                parameters: {
+                    id: '$response.body#/id',
+                },
+            },
+            getProductVariantGroupsFromBranchProductSlug: {
+                operationId: 'getPublicProductVariantGroups',
+                parameters: {
+                    productId: '$response.body#/productId',
+                },
+            },
+        },
+    })
     @Get('by-slug')
     async getItemBySlug(@Query() query: GetBranchProductBySlugDto): Promise<BranchProductDto> {
         const item = await this.branchProductService.getItemBySlug(query.slug, query.branchId);
@@ -35,7 +76,25 @@ export class BranchProductController {
         return item;
     }
 
-    @ApiOkResponse({ type: BranchProductDto })
+    @ApiOperation({ operationId: 'getPublicBranchProductById' })
+    @ApiOkResponse({
+        type: BranchProductDto,
+        links: {
+            getBranchProductBySlugFromId: {
+                operationId: 'getPublicBranchProductBySlug',
+                parameters: {
+                    slug: '$response.body#/slug',
+                    branchId: '$response.body#/branchId',
+                },
+            },
+            getProductVariantGroupsFromBranchProductId: {
+                operationId: 'getPublicProductVariantGroups',
+                parameters: {
+                    productId: '$response.body#/productId',
+                },
+            },
+        },
+    })
     @Get(':id')
     async getItem(@Param('id', ParseIntPipe) id: number): Promise<BranchProductDto> {
         const item = await this.branchProductService.getItem(id);

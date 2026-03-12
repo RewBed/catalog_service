@@ -2,18 +2,20 @@ import { Body, Controller, Get, HttpException, HttpStatus, Post } from '@nestjs/
 import { PrismaService } from '../core/database/prisma.service';
 import { HealthDto } from './dto/health.dto';
 import { HealthPaginationDto } from './dto/health.pagination.dto';
-import { ApiOkResponse } from '@nestjs/swagger';
+import { ApiOkResponse, ApiOperation } from '@nestjs/swagger';
 
 @Controller('health')
 export class HealthController {
     constructor(private readonly prisma: PrismaService) {}
 
+    @ApiOperation({ operationId: 'healthLive' })
     @Get('live')
     live() {
         // Простая проверка того, что сервис жив
         return { status: 'ok' };
     }
 
+    @ApiOperation({ operationId: 'healthReady' })
     @Get('ready')
     async ready() {
         try {
@@ -28,6 +30,7 @@ export class HealthController {
         }
     }
 
+    @ApiOperation({ operationId: 'healthIndex' })
     @ApiOkResponse({ type: HealthPaginationDto })
     @Get()
     async index(): Promise<HealthPaginationDto> {
@@ -41,6 +44,7 @@ export class HealthController {
         }
     }
 
+    @ApiOperation({ operationId: 'healthCreate' })
     @Post()
     create(@Body() dto: HealthDto) {
         return {

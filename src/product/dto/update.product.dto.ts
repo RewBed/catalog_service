@@ -128,6 +128,15 @@ export class UpdateProductDto {
   fullName?: string;
 
   @ApiPropertyOptional({
+    description: 'SKU (article)',
+    example: 'TBL-OAK-140',
+  })
+  @IsOptional()
+  @IsString()
+  @MaxLength(100)
+  sku?: string;
+
+  @ApiPropertyOptional({
     description: 'Product slug',
     example: 'oak-dining-table-140',
   })

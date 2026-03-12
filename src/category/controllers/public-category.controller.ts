@@ -1,5 +1,5 @@
 import { CategoryPaginationDto } from "../dto/category.pagination.dto";
-import { ApiOkResponse } from "@nestjs/swagger";
+import { ApiOkResponse, ApiOperation } from "@nestjs/swagger";
 import { FilterCategoriesDto } from "../dto/filter.categories.dto";
 import { CategoryService } from "../category.service";
 import { CategoryDto } from "../dto/category.dto";
@@ -18,12 +18,24 @@ export class PublicCategoryController {
     constructor(private readonly categoryService: CategoryService) {}
 
     @Get()
-    @ApiOkResponse({ type: CategoryPaginationDto })
+    @ApiOperation({ operationId: 'getPublicCategories' })
+    @ApiOkResponse({
+        type: CategoryPaginationDto,
+        links: {
+            getCategoryByIdFromList: {
+                operationId: 'getPublicCategoryById',
+                parameters: {
+                    id: '$response.body#/items/0/id',
+                },
+            },
+        },
+    })
     async index(@Query() query: FilterCategoriesDto): Promise<CategoryPaginationDto> {
         return this.categoryService.getAll(query);
     }
 
     @Get(':id')
+    @ApiOperation({ operationId: 'getPublicCategoryById' })
     @ApiOkResponse({ type: CategoryDto })
     async getItemById(@Param('id', ParseIntPipe) id: number): Promise<CategoryDto> {
 

@@ -37,9 +37,23 @@ export class AdminProductVariantsController {
     constructor(private readonly productVariantService: ProductVariantService) {}
 
     @ApiBearerAuth()
-    @ApiOperation({ summary: 'Get variant groups for product (admin)' })
+    @ApiOperation({
+        operationId: 'listAdminProductVariantGroups',
+        summary: 'Get variant groups for product (admin)',
+    })
     @ApiParam({ name: 'productId', type: Number })
-    @ApiOkResponse({ type: [AdminProductVariantGroupDto] })
+    @ApiOkResponse({
+        type: [AdminProductVariantGroupDto],
+        links: {
+            getVariantGroupFromList: {
+                operationId: 'getAdminProductVariantGroup',
+                parameters: {
+                    productId: '$request.path.productId',
+                    groupId: '$response.body#/0/id',
+                },
+            },
+        },
+    })
     @UseGuards(GrpcAuthGuard)
     @Get()
     async index(
@@ -50,10 +64,23 @@ export class AdminProductVariantsController {
     }
 
     @ApiBearerAuth()
-    @ApiOperation({ summary: 'Get one variant group (admin)' })
+    @ApiOperation({
+        operationId: 'getAdminProductVariantGroup',
+        summary: 'Get one variant group (admin)',
+    })
     @ApiParam({ name: 'productId', type: Number })
     @ApiParam({ name: 'groupId', type: Number })
-    @ApiOkResponse({ type: AdminProductVariantGroupDto })
+    @ApiOkResponse({
+        type: AdminProductVariantGroupDto,
+        links: {
+            getPublicVariantGroupsForProduct: {
+                operationId: 'getPublicProductVariantGroups',
+                parameters: {
+                    productId: '$request.path.productId',
+                },
+            },
+        },
+    })
     @UseGuards(GrpcAuthGuard)
     @Get(':groupId')
     async getGroup(
@@ -70,9 +97,44 @@ export class AdminProductVariantsController {
     }
 
     @ApiBearerAuth()
-    @ApiOperation({ summary: 'Create variant group for product (admin)' })
+    @ApiOperation({
+        operationId: 'createAdminProductVariantGroup',
+        summary: 'Create variant group for product (admin)',
+    })
     @ApiParam({ name: 'productId', type: Number })
-    @ApiCreatedResponse({ type: AdminProductVariantGroupDto })
+    @ApiCreatedResponse({
+        type: AdminProductVariantGroupDto,
+        links: {
+            getCreatedVariantGroup: {
+                operationId: 'getAdminProductVariantGroup',
+                parameters: {
+                    productId: '$request.path.productId',
+                    groupId: '$response.body#/id',
+                },
+            },
+            updateCreatedVariantGroup: {
+                operationId: 'updateAdminProductVariantGroup',
+                parameters: {
+                    productId: '$request.path.productId',
+                    groupId: '$response.body#/id',
+                },
+            },
+            deleteCreatedVariantGroup: {
+                operationId: 'deleteAdminProductVariantGroup',
+                parameters: {
+                    productId: '$request.path.productId',
+                    groupId: '$response.body#/id',
+                },
+            },
+            restoreCreatedVariantGroup: {
+                operationId: 'restoreAdminProductVariantGroup',
+                parameters: {
+                    productId: '$request.path.productId',
+                    groupId: '$response.body#/id',
+                },
+            },
+        },
+    })
     @UseGuards(GrpcAuthGuard)
     @Post()
     async createGroup(
@@ -83,10 +145,24 @@ export class AdminProductVariantsController {
     }
 
     @ApiBearerAuth()
-    @ApiOperation({ summary: 'Update variant group (admin)' })
+    @ApiOperation({
+        operationId: 'updateAdminProductVariantGroup',
+        summary: 'Update variant group (admin)',
+    })
     @ApiParam({ name: 'productId', type: Number })
     @ApiParam({ name: 'groupId', type: Number })
-    @ApiOkResponse({ type: AdminProductVariantGroupDto })
+    @ApiOkResponse({
+        type: AdminProductVariantGroupDto,
+        links: {
+            getUpdatedVariantGroup: {
+                operationId: 'getAdminProductVariantGroup',
+                parameters: {
+                    productId: '$request.path.productId',
+                    groupId: '$response.body#/id',
+                },
+            },
+        },
+    })
     @UseGuards(GrpcAuthGuard)
     @Patch(':groupId')
     async updateGroup(
@@ -98,7 +174,10 @@ export class AdminProductVariantsController {
     }
 
     @ApiBearerAuth()
-    @ApiOperation({ summary: 'Soft delete variant group (admin)' })
+    @ApiOperation({
+        operationId: 'deleteAdminProductVariantGroup',
+        summary: 'Soft delete variant group (admin)',
+    })
     @ApiParam({ name: 'productId', type: Number })
     @ApiParam({ name: 'groupId', type: Number })
     @ApiNoContentResponse()
@@ -113,10 +192,24 @@ export class AdminProductVariantsController {
     }
 
     @ApiBearerAuth()
-    @ApiOperation({ summary: 'Restore variant group (admin)' })
+    @ApiOperation({
+        operationId: 'restoreAdminProductVariantGroup',
+        summary: 'Restore variant group (admin)',
+    })
     @ApiParam({ name: 'productId', type: Number })
     @ApiParam({ name: 'groupId', type: Number })
-    @ApiOkResponse({ type: AdminProductVariantGroupDto })
+    @ApiOkResponse({
+        type: AdminProductVariantGroupDto,
+        links: {
+            getRestoredVariantGroup: {
+                operationId: 'getAdminProductVariantGroup',
+                parameters: {
+                    productId: '$request.path.productId',
+                    groupId: '$response.body#/id',
+                },
+            },
+        },
+    })
     @UseGuards(GrpcAuthGuard)
     @Patch(':groupId/restore')
     async restoreGroup(
@@ -127,10 +220,48 @@ export class AdminProductVariantsController {
     }
 
     @ApiBearerAuth()
-    @ApiOperation({ summary: 'Create variant option in group (admin)' })
+    @ApiOperation({
+        operationId: 'createAdminProductVariantOption',
+        summary: 'Create variant option in group (admin)',
+    })
     @ApiParam({ name: 'productId', type: Number })
     @ApiParam({ name: 'groupId', type: Number })
-    @ApiCreatedResponse({ type: AdminProductVariantOptionDto })
+    @ApiCreatedResponse({
+        type: AdminProductVariantOptionDto,
+        links: {
+            getGroupForCreatedVariantOption: {
+                operationId: 'getAdminProductVariantGroup',
+                parameters: {
+                    productId: '$request.path.productId',
+                    groupId: '$request.path.groupId',
+                },
+            },
+            updateCreatedVariantOption: {
+                operationId: 'updateAdminProductVariantOption',
+                parameters: {
+                    productId: '$request.path.productId',
+                    groupId: '$request.path.groupId',
+                    optionId: '$response.body#/id',
+                },
+            },
+            deleteCreatedVariantOption: {
+                operationId: 'deleteAdminProductVariantOption',
+                parameters: {
+                    productId: '$request.path.productId',
+                    groupId: '$request.path.groupId',
+                    optionId: '$response.body#/id',
+                },
+            },
+            restoreCreatedVariantOption: {
+                operationId: 'restoreAdminProductVariantOption',
+                parameters: {
+                    productId: '$request.path.productId',
+                    groupId: '$request.path.groupId',
+                    optionId: '$response.body#/id',
+                },
+            },
+        },
+    })
     @UseGuards(GrpcAuthGuard)
     @Post(':groupId/options')
     async createOption(
@@ -142,11 +273,25 @@ export class AdminProductVariantsController {
     }
 
     @ApiBearerAuth()
-    @ApiOperation({ summary: 'Update variant option (admin)' })
+    @ApiOperation({
+        operationId: 'updateAdminProductVariantOption',
+        summary: 'Update variant option (admin)',
+    })
     @ApiParam({ name: 'productId', type: Number })
     @ApiParam({ name: 'groupId', type: Number })
     @ApiParam({ name: 'optionId', type: Number })
-    @ApiOkResponse({ type: AdminProductVariantOptionDto })
+    @ApiOkResponse({
+        type: AdminProductVariantOptionDto,
+        links: {
+            getGroupForUpdatedVariantOption: {
+                operationId: 'getAdminProductVariantGroup',
+                parameters: {
+                    productId: '$request.path.productId',
+                    groupId: '$request.path.groupId',
+                },
+            },
+        },
+    })
     @UseGuards(GrpcAuthGuard)
     @Patch(':groupId/options/:optionId')
     async updateOption(
@@ -159,7 +304,10 @@ export class AdminProductVariantsController {
     }
 
     @ApiBearerAuth()
-    @ApiOperation({ summary: 'Soft delete variant option (admin)' })
+    @ApiOperation({
+        operationId: 'deleteAdminProductVariantOption',
+        summary: 'Soft delete variant option (admin)',
+    })
     @ApiParam({ name: 'productId', type: Number })
     @ApiParam({ name: 'groupId', type: Number })
     @ApiParam({ name: 'optionId', type: Number })
@@ -176,11 +324,25 @@ export class AdminProductVariantsController {
     }
 
     @ApiBearerAuth()
-    @ApiOperation({ summary: 'Restore variant option (admin)' })
+    @ApiOperation({
+        operationId: 'restoreAdminProductVariantOption',
+        summary: 'Restore variant option (admin)',
+    })
     @ApiParam({ name: 'productId', type: Number })
     @ApiParam({ name: 'groupId', type: Number })
     @ApiParam({ name: 'optionId', type: Number })
-    @ApiOkResponse({ type: AdminProductVariantOptionDto })
+    @ApiOkResponse({
+        type: AdminProductVariantOptionDto,
+        links: {
+            getGroupForRestoredVariantOption: {
+                operationId: 'getAdminProductVariantGroup',
+                parameters: {
+                    productId: '$request.path.productId',
+                    groupId: '$request.path.groupId',
+                },
+            },
+        },
+    })
     @UseGuards(GrpcAuthGuard)
     @Patch(':groupId/options/:optionId/restore')
     async restoreOption(

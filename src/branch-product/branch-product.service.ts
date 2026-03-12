@@ -1,5 +1,12 @@
 import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
-import { BranchProduct, Prisma, Product, ProductImage } from 'generated/prisma/client';
+import {
+    BranchProduct,
+    Prisma,
+    Product,
+    ProductImage,
+    ProductVariantGroup,
+    ProductVariantOption,
+} from 'generated/prisma/client';
 import { BranchProductWhereInput, ProductWhereInput } from 'generated/prisma/models';
 import { PrismaService } from 'src/core/database/prisma.service';
 import { BranchProductDto } from './dto/branch-product.dto';
@@ -71,6 +78,11 @@ export class BranchProductService {
             include: {
                 productItem: {
                     include: {
+                        category: {
+                            select: {
+                                name: true,
+                            },
+                        },
                         images: {
                             orderBy: {
                                 sortOrder: 'asc',
@@ -188,6 +200,17 @@ export class BranchProductService {
         const items = await this.prisma.branchProduct.findMany({
             where,
             orderBy: { id: 'asc' },
+            include: {
+                productItem: {
+                    include: {
+                        category: {
+                            select: {
+                                name: true,
+                            },
+                        },
+                    },
+                },
+            },
             skip: (page - 1) * limit,
             take: limit,
         });
@@ -213,9 +236,24 @@ export class BranchProductService {
             include: {
                 productItem: {
                     include: {
+                        category: {
+                            select: {
+                                name: true,
+                            },
+                        },
                         images: {
                             orderBy: {
                                 sortOrder: 'asc',
+                            },
+                        },
+                        variantGroups: {
+                            where: { isActive: true },
+                            orderBy: [{ sortOrder: 'asc' }, { id: 'asc' }],
+                            include: {
+                                options: {
+                                    where: { isActive: true },
+                                    orderBy: [{ sortOrder: 'asc' }, { id: 'asc' }],
+                                },
                             },
                         },
                     },
@@ -244,9 +282,24 @@ export class BranchProductService {
             include: {
                 productItem: {
                     include: {
+                        category: {
+                            select: {
+                                name: true,
+                            },
+                        },
                         images: {
                             orderBy: {
                                 sortOrder: 'asc',
+                            },
+                        },
+                        variantGroups: {
+                            where: { isActive: true },
+                            orderBy: [{ sortOrder: 'asc' }, { id: 'asc' }],
+                            include: {
+                                options: {
+                                    where: { isActive: true },
+                                    orderBy: [{ sortOrder: 'asc' }, { id: 'asc' }],
+                                },
                             },
                         },
                     },
@@ -264,6 +317,25 @@ export class BranchProductService {
     async getItemAdmin(id: number): Promise<AdminBranchProductDto | null> {
         const item = await this.prisma.branchProduct.findUnique({
             where: { id },
+            include: {
+                productItem: {
+                    include: {
+                        category: {
+                            select: {
+                                name: true,
+                            },
+                        },
+                        variantGroups: {
+                            orderBy: [{ sortOrder: 'asc' }, { id: 'asc' }],
+                            include: {
+                                options: {
+                                    orderBy: [{ sortOrder: 'asc' }, { id: 'asc' }],
+                                },
+                            },
+                        },
+                    },
+                },
+            },
         });
 
         if (!item) {
@@ -289,6 +361,11 @@ export class BranchProductService {
                 include: {
                     productItem: {
                         include: {
+                            category: {
+                                select: {
+                                    name: true,
+                                },
+                            },
                             images: {
                                 orderBy: {
                                     sortOrder: 'asc',
@@ -319,6 +396,11 @@ export class BranchProductService {
                 include: {
                     productItem: {
                         include: {
+                            category: {
+                                select: {
+                                    name: true,
+                                },
+                            },
                             images: {
                                 orderBy: {
                                     sortOrder: 'asc',
@@ -359,6 +441,17 @@ export class BranchProductService {
                 data: {
                     isActive: true,
                 },
+                include: {
+                    productItem: {
+                        include: {
+                            category: {
+                                select: {
+                                    name: true,
+                                },
+                            },
+                        },
+                    },
+                },
             });
 
             return this.toAdminDto(item);
@@ -367,31 +460,64 @@ export class BranchProductService {
         }
     }
 
-    private toDto(item: BranchProduct & { productItem?: Product & { images?: ProductImage[] } }): BranchProductDto {
+    private toDto(
+        item: BranchProduct & {
+            productItem?: Product & {
+                category?: {
+                    name: string;
+                };
+                images?: ProductImage[];
+                variantGroups?: (ProductVariantGroup & {
+                    options?: ProductVariantOption[];
+                })[];
+            };
+        },
+    ): BranchProductDto {
         return {
             id: item.id,
             productId: item.productId ?? item.productItem?.id ?? 0,
             categoryId: item.productItem?.categoryId ?? 0,
+            categoryName: item.productItem?.category?.name ?? '',
             branchId: item.branchId,
             price: item.price?.toNumber() ?? item.productItem?.price?.toNumber() ?? 0,
             stock: item.stock,
             name: item.productItem?.name ?? '',
+            sku: item.productItem?.sku ?? undefined,
             description: item.productItem?.description ?? undefined,
             slug: item.productItem?.slug ?? '',
             images: this.mapProductImages(item.productItem?.images),
+            ...(item.productItem?.variantGroups
+                ? { variantGroups: this.mapPublicVariantGroups(item.productItem.variantGroups) }
+                : {}),
         };
     }
 
-    private toAdminDto(item: BranchProduct): AdminBranchProductDto {
+    private toAdminDto(
+        item: BranchProduct & {
+            productItem?: Product & {
+                category?: {
+                    name: string;
+                };
+                variantGroups?: (ProductVariantGroup & {
+                    options?: ProductVariantOption[];
+                })[];
+            };
+        },
+    ): AdminBranchProductDto {
         return {
             id: item.id,
             productId: item.productId,
+            categoryName: item.productItem?.category?.name ?? '',
+            sku: item.productItem?.sku ?? undefined,
             branchId: item.branchId,
             price: item.price?.toNumber() ?? 0,
             stock: item.stock,
             isActive: item.isActive,
             createdAt: item.createdAt,
             updatedAt: item.updatedAt,
+            ...(item.productItem?.variantGroups
+                ? { variantGroups: this.mapAdminVariantGroups(item.productItem.variantGroups) }
+                : {}),
         };
     }
 
@@ -403,6 +529,50 @@ export class BranchProductService {
         return images.map((image) => ({
             url: image.url,
             type: image.type,
+        }));
+    }
+
+    private mapPublicVariantGroups(
+        groups: (ProductVariantGroup & { options?: ProductVariantOption[] })[],
+    ): NonNullable<BranchProductDto['variantGroups']> {
+        return groups.map((group) => ({
+            id: group.id,
+            name: group.name,
+            isRequired: group.isRequired,
+            sortOrder: group.sortOrder,
+            options:
+                group.options?.map((option) => ({
+                    id: option.id,
+                    name: option.name,
+                    priceDelta: option.priceDelta.toNumber(),
+                    sortOrder: option.sortOrder,
+                })) ?? [],
+        }));
+    }
+
+    private mapAdminVariantGroups(
+        groups: (ProductVariantGroup & { options?: ProductVariantOption[] })[],
+    ): NonNullable<AdminBranchProductDto['variantGroups']> {
+        return groups.map((group) => ({
+            id: group.id,
+            productId: group.productId,
+            name: group.name,
+            isRequired: group.isRequired,
+            sortOrder: group.sortOrder,
+            isActive: group.isActive,
+            options:
+                group.options?.map((option) => ({
+                    id: option.id,
+                    groupId: option.groupId,
+                    name: option.name,
+                    priceDelta: option.priceDelta.toNumber(),
+                    sortOrder: option.sortOrder,
+                    isActive: option.isActive,
+                    createdAt: option.createdAt,
+                    updatedAt: option.updatedAt,
+                })) ?? [],
+            createdAt: group.createdAt,
+            updatedAt: group.updatedAt,
         }));
     }
 

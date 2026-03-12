@@ -3,13 +3,14 @@
   "paths": {
     "/health/live": {
       "get": {
-        "operationId": "HealthController_live",
+        "operationId": "healthLive",
         "parameters": [],
         "responses": {
           "200": {
             "description": ""
           }
         },
+        "summary": "",
         "tags": [
           "Health"
         ]
@@ -17,13 +18,14 @@
     },
     "/health/ready": {
       "get": {
-        "operationId": "HealthController_ready",
+        "operationId": "healthReady",
         "parameters": [],
         "responses": {
           "200": {
             "description": ""
           }
         },
+        "summary": "",
         "tags": [
           "Health"
         ]
@@ -31,7 +33,7 @@
     },
     "/health": {
       "get": {
-        "operationId": "HealthController_index",
+        "operationId": "healthIndex",
         "parameters": [],
         "responses": {
           "200": {
@@ -45,12 +47,13 @@
             }
           }
         },
+        "summary": "",
         "tags": [
           "Health"
         ]
       },
       "post": {
-        "operationId": "HealthController_create",
+        "operationId": "healthCreate",
         "parameters": [],
         "requestBody": {
           "required": true,
@@ -67,6 +70,7 @@
             "description": ""
           }
         },
+        "summary": "",
         "tags": [
           "Health"
         ]
@@ -74,7 +78,7 @@
     },
     "/api/categories": {
       "get": {
-        "operationId": "PublicCategoryController_index",
+        "operationId": "getPublicCategories",
         "parameters": [
           {
             "name": "name",
@@ -131,6 +135,14 @@
         ],
         "responses": {
           "200": {
+            "links": {
+              "getCategoryByIdFromList": {
+                "operationId": "getPublicCategoryById",
+                "parameters": {
+                  "id": "$response.body#/items/0/id"
+                }
+              }
+            },
             "description": "",
             "content": {
               "application/json": {
@@ -141,6 +153,7 @@
             }
           }
         },
+        "summary": "",
         "tags": [
           "PublicCategory"
         ]
@@ -148,7 +161,7 @@
     },
     "/api/categories/{id}": {
       "get": {
-        "operationId": "PublicCategoryController_getItemById",
+        "operationId": "getPublicCategoryById",
         "parameters": [
           {
             "name": "id",
@@ -171,6 +184,7 @@
             }
           }
         },
+        "summary": "",
         "tags": [
           "PublicCategory"
         ]
@@ -178,7 +192,7 @@
     },
     "/api/admin/categories": {
       "get": {
-        "operationId": "AdminCategoryController_index",
+        "operationId": "getAdminCategories",
         "parameters": [
           {
             "name": "name",
@@ -245,6 +259,14 @@
         ],
         "responses": {
           "200": {
+            "links": {
+              "getAdminCategoryByIdFromList": {
+                "operationId": "getAdminCategoryById",
+                "parameters": {
+                  "id": "$response.body#/items/0/id"
+                }
+              }
+            },
             "description": "",
             "content": {
               "application/json": {
@@ -260,12 +282,13 @@
             "bearer": []
           }
         ],
+        "summary": "",
         "tags": [
           "AdminCategory"
         ]
       },
       "post": {
-        "operationId": "AdminCategoryController_create",
+        "operationId": "createAdminCategory",
         "parameters": [],
         "requestBody": {
           "required": true,
@@ -279,6 +302,32 @@
         },
         "responses": {
           "201": {
+            "links": {
+              "getCreatedAdminCategory": {
+                "operationId": "getAdminCategoryById",
+                "parameters": {
+                  "id": "$response.body#/id"
+                }
+              },
+              "updateCreatedAdminCategory": {
+                "operationId": "updateAdminCategory",
+                "parameters": {
+                  "id": "$response.body#/id"
+                }
+              },
+              "deleteCreatedAdminCategory": {
+                "operationId": "deleteAdminCategory",
+                "parameters": {
+                  "id": "$response.body#/id"
+                }
+              },
+              "restoreCreatedAdminCategory": {
+                "operationId": "restoreAdminCategory",
+                "parameters": {
+                  "id": "$response.body#/id"
+                }
+              }
+            },
             "description": "",
             "content": {
               "application/json": {
@@ -294,6 +343,7 @@
             "bearer": []
           }
         ],
+        "summary": "",
         "tags": [
           "AdminCategory"
         ]
@@ -301,7 +351,7 @@
     },
     "/api/admin/categories/{id}": {
       "get": {
-        "operationId": "AdminCategoryController_getItemById",
+        "operationId": "getAdminCategoryById",
         "parameters": [
           {
             "name": "id",
@@ -314,6 +364,14 @@
         ],
         "responses": {
           "200": {
+            "links": {
+              "getPublicCategoryByIdFromAdmin": {
+                "operationId": "getPublicCategoryById",
+                "parameters": {
+                  "id": "$response.body#/id"
+                }
+              }
+            },
             "description": "",
             "content": {
               "application/json": {
@@ -324,12 +382,13 @@
             }
           }
         },
+        "summary": "",
         "tags": [
           "AdminCategory"
         ]
       },
       "patch": {
-        "operationId": "AdminCategoryController_update",
+        "operationId": "updateAdminCategory",
         "parameters": [
           {
             "name": "id",
@@ -352,6 +411,14 @@
         },
         "responses": {
           "200": {
+            "links": {
+              "getUpdatedAdminCategory": {
+                "operationId": "getAdminCategoryById",
+                "parameters": {
+                  "id": "$response.body#/id"
+                }
+              }
+            },
             "description": "",
             "content": {
               "application/json": {
@@ -367,12 +434,13 @@
             "bearer": []
           }
         ],
+        "summary": "",
         "tags": [
           "AdminCategory"
         ]
       },
       "delete": {
-        "operationId": "AdminCategoryController_remove",
+        "operationId": "deleteAdminCategory",
         "parameters": [
           {
             "name": "id",
@@ -393,6 +461,7 @@
             "bearer": []
           }
         ],
+        "summary": "",
         "tags": [
           "AdminCategory"
         ]
@@ -400,7 +469,7 @@
     },
     "/api/admin/categories/{id}/restore": {
       "patch": {
-        "operationId": "AdminCategoryController_restore",
+        "operationId": "restoreAdminCategory",
         "parameters": [
           {
             "name": "id",
@@ -413,6 +482,14 @@
         ],
         "responses": {
           "200": {
+            "links": {
+              "getRestoredAdminCategory": {
+                "operationId": "getAdminCategoryById",
+                "parameters": {
+                  "id": "$response.body#/id"
+                }
+              }
+            },
             "description": "",
             "content": {
               "application/json": {
@@ -428,6 +505,7 @@
             "bearer": []
           }
         ],
+        "summary": "",
         "tags": [
           "AdminCategory"
         ]
@@ -435,7 +513,7 @@
     },
     "/api/admin/products": {
       "get": {
-        "operationId": "AdminProductController_index",
+        "operationId": "getAdminProducts",
         "parameters": [
           {
             "name": "name",
@@ -444,6 +522,26 @@
             "description": "Filter by product name (partial match)",
             "schema": {
               "example": "oak",
+              "type": "string"
+            }
+          },
+          {
+            "name": "slug",
+            "required": false,
+            "in": "query",
+            "description": "Filter by product slug (partial match)",
+            "schema": {
+              "example": "oak-dining",
+              "type": "string"
+            }
+          },
+          {
+            "name": "description",
+            "required": false,
+            "in": "query",
+            "description": "Filter by product description (partial match)",
+            "schema": {
+              "example": "dining",
               "type": "string"
             }
           },
@@ -512,6 +610,26 @@
         ],
         "responses": {
           "200": {
+            "links": {
+              "getAdminProductByIdFromList": {
+                "operationId": "getAdminProductById",
+                "parameters": {
+                  "id": "$response.body#/items/0/id"
+                }
+              },
+              "getAdminProductVariantGroupsFromList": {
+                "operationId": "listAdminProductVariantGroups",
+                "parameters": {
+                  "productId": "$response.body#/items/0/id"
+                }
+              },
+              "getPublicProductVariantGroupsFromList": {
+                "operationId": "getPublicProductVariantGroups",
+                "parameters": {
+                  "productId": "$response.body#/items/0/id"
+                }
+              }
+            },
             "description": "",
             "content": {
               "application/json": {
@@ -527,13 +645,14 @@
             "bearer": []
           }
         ],
+        "summary": "",
         "tags": [
           "Admin Products"
         ]
       },
       "post": {
         "description": "Supports optional nested variant groups and options in variantGroups[]",
-        "operationId": "AdminProductController_create",
+        "operationId": "createAdminProduct",
         "parameters": [],
         "requestBody": {
           "required": true,
@@ -547,6 +666,32 @@
         },
         "responses": {
           "201": {
+            "links": {
+              "getCreatedAdminProduct": {
+                "operationId": "getAdminProductById",
+                "parameters": {
+                  "id": "$response.body#/id"
+                }
+              },
+              "updateCreatedAdminProduct": {
+                "operationId": "updateAdminProduct",
+                "parameters": {
+                  "id": "$response.body#/id"
+                }
+              },
+              "deleteCreatedAdminProduct": {
+                "operationId": "deleteAdminProduct",
+                "parameters": {
+                  "id": "$response.body#/id"
+                }
+              },
+              "getCreatedAdminProductVariantGroups": {
+                "operationId": "listAdminProductVariantGroups",
+                "parameters": {
+                  "productId": "$response.body#/id"
+                }
+              }
+            },
             "description": "",
             "content": {
               "application/json": {
@@ -570,7 +715,7 @@
     },
     "/api/admin/products/{id}": {
       "get": {
-        "operationId": "AdminProductController_getProduct",
+        "operationId": "getAdminProductById",
         "parameters": [
           {
             "name": "id",
@@ -583,6 +728,20 @@
         ],
         "responses": {
           "200": {
+            "links": {
+              "getAdminProductVariantGroups": {
+                "operationId": "listAdminProductVariantGroups",
+                "parameters": {
+                  "productId": "$response.body#/id"
+                }
+              },
+              "getPublicProductVariantGroups": {
+                "operationId": "getPublicProductVariantGroups",
+                "parameters": {
+                  "productId": "$response.body#/id"
+                }
+              }
+            },
             "description": "",
             "content": {
               "application/json": {
@@ -598,13 +757,14 @@
             "bearer": []
           }
         ],
+        "summary": "",
         "tags": [
           "Admin Products"
         ]
       },
       "patch": {
         "description": "Supports optional nested variantGroups[] updates: with id updates existing group/option, without id creates new one",
-        "operationId": "AdminProductController_update",
+        "operationId": "updateAdminProduct",
         "parameters": [
           {
             "name": "id",
@@ -627,6 +787,14 @@
         },
         "responses": {
           "200": {
+            "links": {
+              "getUpdatedAdminProduct": {
+                "operationId": "getAdminProductById",
+                "parameters": {
+                  "id": "$response.body#/id"
+                }
+              }
+            },
             "description": "",
             "content": {
               "application/json": {
@@ -648,7 +816,7 @@
         ]
       },
       "delete": {
-        "operationId": "AdminProductController_remove",
+        "operationId": "deleteAdminProduct",
         "parameters": [
           {
             "name": "id",
@@ -669,6 +837,7 @@
             "bearer": []
           }
         ],
+        "summary": "",
         "tags": [
           "Admin Products"
         ]
@@ -676,7 +845,7 @@
     },
     "/api/admin/products/{id}/restore": {
       "patch": {
-        "operationId": "AdminProductController_restore",
+        "operationId": "restoreAdminProduct",
         "parameters": [
           {
             "name": "id",
@@ -689,6 +858,14 @@
         ],
         "responses": {
           "200": {
+            "links": {
+              "getRestoredAdminProduct": {
+                "operationId": "getAdminProductById",
+                "parameters": {
+                  "id": "$response.body#/id"
+                }
+              }
+            },
             "description": "",
             "content": {
               "application/json": {
@@ -704,6 +881,7 @@
             "bearer": []
           }
         ],
+        "summary": "",
         "tags": [
           "Admin Products"
         ]
@@ -711,7 +889,7 @@
     },
     "/api/admin/products/{productId}/variant-groups": {
       "get": {
-        "operationId": "AdminProductVariantsController_index",
+        "operationId": "listAdminProductVariantGroups",
         "parameters": [
           {
             "name": "productId",
@@ -734,6 +912,15 @@
         ],
         "responses": {
           "200": {
+            "links": {
+              "getVariantGroupFromList": {
+                "operationId": "getAdminProductVariantGroup",
+                "parameters": {
+                  "productId": "$request.path.productId",
+                  "groupId": "$response.body#/0/id"
+                }
+              }
+            },
             "description": "",
             "content": {
               "application/json": {
@@ -758,7 +945,7 @@
         ]
       },
       "post": {
-        "operationId": "AdminProductVariantsController_createGroup",
+        "operationId": "createAdminProductVariantGroup",
         "parameters": [
           {
             "name": "productId",
@@ -781,6 +968,36 @@
         },
         "responses": {
           "201": {
+            "links": {
+              "getCreatedVariantGroup": {
+                "operationId": "getAdminProductVariantGroup",
+                "parameters": {
+                  "productId": "$request.path.productId",
+                  "groupId": "$response.body#/id"
+                }
+              },
+              "updateCreatedVariantGroup": {
+                "operationId": "updateAdminProductVariantGroup",
+                "parameters": {
+                  "productId": "$request.path.productId",
+                  "groupId": "$response.body#/id"
+                }
+              },
+              "deleteCreatedVariantGroup": {
+                "operationId": "deleteAdminProductVariantGroup",
+                "parameters": {
+                  "productId": "$request.path.productId",
+                  "groupId": "$response.body#/id"
+                }
+              },
+              "restoreCreatedVariantGroup": {
+                "operationId": "restoreAdminProductVariantGroup",
+                "parameters": {
+                  "productId": "$request.path.productId",
+                  "groupId": "$response.body#/id"
+                }
+              }
+            },
             "description": "",
             "content": {
               "application/json": {
@@ -804,7 +1021,7 @@
     },
     "/api/admin/products/{productId}/variant-groups/{groupId}": {
       "get": {
-        "operationId": "AdminProductVariantsController_getGroup",
+        "operationId": "getAdminProductVariantGroup",
         "parameters": [
           {
             "name": "productId",
@@ -825,6 +1042,14 @@
         ],
         "responses": {
           "200": {
+            "links": {
+              "getPublicVariantGroupsForProduct": {
+                "operationId": "getPublicProductVariantGroups",
+                "parameters": {
+                  "productId": "$request.path.productId"
+                }
+              }
+            },
             "description": "",
             "content": {
               "application/json": {
@@ -846,7 +1071,7 @@
         ]
       },
       "patch": {
-        "operationId": "AdminProductVariantsController_updateGroup",
+        "operationId": "updateAdminProductVariantGroup",
         "parameters": [
           {
             "name": "productId",
@@ -877,6 +1102,15 @@
         },
         "responses": {
           "200": {
+            "links": {
+              "getUpdatedVariantGroup": {
+                "operationId": "getAdminProductVariantGroup",
+                "parameters": {
+                  "productId": "$request.path.productId",
+                  "groupId": "$response.body#/id"
+                }
+              }
+            },
             "description": "",
             "content": {
               "application/json": {
@@ -898,7 +1132,7 @@
         ]
       },
       "delete": {
-        "operationId": "AdminProductVariantsController_removeGroup",
+        "operationId": "deleteAdminProductVariantGroup",
         "parameters": [
           {
             "name": "productId",
@@ -935,7 +1169,7 @@
     },
     "/api/admin/products/{productId}/variant-groups/{groupId}/restore": {
       "patch": {
-        "operationId": "AdminProductVariantsController_restoreGroup",
+        "operationId": "restoreAdminProductVariantGroup",
         "parameters": [
           {
             "name": "productId",
@@ -956,6 +1190,15 @@
         ],
         "responses": {
           "200": {
+            "links": {
+              "getRestoredVariantGroup": {
+                "operationId": "getAdminProductVariantGroup",
+                "parameters": {
+                  "productId": "$request.path.productId",
+                  "groupId": "$response.body#/id"
+                }
+              }
+            },
             "description": "",
             "content": {
               "application/json": {
@@ -979,7 +1222,7 @@
     },
     "/api/admin/products/{productId}/variant-groups/{groupId}/options": {
       "post": {
-        "operationId": "AdminProductVariantsController_createOption",
+        "operationId": "createAdminProductVariantOption",
         "parameters": [
           {
             "name": "productId",
@@ -1010,6 +1253,39 @@
         },
         "responses": {
           "201": {
+            "links": {
+              "getGroupForCreatedVariantOption": {
+                "operationId": "getAdminProductVariantGroup",
+                "parameters": {
+                  "productId": "$request.path.productId",
+                  "groupId": "$request.path.groupId"
+                }
+              },
+              "updateCreatedVariantOption": {
+                "operationId": "updateAdminProductVariantOption",
+                "parameters": {
+                  "productId": "$request.path.productId",
+                  "groupId": "$request.path.groupId",
+                  "optionId": "$response.body#/id"
+                }
+              },
+              "deleteCreatedVariantOption": {
+                "operationId": "deleteAdminProductVariantOption",
+                "parameters": {
+                  "productId": "$request.path.productId",
+                  "groupId": "$request.path.groupId",
+                  "optionId": "$response.body#/id"
+                }
+              },
+              "restoreCreatedVariantOption": {
+                "operationId": "restoreAdminProductVariantOption",
+                "parameters": {
+                  "productId": "$request.path.productId",
+                  "groupId": "$request.path.groupId",
+                  "optionId": "$response.body#/id"
+                }
+              }
+            },
             "description": "",
             "content": {
               "application/json": {
@@ -1033,7 +1309,7 @@
     },
     "/api/admin/products/{productId}/variant-groups/{groupId}/options/{optionId}": {
       "patch": {
-        "operationId": "AdminProductVariantsController_updateOption",
+        "operationId": "updateAdminProductVariantOption",
         "parameters": [
           {
             "name": "productId",
@@ -1072,6 +1348,15 @@
         },
         "responses": {
           "200": {
+            "links": {
+              "getGroupForUpdatedVariantOption": {
+                "operationId": "getAdminProductVariantGroup",
+                "parameters": {
+                  "productId": "$request.path.productId",
+                  "groupId": "$request.path.groupId"
+                }
+              }
+            },
             "description": "",
             "content": {
               "application/json": {
@@ -1093,7 +1378,7 @@
         ]
       },
       "delete": {
-        "operationId": "AdminProductVariantsController_removeOption",
+        "operationId": "deleteAdminProductVariantOption",
         "parameters": [
           {
             "name": "productId",
@@ -1138,7 +1423,7 @@
     },
     "/api/admin/products/{productId}/variant-groups/{groupId}/options/{optionId}/restore": {
       "patch": {
-        "operationId": "AdminProductVariantsController_restoreOption",
+        "operationId": "restoreAdminProductVariantOption",
         "parameters": [
           {
             "name": "productId",
@@ -1167,6 +1452,15 @@
         ],
         "responses": {
           "200": {
+            "links": {
+              "getGroupForRestoredVariantOption": {
+                "operationId": "getAdminProductVariantGroup",
+                "parameters": {
+                  "productId": "$request.path.productId",
+                  "groupId": "$request.path.groupId"
+                }
+              }
+            },
             "description": "",
             "content": {
               "application/json": {
@@ -1190,7 +1484,7 @@
     },
     "/api/products/{productId}/variant-groups": {
       "get": {
-        "operationId": "ProductVariantController_index",
+        "operationId": "getPublicProductVariantGroups",
         "parameters": [
           {
             "name": "productId",
@@ -1203,6 +1497,15 @@
         ],
         "responses": {
           "200": {
+            "links": {
+              "calculatePriceFromFirstVariantOption": {
+                "operationId": "getPublicProductVariantPrice",
+                "parameters": {
+                  "productId": "$request.path.productId",
+                  "optionIds": "$response.body#/0/options/0/id"
+                }
+              }
+            },
             "description": "",
             "content": {
               "application/json": {
@@ -1224,7 +1527,7 @@
     },
     "/api/products/{productId}/variant-groups/price": {
       "get": {
-        "operationId": "ProductVariantController_getPrice",
+        "operationId": "getPublicProductVariantPrice",
         "parameters": [
           {
             "name": "productId",
@@ -1271,7 +1574,7 @@
     },
     "/api/branches": {
       "get": {
-        "operationId": "PublicBranchController_index",
+        "operationId": "getPublicBranches",
         "parameters": [
           {
             "name": "page",
@@ -1298,6 +1601,14 @@
         ],
         "responses": {
           "200": {
+            "links": {
+              "getBranchByIdFromList": {
+                "operationId": "getPublicBranchById",
+                "parameters": {
+                  "id": "$response.body#/items/0/id"
+                }
+              }
+            },
             "description": "",
             "content": {
               "application/json": {
@@ -1308,6 +1619,7 @@
             }
           }
         },
+        "summary": "",
         "tags": [
           "PublicBranch"
         ]
@@ -1315,7 +1627,7 @@
     },
     "/api/branches/{id}": {
       "get": {
-        "operationId": "PublicBranchController_getItem",
+        "operationId": "getPublicBranchById",
         "parameters": [
           {
             "name": "id",
@@ -1338,6 +1650,7 @@
             }
           }
         },
+        "summary": "",
         "tags": [
           "PublicBranch"
         ]
@@ -1345,7 +1658,7 @@
     },
     "/api/admin/branches": {
       "get": {
-        "operationId": "AdminBranchController_index",
+        "operationId": "getAdminBranches",
         "parameters": [
           {
             "name": "page",
@@ -1382,6 +1695,14 @@
         ],
         "responses": {
           "200": {
+            "links": {
+              "getAdminBranchByIdFromList": {
+                "operationId": "getAdminBranchById",
+                "parameters": {
+                  "id": "$response.body#/items/0/id"
+                }
+              }
+            },
             "description": "",
             "content": {
               "application/json": {
@@ -1397,12 +1718,13 @@
             "bearer": []
           }
         ],
+        "summary": "",
         "tags": [
           "AdminBranch"
         ]
       },
       "post": {
-        "operationId": "AdminBranchController_create",
+        "operationId": "createAdminBranch",
         "parameters": [],
         "requestBody": {
           "required": true,
@@ -1416,6 +1738,32 @@
         },
         "responses": {
           "201": {
+            "links": {
+              "getCreatedAdminBranch": {
+                "operationId": "getAdminBranchById",
+                "parameters": {
+                  "id": "$response.body#/id"
+                }
+              },
+              "updateCreatedAdminBranch": {
+                "operationId": "updateAdminBranch",
+                "parameters": {
+                  "id": "$response.body#/id"
+                }
+              },
+              "deleteCreatedAdminBranch": {
+                "operationId": "deleteAdminBranch",
+                "parameters": {
+                  "id": "$response.body#/id"
+                }
+              },
+              "restoreCreatedAdminBranch": {
+                "operationId": "restoreAdminBranch",
+                "parameters": {
+                  "id": "$response.body#/id"
+                }
+              }
+            },
             "description": "",
             "content": {
               "application/json": {
@@ -1431,6 +1779,7 @@
             "bearer": []
           }
         ],
+        "summary": "",
         "tags": [
           "AdminBranch"
         ]
@@ -1438,7 +1787,7 @@
     },
     "/api/admin/branches/{id}": {
       "get": {
-        "operationId": "AdminBranchController_getItem",
+        "operationId": "getAdminBranchById",
         "parameters": [
           {
             "name": "id",
@@ -1466,12 +1815,13 @@
             "bearer": []
           }
         ],
+        "summary": "",
         "tags": [
           "AdminBranch"
         ]
       },
       "patch": {
-        "operationId": "AdminBranchController_update",
+        "operationId": "updateAdminBranch",
         "parameters": [
           {
             "name": "id",
@@ -1494,6 +1844,14 @@
         },
         "responses": {
           "200": {
+            "links": {
+              "getUpdatedAdminBranch": {
+                "operationId": "getAdminBranchById",
+                "parameters": {
+                  "id": "$response.body#/id"
+                }
+              }
+            },
             "description": "",
             "content": {
               "application/json": {
@@ -1509,12 +1867,13 @@
             "bearer": []
           }
         ],
+        "summary": "",
         "tags": [
           "AdminBranch"
         ]
       },
       "delete": {
-        "operationId": "AdminBranchController_remove",
+        "operationId": "deleteAdminBranch",
         "parameters": [
           {
             "name": "id",
@@ -1535,6 +1894,7 @@
             "bearer": []
           }
         ],
+        "summary": "",
         "tags": [
           "AdminBranch"
         ]
@@ -1542,7 +1902,7 @@
     },
     "/api/admin/branches/{id}/restore": {
       "patch": {
-        "operationId": "AdminBranchController_restore",
+        "operationId": "restoreAdminBranch",
         "parameters": [
           {
             "name": "id",
@@ -1555,6 +1915,14 @@
         ],
         "responses": {
           "200": {
+            "links": {
+              "getRestoredAdminBranch": {
+                "operationId": "getAdminBranchById",
+                "parameters": {
+                  "id": "$response.body#/id"
+                }
+              }
+            },
             "description": "",
             "content": {
               "application/json": {
@@ -1570,6 +1938,7 @@
             "bearer": []
           }
         ],
+        "summary": "",
         "tags": [
           "AdminBranch"
         ]
@@ -1577,7 +1946,7 @@
     },
     "/api/branch-products": {
       "get": {
-        "operationId": "BranchProductController_index",
+        "operationId": "getPublicBranchProducts",
         "parameters": [
           {
             "name": "branchId",
@@ -1630,6 +1999,16 @@
             }
           },
           {
+            "name": "slug",
+            "required": false,
+            "in": "query",
+            "description": "Product slug filter (partial match, case-insensitive)",
+            "schema": {
+              "example": "oak-dining",
+              "type": "string"
+            }
+          },
+          {
             "name": "description",
             "required": false,
             "in": "query",
@@ -1674,6 +2053,27 @@
         ],
         "responses": {
           "200": {
+            "links": {
+              "getBranchProductByIdFromList": {
+                "operationId": "getPublicBranchProductById",
+                "parameters": {
+                  "id": "$response.body#/items/0/id"
+                }
+              },
+              "getBranchProductBySlugFromList": {
+                "operationId": "getPublicBranchProductBySlug",
+                "parameters": {
+                  "slug": "$response.body#/items/0/slug",
+                  "branchId": "$response.body#/items/0/branchId"
+                }
+              },
+              "getProductVariantGroupsFromBranchProductList": {
+                "operationId": "getPublicProductVariantGroups",
+                "parameters": {
+                  "productId": "$response.body#/items/0/productId"
+                }
+              }
+            },
             "description": "",
             "content": {
               "application/json": {
@@ -1684,6 +2084,7 @@
             }
           }
         },
+        "summary": "",
         "tags": [
           "BranchProduct"
         ]
@@ -1691,7 +2092,7 @@
     },
     "/api/branch-products/by-slug": {
       "get": {
-        "operationId": "BranchProductController_getItemBySlug",
+        "operationId": "getPublicBranchProductBySlug",
         "parameters": [
           {
             "name": "slug",
@@ -1716,6 +2117,20 @@
         ],
         "responses": {
           "200": {
+            "links": {
+              "getBranchProductByIdFromSlug": {
+                "operationId": "getPublicBranchProductById",
+                "parameters": {
+                  "id": "$response.body#/id"
+                }
+              },
+              "getProductVariantGroupsFromBranchProductSlug": {
+                "operationId": "getPublicProductVariantGroups",
+                "parameters": {
+                  "productId": "$response.body#/productId"
+                }
+              }
+            },
             "description": "",
             "content": {
               "application/json": {
@@ -1726,6 +2141,7 @@
             }
           }
         },
+        "summary": "",
         "tags": [
           "BranchProduct"
         ]
@@ -1733,7 +2149,7 @@
     },
     "/api/branch-products/{id}": {
       "get": {
-        "operationId": "BranchProductController_getItem",
+        "operationId": "getPublicBranchProductById",
         "parameters": [
           {
             "name": "id",
@@ -1746,6 +2162,21 @@
         ],
         "responses": {
           "200": {
+            "links": {
+              "getBranchProductBySlugFromId": {
+                "operationId": "getPublicBranchProductBySlug",
+                "parameters": {
+                  "slug": "$response.body#/slug",
+                  "branchId": "$response.body#/branchId"
+                }
+              },
+              "getProductVariantGroupsFromBranchProductId": {
+                "operationId": "getPublicProductVariantGroups",
+                "parameters": {
+                  "productId": "$response.body#/productId"
+                }
+              }
+            },
             "description": "",
             "content": {
               "application/json": {
@@ -1756,6 +2187,7 @@
             }
           }
         },
+        "summary": "",
         "tags": [
           "BranchProduct"
         ]
@@ -1763,7 +2195,7 @@
     },
     "/api/admin/branch-products": {
       "get": {
-        "operationId": "AdminBranchProductsController_index",
+        "operationId": "getAdminBranchProducts",
         "parameters": [
           {
             "name": "id",
@@ -1783,6 +2215,36 @@
             "schema": {
               "example": 101,
               "type": "number"
+            }
+          },
+          {
+            "name": "name",
+            "required": false,
+            "in": "query",
+            "description": "Product name filter (partial match, case-insensitive)",
+            "schema": {
+              "example": "oak",
+              "type": "string"
+            }
+          },
+          {
+            "name": "slug",
+            "required": false,
+            "in": "query",
+            "description": "Product slug filter (partial match, case-insensitive)",
+            "schema": {
+              "example": "oak-dining",
+              "type": "string"
+            }
+          },
+          {
+            "name": "description",
+            "required": false,
+            "in": "query",
+            "description": "Product description filter (partial match, case-insensitive)",
+            "schema": {
+              "example": "dining",
+              "type": "string"
             }
           },
           {
@@ -1934,6 +2396,14 @@
         ],
         "responses": {
           "200": {
+            "links": {
+              "getAdminBranchProductByIdFromList": {
+                "operationId": "getAdminBranchProductById",
+                "parameters": {
+                  "id": "$response.body#/items/0/id"
+                }
+              }
+            },
             "description": "",
             "content": {
               "application/json": {
@@ -1949,12 +2419,13 @@
             "bearer": []
           }
         ],
+        "summary": "",
         "tags": [
           "AdminBranchProducts"
         ]
       },
       "post": {
-        "operationId": "AdminBranchProductsController_create",
+        "operationId": "createAdminBranchProduct",
         "parameters": [],
         "requestBody": {
           "required": true,
@@ -1968,6 +2439,32 @@
         },
         "responses": {
           "201": {
+            "links": {
+              "getCreatedAdminBranchProduct": {
+                "operationId": "getAdminBranchProductById",
+                "parameters": {
+                  "id": "$response.body#/id"
+                }
+              },
+              "updateCreatedAdminBranchProduct": {
+                "operationId": "updateAdminBranchProduct",
+                "parameters": {
+                  "id": "$response.body#/id"
+                }
+              },
+              "deleteCreatedAdminBranchProduct": {
+                "operationId": "deleteAdminBranchProduct",
+                "parameters": {
+                  "id": "$response.body#/id"
+                }
+              },
+              "getCreatedAdminBranchProductPublicCard": {
+                "operationId": "getPublicBranchProductById",
+                "parameters": {
+                  "id": "$response.body#/id"
+                }
+              }
+            },
             "description": "",
             "content": {
               "application/json": {
@@ -1983,6 +2480,7 @@
             "bearer": []
           }
         ],
+        "summary": "",
         "tags": [
           "AdminBranchProducts"
         ]
@@ -1990,7 +2488,7 @@
     },
     "/api/admin/branch-products/{id}": {
       "get": {
-        "operationId": "AdminBranchProductsController_getItem",
+        "operationId": "getAdminBranchProductById",
         "parameters": [
           {
             "name": "id",
@@ -2003,6 +2501,14 @@
         ],
         "responses": {
           "200": {
+            "links": {
+              "getProductFromAdminBranchProduct": {
+                "operationId": "getAdminProductById",
+                "parameters": {
+                  "id": "$response.body#/productId"
+                }
+              }
+            },
             "description": "",
             "content": {
               "application/json": {
@@ -2018,12 +2524,13 @@
             "bearer": []
           }
         ],
+        "summary": "",
         "tags": [
           "AdminBranchProducts"
         ]
       },
       "patch": {
-        "operationId": "AdminBranchProductsController_update",
+        "operationId": "updateAdminBranchProduct",
         "parameters": [
           {
             "name": "id",
@@ -2046,6 +2553,14 @@
         },
         "responses": {
           "200": {
+            "links": {
+              "getUpdatedAdminBranchProduct": {
+                "operationId": "getAdminBranchProductById",
+                "parameters": {
+                  "id": "$response.body#/id"
+                }
+              }
+            },
             "description": "",
             "content": {
               "application/json": {
@@ -2061,12 +2576,13 @@
             "bearer": []
           }
         ],
+        "summary": "",
         "tags": [
           "AdminBranchProducts"
         ]
       },
       "delete": {
-        "operationId": "AdminBranchProductsController_remove",
+        "operationId": "deleteAdminBranchProduct",
         "parameters": [
           {
             "name": "id",
@@ -2087,6 +2603,7 @@
             "bearer": []
           }
         ],
+        "summary": "",
         "tags": [
           "AdminBranchProducts"
         ]
@@ -2094,7 +2611,7 @@
     },
     "/api/admin/branch-products/{id}/restore": {
       "patch": {
-        "operationId": "AdminBranchProductsController_restore",
+        "operationId": "restoreAdminBranchProduct",
         "parameters": [
           {
             "name": "id",
@@ -2107,6 +2624,14 @@
         ],
         "responses": {
           "200": {
+            "links": {
+              "getRestoredAdminBranchProduct": {
+                "operationId": "getAdminBranchProductById",
+                "parameters": {
+                  "id": "$response.body#/id"
+                }
+              }
+            },
             "description": "",
             "content": {
               "application/json": {
@@ -2122,6 +2647,7 @@
             "bearer": []
           }
         ],
+        "summary": "",
         "tags": [
           "AdminBranchProducts"
         ]
@@ -2567,6 +3093,11 @@
             "description": "Full product name",
             "example": "Solid Oak Dining Table 120 x 80 cm"
           },
+          "sku": {
+            "type": "string",
+            "description": "SKU (article)",
+            "example": "TBL-OAK-120"
+          },
           "slug": {
             "type": "string",
             "description": "Product slug",
@@ -2586,6 +3117,11 @@
             "type": "number",
             "description": "Category id",
             "example": 3
+          },
+          "categoryName": {
+            "type": "string",
+            "description": "Category name",
+            "example": "Dining Tables"
           },
           "sortOrder": {
             "type": "number",
@@ -2615,6 +3151,7 @@
           "slug",
           "price",
           "categoryId",
+          "categoryName",
           "sortOrder",
           "images"
         ]
@@ -2753,6 +3290,11 @@
             "type": "string",
             "description": "Full product name",
             "example": "Solid Oak Dining Table 120 x 80 cm"
+          },
+          "sku": {
+            "type": "string",
+            "description": "SKU (article)",
+            "example": "TBL-OAK-120"
           },
           "slug": {
             "type": "string",
@@ -2916,6 +3458,11 @@
             "type": "string",
             "description": "Full product name",
             "example": "Solid Oak Dining Table 140 x 80 cm"
+          },
+          "sku": {
+            "type": "string",
+            "description": "SKU (article)",
+            "example": "TBL-OAK-140"
           },
           "slug": {
             "type": "string",
@@ -3399,6 +3946,31 @@
             "type": "string",
             "description": "Phone",
             "example": "+7 495 555-12-34"
+          },
+          "email": {
+            "type": "string",
+            "description": "Email",
+            "example": "moscow@gearo.ru"
+          },
+          "workingHours": {
+            "type": "string",
+            "description": "Working hours",
+            "example": "Mon-Sat 9:00-20:00"
+          },
+          "latitude": {
+            "type": "number",
+            "description": "Latitude",
+            "example": 55.7558
+          },
+          "longitude": {
+            "type": "number",
+            "description": "Longitude",
+            "example": 37.6173
+          },
+          "bannerImage": {
+            "type": "string",
+            "description": "Banner image external id",
+            "example": "f6a1c6b6f3d741f4ad3c1a2a"
           }
         },
         "required": [
@@ -3432,7 +4004,12 @@
                 "address": "Tverskaya St, 7",
                 "city": "Moscow",
                 "region": "Moscow City",
-                "phone": "+7 495 555-12-34"
+                "phone": "+7 495 555-12-34",
+                "email": "moscow@gearo.ru",
+                "workingHours": "Mon-Sat 9:00-20:00",
+                "latitude": 55.7558,
+                "longitude": 37.6173,
+                "bannerImage": "f6a1c6b6f3d741f4ad3c1a2a"
               }
             ],
             "type": "array",
@@ -3483,6 +4060,31 @@
             "type": "string",
             "description": "Phone",
             "example": "+7 495 555-12-34"
+          },
+          "email": {
+            "type": "string",
+            "description": "Email",
+            "example": "moscow@gearo.ru"
+          },
+          "workingHours": {
+            "type": "string",
+            "description": "Working hours",
+            "example": "Mon-Sat 9:00-20:00"
+          },
+          "latitude": {
+            "type": "number",
+            "description": "Latitude",
+            "example": 55.7558
+          },
+          "longitude": {
+            "type": "number",
+            "description": "Longitude",
+            "example": 37.6173
+          },
+          "bannerImage": {
+            "type": "string",
+            "description": "Banner image external id",
+            "example": "f6a1c6b6f3d741f4ad3c1a2a"
           },
           "isActive": {
             "type": "boolean",
@@ -3535,6 +4137,11 @@
                 "city": "Moscow",
                 "region": "Moscow City",
                 "phone": "+7 495 555-12-34",
+                "email": "moscow@gearo.ru",
+                "workingHours": "Mon-Sat 9:00-20:00",
+                "latitude": 55.7558,
+                "longitude": 37.6173,
+                "bannerImage": "f6a1c6b6f3d741f4ad3c1a2a",
                 "isActive": true,
                 "createdAt": "2026-03-10T08:21:11.000Z",
                 "updatedAt": "2026-03-10T10:05:30.000Z"
@@ -3584,6 +4191,31 @@
             "description": "Phone number",
             "example": "+7 495 555-12-34"
           },
+          "email": {
+            "type": "string",
+            "description": "Email",
+            "example": "moscow@gearo.ru"
+          },
+          "workingHours": {
+            "type": "string",
+            "description": "Working hours",
+            "example": "Mon-Sat 9:00-20:00"
+          },
+          "latitude": {
+            "type": "number",
+            "description": "Latitude",
+            "example": 55.7558
+          },
+          "longitude": {
+            "type": "number",
+            "description": "Longitude",
+            "example": 37.6173
+          },
+          "bannerImage": {
+            "type": "string",
+            "description": "Banner image external id",
+            "example": "f6a1c6b6f3d741f4ad3c1a2a"
+          },
           "isActive": {
             "type": "boolean",
             "description": "Branch active status",
@@ -3628,6 +4260,31 @@
             "description": "Phone number",
             "example": "+7 495 555-98-76"
           },
+          "email": {
+            "type": "string",
+            "description": "Email",
+            "example": "moscow@gearo.ru"
+          },
+          "workingHours": {
+            "type": "string",
+            "description": "Working hours",
+            "example": "Mon-Sat 9:00-20:00"
+          },
+          "latitude": {
+            "type": "number",
+            "description": "Latitude",
+            "example": 55.7558
+          },
+          "longitude": {
+            "type": "number",
+            "description": "Longitude",
+            "example": 37.6173
+          },
+          "bannerImage": {
+            "type": "string",
+            "description": "Banner image external id",
+            "example": "f6a1c6b6f3d741f4ad3c1a2a"
+          },
           "isActive": {
             "type": "boolean",
             "description": "Branch active status",
@@ -3642,6 +4299,21 @@
             "type": "number",
             "description": "Branch product id",
             "example": 7001
+          },
+          "productId": {
+            "type": "number",
+            "description": "Product id",
+            "example": 301
+          },
+          "categoryId": {
+            "type": "number",
+            "description": "Product category id",
+            "example": 12
+          },
+          "categoryName": {
+            "type": "string",
+            "description": "Product category name",
+            "example": "Dining Tables"
           },
           "branchId": {
             "type": "number",
@@ -3662,6 +4334,11 @@
             "type": "string",
             "description": "Product name",
             "example": "Oak Dining Table 120"
+          },
+          "sku": {
+            "type": "string",
+            "description": "Product SKU (article)",
+            "example": "TBL-OAK-120"
           },
           "description": {
             "type": "string",
@@ -3688,10 +4365,20 @@
             "items": {
               "$ref": "#/components/schemas/ImageProductDto"
             }
+          },
+          "variantGroups": {
+            "description": "Product variant groups. Returned in detailed endpoints by id/by-slug",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProductVariantGroupDto"
+            }
           }
         },
         "required": [
           "id",
+          "productId",
+          "categoryId",
+          "categoryName",
           "branchId",
           "price",
           "stock",
@@ -3758,6 +4445,16 @@
             "description": "Product id",
             "example": 101
           },
+          "categoryName": {
+            "type": "string",
+            "description": "Product category name",
+            "example": "Dining Tables"
+          },
+          "sku": {
+            "type": "string",
+            "description": "Product SKU (article)",
+            "example": "TBL-OAK-120"
+          },
           "branchId": {
             "type": "number",
             "description": "Branch id",
@@ -3789,11 +4486,19 @@
             "description": "Updated at",
             "format": "date-time",
             "example": "2026-03-10T10:01:44.000Z"
+          },
+          "variantGroups": {
+            "description": "Product variant groups. Returned in detailed admin endpoint by id",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AdminProductVariantGroupDto"
+            }
           }
         },
         "required": [
           "id",
           "productId",
+          "categoryName",
           "branchId",
           "price",
           "stock",

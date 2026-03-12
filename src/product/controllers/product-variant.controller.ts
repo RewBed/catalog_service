@@ -10,15 +10,32 @@ import { GetProductVariantPriceDto } from '../dto/variant/get-product-variant-pr
 export class ProductVariantController {
     constructor(private readonly productVariantService: ProductVariantService) {}
 
-    @ApiOperation({ summary: 'Get active variant groups for product' })
+    @ApiOperation({
+        operationId: 'getPublicProductVariantGroups',
+        summary: 'Get active variant groups for product',
+    })
     @ApiParam({ name: 'productId', type: Number })
-    @ApiOkResponse({ type: [ProductVariantGroupDto] })
+    @ApiOkResponse({
+        type: [ProductVariantGroupDto],
+        links: {
+            calculatePriceFromFirstVariantOption: {
+                operationId: 'getPublicProductVariantPrice',
+                parameters: {
+                    productId: '$request.path.productId',
+                    optionIds: '$response.body#/0/options/0/id',
+                },
+            },
+        },
+    })
     @Get()
     async index(@Param('productId', ParseIntPipe) productId: number): Promise<ProductVariantGroupDto[]> {
         return this.productVariantService.getAllPublic(productId);
     }
 
-    @ApiOperation({ summary: 'Calculate final product price by selected option ids' })
+    @ApiOperation({
+        operationId: 'getPublicProductVariantPrice',
+        summary: 'Calculate final product price by selected option ids',
+    })
     @ApiParam({ name: 'productId', type: Number })
     @ApiOkResponse({ type: ProductVariantPriceDto })
     @Get('price')

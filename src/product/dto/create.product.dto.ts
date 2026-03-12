@@ -101,6 +101,15 @@ export class CreateProductDto {
   @MaxLength(250)
   fullName?: string;
 
+  @ApiPropertyOptional({
+    description: 'SKU (article)',
+    example: 'TBL-OAK-120',
+  })
+  @IsOptional()
+  @IsString()
+  @MaxLength(100)
+  sku?: string;
+
   @ApiProperty({ description: 'Product slug', example: 'oak-dining-table-120' })
   @IsString()
   @MaxLength(250)

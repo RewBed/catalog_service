@@ -14,6 +14,12 @@ export class ProductDto {
   })
   fullName?: string;
 
+  @ApiPropertyOptional({
+    description: 'SKU (article)',
+    example: 'TBL-OAK-120',
+  })
+  sku?: string;
+
   @ApiProperty({ description: 'Product slug', example: 'oak-dining-table-120' })
   slug: string;
 
@@ -28,6 +34,9 @@ export class ProductDto {
 
   @ApiProperty({ description: 'Category id', example: 3 })
   categoryId: number;
+
+  @ApiProperty({ description: 'Category name', example: 'Dining Tables' })
+  categoryName: string;
 
   @ApiProperty({ description: 'Sorting priority', example: 10 })
   sortOrder: number;

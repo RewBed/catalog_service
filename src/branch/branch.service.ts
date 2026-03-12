@@ -103,6 +103,11 @@ export class BranchService {
                     ...(payload.city !== undefined ? { city: payload.city } : {}),
                     ...(payload.region !== undefined ? { region: payload.region } : {}),
                     ...(payload.phone !== undefined ? { phone: payload.phone } : {}),
+                    ...(payload.email !== undefined ? { email: payload.email } : {}),
+                    ...(payload.workingHours !== undefined ? { workingHours: payload.workingHours } : {}),
+                    ...(payload.latitude !== undefined ? { latitude: payload.latitude } : {}),
+                    ...(payload.longitude !== undefined ? { longitude: payload.longitude } : {}),
+                    ...(payload.bannerImage !== undefined ? { bannerImage: payload.bannerImage } : {}),
                     ...(payload.isActive !== undefined ? { isActive: payload.isActive } : {}),
                 },
             });
@@ -126,6 +131,11 @@ export class BranchService {
                     ...(payload.city !== undefined ? { city: payload.city } : {}),
                     ...(payload.region !== undefined ? { region: payload.region } : {}),
                     ...(payload.phone !== undefined ? { phone: payload.phone } : {}),
+                    ...(payload.email !== undefined ? { email: payload.email } : {}),
+                    ...(payload.workingHours !== undefined ? { workingHours: payload.workingHours } : {}),
+                    ...(payload.latitude !== undefined ? { latitude: payload.latitude } : {}),
+                    ...(payload.longitude !== undefined ? { longitude: payload.longitude } : {}),
+                    ...(payload.bannerImage !== undefined ? { bannerImage: payload.bannerImage } : {}),
                     ...(payload.isActive !== undefined ? { isActive: payload.isActive } : {}),
                 },
             });
@@ -177,6 +187,11 @@ export class BranchService {
             city: branch.city ?? '',
             region: branch.region ?? '',
             phone: branch.phone ?? '',
+            email: branch.email ?? '',
+            workingHours: branch.workingHours ?? '',
+            latitude: branch.latitude ?? undefined,
+            longitude: branch.longitude ?? undefined,
+            bannerImage: branch.bannerImage ?? '',
         }
     }
 
@@ -189,6 +204,11 @@ export class BranchService {
             city: branch.city ?? '',
             region: branch.region ?? '',
             phone: branch.phone ?? '',
+            email: branch.email ?? '',
+            workingHours: branch.workingHours ?? '',
+            latitude: branch.latitude ?? undefined,
+            longitude: branch.longitude ?? undefined,
+            bannerImage: branch.bannerImage ?? '',
             isActive: branch.isActive,
             createdAt: branch.createdAt,
             updatedAt: branch.updatedAt,

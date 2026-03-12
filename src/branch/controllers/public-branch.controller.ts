@@ -1,4 +1,4 @@
-import { ApiOkResponse } from "@nestjs/swagger";
+import { ApiOkResponse, ApiOperation } from "@nestjs/swagger";
 import { BranchService } from "../branch.service";
 import { BranchDto } from "../dto/branch.dto";
 import { BranchPaginationDto } from "../dto/branch.pagination.dto";
@@ -17,12 +17,24 @@ export class PublicBranchController {
 
     constructor(private readonly branchService: BranchService) {}
 
-    @ApiOkResponse({ type: BranchPaginationDto })
+    @ApiOperation({ operationId: 'getPublicBranches' })
+    @ApiOkResponse({
+        type: BranchPaginationDto,
+        links: {
+            getBranchByIdFromList: {
+                operationId: 'getPublicBranchById',
+                parameters: {
+                    id: '$response.body#/items/0/id',
+                },
+            },
+        },
+    })
     @Get()
     async index(@Query() query: FilterBranchDto): Promise<BranchPaginationDto> {
         return this.branchService.getAll(query);
     }
 
+    @ApiOperation({ operationId: 'getPublicBranchById' })
     @ApiOkResponse({ type: BranchDto })
     @Get(':id')
     async getItem(@Param('id', ParseIntPipe) id: number): Promise<BranchDto> {

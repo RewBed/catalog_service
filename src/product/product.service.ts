@@ -46,6 +46,11 @@ export class ProductService {
         const products = await this.prisma.product.findMany({
             where,
             include: {
+                category: {
+                    select: {
+                        name: true,
+                    },
+                },
                 images: {
                     orderBy: {
                         sortOrder: 'asc',
@@ -73,6 +78,11 @@ export class ProductService {
                 id
             },
             include: {
+                category: {
+                    select: {
+                        name: true,
+                    },
+                },
                 images: {
                     orderBy: {
                         sortOrder: 'asc',
@@ -100,6 +110,7 @@ export class ProductService {
                     price: payload.price,
                     categoryId: payload.categoryId,
                     ...(payload.fullName !== undefined ? { fullName: payload.fullName } : {}),
+                    ...(payload.sku !== undefined ? { sku: payload.sku } : {}),
                     ...(payload.description !== undefined ? { description: payload.description } : {}),
                     ...(payload.sortOrder !== undefined ? { sortOrder: payload.sortOrder } : {}),
                     ...(payload.variantGroups !== undefined
@@ -134,6 +145,11 @@ export class ProductService {
                         : {}),
                 },
                 include: {
+                    category: {
+                        select: {
+                            name: true,
+                        },
+                    },
                     images: {
                         orderBy: {
                             sortOrder: 'asc',
@@ -163,6 +179,7 @@ export class ProductService {
                     data: {
                         ...(payload.name !== undefined ? { name: payload.name } : {}),
                         ...(payload.fullName !== undefined ? { fullName: payload.fullName } : {}),
+                        ...(payload.sku !== undefined ? { sku: payload.sku } : {}),
                         ...(payload.slug !== undefined ? { slug: payload.slug } : {}),
                         ...(payload.description !== undefined ? { description: payload.description } : {}),
                         ...(payload.price !== undefined ? { price: payload.price } : {}),
@@ -277,6 +294,11 @@ export class ProductService {
                 return tx.product.findUnique({
                     where: { id: updatedProduct.id },
                     include: {
+                        category: {
+                            select: {
+                                name: true,
+                            },
+                        },
                         images: {
                             orderBy: {
                                 sortOrder: 'asc',
@@ -333,6 +355,11 @@ export class ProductService {
                     deletedAt: null,
                 },
                 include: {
+                    category: {
+                        select: {
+                            name: true,
+                        },
+                    },
                     images: {
                         orderBy: {
                             sortOrder: 'asc',
@@ -356,15 +383,24 @@ export class ProductService {
     }
 
     // преобразование товара в дто
-    private productToDto(product: Product & { images?: ProductImage[] }): ProductDto {
+    private productToDto(
+        product: Product & {
+            category?: {
+                name: string;
+            };
+            images?: ProductImage[];
+        },
+    ): ProductDto {
         return {
             id: product.id,
             name: product.name,
             fullName: product.fullName ?? undefined,
+            sku: product.sku ?? undefined,
             slug: product.slug,
             description: product.description ?? undefined,
             price: product.price.toNumber(),
             categoryId: product.categoryId,
+            categoryName: product.category?.name ?? '',
             sortOrder: product.sortOrder,
             images: product.images?.map((image) => this.productImageToDto(image)) ?? [],
         };
@@ -448,7 +484,17 @@ export class ProductService {
     private handlePrismaError(error: unknown): never {
         if (error instanceof Prisma.PrismaClientKnownRequestError) {
             if (error.code === 'P2002') {
-                throw new ConflictException('Product with this slug already exists');
+                const target = Array.isArray(error.meta?.target) ? error.meta.target.join(',') : '';
+
+                if (target.includes('slug')) {
+                    throw new ConflictException('Product with this slug already exists');
+                }
+
+                if (target.includes('sku')) {
+                    throw new ConflictException('Product with this sku already exists');
+                }
+
+                throw new ConflictException('Product with this unique field already exists');
             }
 
             if (error.code === 'P2003') {
