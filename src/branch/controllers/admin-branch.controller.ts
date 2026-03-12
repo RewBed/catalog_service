@@ -13,7 +13,7 @@ import {
     UseGuards,
 } from "@nestjs/common";
 import { BranchService } from "../branch.service";
-import { ApiBearerAuth, ApiCreatedResponse, ApiNoContentResponse, ApiOkResponse, ApiOperation } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiCreatedResponse, ApiNoContentResponse, ApiOkResponse, ApiOperation, ApiTags } from "@nestjs/swagger";
 import { CreateBranchDto } from "../dto/create.branch.dto";
 import { UpdateBranchDto } from "../dto/update.branch.dto";
 import { GrpcAuthGuard } from "src/common/auth";
@@ -22,6 +22,7 @@ import { AdminBranchPaginationDto } from "../dto/admin/admin-branch.pagination.d
 import { AdminFilterBranchDto } from "../dto/admin/admin-filter.branch.dto";
 
 @Controller('api/admin/branches')
+@ApiTags('Admin Branches')
 export class AdminBranchController {
 
     constructor(private readonly branchService: BranchService) {}

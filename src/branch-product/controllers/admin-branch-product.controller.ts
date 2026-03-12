@@ -1,6 +1,6 @@
 import { Body, Controller, Delete, Get, HttpCode, NotFoundException, Param, ParseIntPipe, Patch, Post, Query, UseGuards } from "@nestjs/common";
 import { BranchProductService } from "../branch-product.service";
-import { ApiBearerAuth, ApiCreatedResponse, ApiNoContentResponse, ApiOkResponse, ApiOperation } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiCreatedResponse, ApiNoContentResponse, ApiOkResponse, ApiOperation, ApiTags } from "@nestjs/swagger";
 import { BranchProductDto } from "../dto/branch-product.dto";
 import { GrpcAuthGuard } from "src/common/auth";
 import { CreateBranchProductDto } from "../dto/create.branch-product.dto";
@@ -10,6 +10,7 @@ import { AdminBranchProductPaginationDto } from "../dto/admin/admin-branch-produ
 import { AdminBranchProductDto } from "../dto/admin/admin-branch-product.dto";
 
 @Controller('api/admin/branch-products')
+@ApiTags('Admin Branch Products')
 export class AdminBranchProductsController {
     constructor(private readonly branchProductService: BranchProductService) {}
 

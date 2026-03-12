@@ -9,6 +9,7 @@ import { BranchModule } from './branch/branch.module';
 import { OutboxModule } from './core/outbox/outbox.module';
 import { ImageEventsModule } from './image-events/image-events.module';
 import { BranchProductModule } from './branch-product/branch-product.module';
+import { CollectionModule } from './collection/collection.module';
 
 @Module({
     imports: [
@@ -20,6 +21,7 @@ import { BranchProductModule } from './branch-product/branch-product.module';
         ProductModule,
         BranchModule,
         BranchProductModule,
+        CollectionModule,
         OutboxModule,
         ImageEventsModule,
     ],

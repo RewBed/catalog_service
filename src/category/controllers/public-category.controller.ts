@@ -1,5 +1,5 @@
 import { CategoryPaginationDto } from "../dto/category.pagination.dto";
-import { ApiOkResponse, ApiOperation } from "@nestjs/swagger";
+import { ApiOkResponse, ApiOperation, ApiTags } from "@nestjs/swagger";
 import { FilterCategoriesDto } from "../dto/filter.categories.dto";
 import { CategoryService } from "../category.service";
 import { CategoryDto } from "../dto/category.dto";
@@ -13,6 +13,7 @@ import {
 } from "@nestjs/common";
 
 @Controller('api/categories')
+@ApiTags('Categories')
 export class PublicCategoryController {
 
     constructor(private readonly categoryService: CategoryService) {}

@@ -3,14 +3,24 @@
   "paths": {
     "/health/live": {
       "get": {
+        "description": "Checks that service process is alive.",
         "operationId": "healthLive",
         "parameters": [],
         "responses": {
           "200": {
-            "description": ""
+            "description": "Service is alive",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "status": "ok"
+                  }
+                }
+              }
+            }
           }
         },
-        "summary": "",
+        "summary": "Liveness probe",
         "tags": [
           "Health"
         ]
@@ -18,14 +28,37 @@
     },
     "/health/ready": {
       "get": {
+        "description": "Checks that service can access database.",
         "operationId": "healthReady",
         "parameters": [],
         "responses": {
           "200": {
-            "description": ""
+            "description": "Service is ready",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "status": "ok"
+                  }
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Database is not ready",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "status": "error",
+                    "message": "Database not ready"
+                  }
+                }
+              }
+            }
           }
         },
-        "summary": "",
+        "summary": "Readiness probe",
         "tags": [
           "Health"
         ]
@@ -37,7 +70,7 @@
         "parameters": [],
         "responses": {
           "200": {
-            "description": "",
+            "description": "Health list response",
             "content": {
               "application/json": {
                 "schema": {
@@ -47,7 +80,7 @@
             }
           }
         },
-        "summary": "",
+        "summary": "Health example list endpoint",
         "tags": [
           "Health"
         ]
@@ -67,10 +100,19 @@
         },
         "responses": {
           "201": {
-            "description": ""
+            "description": "Echo payload result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "dtoStr": "test-value"
+                  }
+                }
+              }
+            }
           }
         },
-        "summary": "",
+        "summary": "Health example create endpoint",
         "tags": [
           "Health"
         ]
@@ -155,7 +197,7 @@
         },
         "summary": "",
         "tags": [
-          "PublicCategory"
+          "Categories"
         ]
       }
     },
@@ -186,7 +228,7 @@
         },
         "summary": "",
         "tags": [
-          "PublicCategory"
+          "Categories"
         ]
       }
     },
@@ -284,7 +326,7 @@
         ],
         "summary": "",
         "tags": [
-          "AdminCategory"
+          "Admin Categories"
         ]
       },
       "post": {
@@ -345,7 +387,7 @@
         ],
         "summary": "",
         "tags": [
-          "AdminCategory"
+          "Admin Categories"
         ]
       }
     },
@@ -384,7 +426,7 @@
         },
         "summary": "",
         "tags": [
-          "AdminCategory"
+          "Admin Categories"
         ]
       },
       "patch": {
@@ -436,7 +478,7 @@
         ],
         "summary": "",
         "tags": [
-          "AdminCategory"
+          "Admin Categories"
         ]
       },
       "delete": {
@@ -463,7 +505,7 @@
         ],
         "summary": "",
         "tags": [
-          "AdminCategory"
+          "Admin Categories"
         ]
       }
     },
@@ -507,7 +549,7 @@
         ],
         "summary": "",
         "tags": [
-          "AdminCategory"
+          "Admin Categories"
         ]
       }
     },
@@ -1621,7 +1663,7 @@
         },
         "summary": "",
         "tags": [
-          "PublicBranch"
+          "Branches"
         ]
       }
     },
@@ -1652,7 +1694,7 @@
         },
         "summary": "",
         "tags": [
-          "PublicBranch"
+          "Branches"
         ]
       }
     },
@@ -1720,7 +1762,7 @@
         ],
         "summary": "",
         "tags": [
-          "AdminBranch"
+          "Admin Branches"
         ]
       },
       "post": {
@@ -1781,7 +1823,7 @@
         ],
         "summary": "",
         "tags": [
-          "AdminBranch"
+          "Admin Branches"
         ]
       }
     },
@@ -1817,7 +1859,7 @@
         ],
         "summary": "",
         "tags": [
-          "AdminBranch"
+          "Admin Branches"
         ]
       },
       "patch": {
@@ -1869,7 +1911,7 @@
         ],
         "summary": "",
         "tags": [
-          "AdminBranch"
+          "Admin Branches"
         ]
       },
       "delete": {
@@ -1896,7 +1938,7 @@
         ],
         "summary": "",
         "tags": [
-          "AdminBranch"
+          "Admin Branches"
         ]
       }
     },
@@ -1940,7 +1982,7 @@
         ],
         "summary": "",
         "tags": [
-          "AdminBranch"
+          "Admin Branches"
         ]
       }
     },
@@ -2086,7 +2128,7 @@
         },
         "summary": "",
         "tags": [
-          "BranchProduct"
+          "Branch Products"
         ]
       }
     },
@@ -2143,7 +2185,7 @@
         },
         "summary": "",
         "tags": [
-          "BranchProduct"
+          "Branch Products"
         ]
       }
     },
@@ -2189,7 +2231,7 @@
         },
         "summary": "",
         "tags": [
-          "BranchProduct"
+          "Branch Products"
         ]
       }
     },
@@ -2421,7 +2463,7 @@
         ],
         "summary": "",
         "tags": [
-          "AdminBranchProducts"
+          "Admin Branch Products"
         ]
       },
       "post": {
@@ -2482,7 +2524,7 @@
         ],
         "summary": "",
         "tags": [
-          "AdminBranchProducts"
+          "Admin Branch Products"
         ]
       }
     },
@@ -2526,7 +2568,7 @@
         ],
         "summary": "",
         "tags": [
-          "AdminBranchProducts"
+          "Admin Branch Products"
         ]
       },
       "patch": {
@@ -2578,7 +2620,7 @@
         ],
         "summary": "",
         "tags": [
-          "AdminBranchProducts"
+          "Admin Branch Products"
         ]
       },
       "delete": {
@@ -2605,7 +2647,7 @@
         ],
         "summary": "",
         "tags": [
-          "AdminBranchProducts"
+          "Admin Branch Products"
         ]
       }
     },
@@ -2649,7 +2691,425 @@
         ],
         "summary": "",
         "tags": [
-          "AdminBranchProducts"
+          "Admin Branch Products"
+        ]
+      }
+    },
+    "/api/collections/{collectionId}/branches/{branchId}": {
+      "get": {
+        "description": "Returns collection data and only active branch products from this collection for the requested branch.",
+        "operationId": "getPublicCollectionByIdAndBranchId",
+        "parameters": [
+          {
+            "name": "collectionId",
+            "required": true,
+            "in": "path",
+            "description": "Collection id",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "branchId",
+            "required": true,
+            "in": "path",
+            "description": "Branch id",
+            "schema": {
+              "example": 5,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Collection data with nested branch products",
+            "links": {
+              "getBranchProductByIdFromCollection": {
+                "operationId": "getPublicBranchProductById",
+                "parameters": {
+                  "id": "$response.body#/products/0/id"
+                }
+              },
+              "getBranchProductBySlugFromCollection": {
+                "operationId": "getPublicBranchProductBySlug",
+                "parameters": {
+                  "slug": "$response.body#/products/0/slug",
+                  "branchId": "$request.path.branchId"
+                }
+              },
+              "getVariantGroupsFromCollectionProduct": {
+                "operationId": "getPublicProductVariantGroups",
+                "parameters": {
+                  "productId": "$response.body#/products/0/productId"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicCollectionDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid collectionId or branchId"
+          },
+          "404": {
+            "description": "Collection or branch not found"
+          }
+        },
+        "summary": "Get collection with branch products",
+        "tags": [
+          "Collections"
+        ]
+      }
+    },
+    "/api/admin/collections": {
+      "get": {
+        "description": "Returns collections with optional filters and pagination. Includes linked product previews and soft-delete filtering.",
+        "operationId": "getAdminCollections",
+        "parameters": [
+          {
+            "name": "title",
+            "required": false,
+            "in": "query",
+            "description": "Filter by collection title (partial match, case-insensitive)",
+            "schema": {
+              "example": "banner",
+              "type": "string"
+            }
+          },
+          {
+            "name": "description",
+            "required": false,
+            "in": "query",
+            "description": "Filter by collection description (partial match, case-insensitive)",
+            "schema": {
+              "example": "homepage",
+              "type": "string"
+            }
+          },
+          {
+            "name": "isDeleted",
+            "required": false,
+            "in": "query",
+            "description": "Include soft-deleted collections",
+            "schema": {
+              "example": false,
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "Page number",
+            "schema": {
+              "default": 1,
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Items per page",
+            "schema": {
+              "default": 25,
+              "example": 25,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Collections page for admin",
+            "links": {
+              "getAdminCollectionByIdFromList": {
+                "operationId": "getAdminCollectionById",
+                "parameters": {
+                  "id": "$response.body#/items/0/id"
+                }
+              },
+              "getPublicCollectionForBranchFromAdminList": {
+                "operationId": "getPublicCollectionByIdAndBranchId",
+                "parameters": {
+                  "collectionId": "$response.body#/items/0/id",
+                  "branchId": 1
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminCollectionPaginationDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation failed for query params"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Get collections list (admin)",
+        "tags": [
+          "Admin Collections"
+        ]
+      },
+      "post": {
+        "description": "Creates a product collection with title, description and optional ordered productIds.",
+        "operationId": "createAdminCollection",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCollectionDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Collection created",
+            "links": {
+              "getCreatedAdminCollection": {
+                "operationId": "getAdminCollectionById",
+                "parameters": {
+                  "id": "$response.body#/id"
+                }
+              },
+              "updateCreatedAdminCollection": {
+                "operationId": "updateAdminCollection",
+                "parameters": {
+                  "id": "$response.body#/id"
+                }
+              },
+              "deleteCreatedAdminCollection": {
+                "operationId": "deleteAdminCollection",
+                "parameters": {
+                  "id": "$response.body#/id"
+                }
+              },
+              "getCreatedCollectionForBranch": {
+                "operationId": "getPublicCollectionByIdAndBranchId",
+                "parameters": {
+                  "collectionId": "$response.body#/id",
+                  "branchId": 1
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminCollectionDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation failed for request body"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "One or more products from productIds not found"
+          },
+          "409": {
+            "description": "Collection relation conflict"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Create collection (admin)",
+        "tags": [
+          "Admin Collections"
+        ]
+      }
+    },
+    "/api/admin/collections/{id}": {
+      "get": {
+        "description": "Returns collection details with linked product ids and product previews.",
+        "operationId": "getAdminCollectionById",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Collection id",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Collection details for admin",
+            "links": {
+              "getPublicCollectionForBranchFromAdminItem": {
+                "operationId": "getPublicCollectionByIdAndBranchId",
+                "parameters": {
+                  "collectionId": "$response.body#/id",
+                  "branchId": 1
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminCollectionDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid collection id"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Collection not found"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Get collection by id (admin)",
+        "tags": [
+          "Admin Collections"
+        ]
+      },
+      "patch": {
+        "description": "Updates title/description and optionally fully replaces ordered productIds.",
+        "operationId": "updateAdminCollection",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Collection id",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCollectionDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Collection updated",
+            "links": {
+              "getUpdatedAdminCollection": {
+                "operationId": "getAdminCollectionById",
+                "parameters": {
+                  "id": "$response.body#/id"
+                }
+              },
+              "getUpdatedCollectionForBranch": {
+                "operationId": "getPublicCollectionByIdAndBranchId",
+                "parameters": {
+                  "collectionId": "$response.body#/id",
+                  "branchId": 1
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminCollectionDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid collection id or validation failed for request body"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Collection not found or one or more products not found"
+          },
+          "409": {
+            "description": "Collection relation conflict"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Update collection (admin)",
+        "tags": [
+          "Admin Collections"
+        ]
+      },
+      "delete": {
+        "description": "Soft-deletes a collection by setting deletedAt timestamp.",
+        "operationId": "deleteAdminCollection",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Collection id",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Collection deleted"
+          },
+          "400": {
+            "description": "Invalid collection id"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Collection not found"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Delete collection (admin)",
+        "tags": [
+          "Admin Collections"
         ]
       }
     }
@@ -4599,6 +5059,280 @@
             "type": "boolean",
             "description": "Active status",
             "example": true
+          }
+        }
+      },
+      "PublicCollectionDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "Collection id",
+            "example": 1
+          },
+          "title": {
+            "type": "string",
+            "description": "Collection title",
+            "example": "Main Banner Collection"
+          },
+          "description": {
+            "type": "string",
+            "description": "Collection description",
+            "example": "Products displayed in homepage banner"
+          },
+          "products": {
+            "description": "Branch products that are part of this collection for the requested branch",
+            "example": [
+              {
+                "id": 7001,
+                "productId": 101,
+                "categoryId": 12,
+                "categoryName": "Dining Tables",
+                "branchId": 5,
+                "price": 25990,
+                "stock": 20,
+                "name": "Oak Dining Table 120",
+                "sku": "TBL-OAK-120",
+                "description": "Solid oak dining table, 120 cm width",
+                "slug": "oak-dining-table-120",
+                "images": [
+                  {
+                    "url": "https://cdn.example.com/products/oak-dining-table-120/main.jpg",
+                    "type": "main"
+                  }
+                ]
+              }
+            ],
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BranchProductDto"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "products"
+        ]
+      },
+      "CollectionProductDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "Product id",
+            "example": 101
+          },
+          "name": {
+            "type": "string",
+            "description": "Product name",
+            "example": "Oak Dining Table 120"
+          },
+          "slug": {
+            "type": "string",
+            "description": "Product slug",
+            "example": "oak-dining-table-120"
+          },
+          "sku": {
+            "type": "string",
+            "description": "Product SKU (article)",
+            "example": "TBL-OAK-120"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "slug"
+        ]
+      },
+      "AdminCollectionDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "Collection id",
+            "example": 1
+          },
+          "title": {
+            "type": "string",
+            "description": "Collection title",
+            "example": "Main Banner Collection"
+          },
+          "description": {
+            "type": "string",
+            "description": "Collection description",
+            "example": "Products displayed in homepage banner"
+          },
+          "productIds": {
+            "description": "Linked product ids in collection order",
+            "example": [
+              101,
+              205,
+              330
+            ],
+            "type": "array",
+            "items": {
+              "type": "number"
+            }
+          },
+          "products": {
+            "description": "Linked product previews",
+            "example": [
+              {
+                "id": 101,
+                "name": "Oak Dining Table 120",
+                "slug": "oak-dining-table-120",
+                "sku": "TBL-OAK-120"
+              },
+              {
+                "id": 205,
+                "name": "Ash Dining Table 140",
+                "slug": "ash-dining-table-140",
+                "sku": "TBL-ASH-140"
+              }
+            ],
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CollectionProductDto"
+            }
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-03-12T16:10:00.000Z"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-03-12T16:15:00.000Z"
+          },
+          "deletedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "example": null
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "productIds",
+          "products",
+          "createdAt",
+          "updatedAt",
+          "deletedAt"
+        ]
+      },
+      "AdminCollectionPaginationDto": {
+        "type": "object",
+        "properties": {
+          "meta": {
+            "description": "Pagination metadata",
+            "example": {
+              "total": 124,
+              "page": 1,
+              "limit": 25
+            },
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PaginationMeta"
+              }
+            ]
+          },
+          "items": {
+            "description": "Collections items for current page",
+            "example": [
+              {
+                "id": 1,
+                "title": "Main Banner Collection",
+                "description": "Products displayed in homepage banner",
+                "productIds": [
+                  101,
+                  205,
+                  330
+                ],
+                "products": [
+                  {
+                    "id": 101,
+                    "name": "Oak Dining Table 120",
+                    "slug": "oak-dining-table-120",
+                    "sku": "TBL-OAK-120"
+                  }
+                ],
+                "createdAt": "2026-03-12T16:10:00.000Z",
+                "updatedAt": "2026-03-12T16:15:00.000Z",
+                "deletedAt": null
+              }
+            ],
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AdminCollectionDto"
+            }
+          }
+        },
+        "required": [
+          "meta",
+          "items"
+        ]
+      },
+      "CreateCollectionDto": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Collection title",
+            "example": "Main Banner Collection"
+          },
+          "description": {
+            "type": "string",
+            "description": "Collection description",
+            "example": "Products displayed in homepage banner"
+          },
+          "productIds": {
+            "description": "Product ids in required display order",
+            "example": [
+              101,
+              205,
+              330
+            ],
+            "minItems": 1,
+            "uniqueItems": true,
+            "type": "array",
+            "items": {
+              "type": "number"
+            }
+          }
+        },
+        "required": [
+          "title"
+        ]
+      },
+      "UpdateCollectionDto": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Collection title",
+            "example": "Main Banner Collection"
+          },
+          "description": {
+            "type": "string",
+            "description": "Collection description",
+            "example": "Products displayed in homepage banner"
+          },
+          "productIds": {
+            "description": "Product ids in required display order",
+            "example": [
+              101,
+              205,
+              330
+            ],
+            "minItems": 1,
+            "uniqueItems": true,
+            "type": "array",
+            "items": {
+              "type": "number"
+            }
           }
         }
       }

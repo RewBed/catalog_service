@@ -1,6 +1,6 @@
 import { Body, Controller, Delete, Get, HttpCode, NotFoundException, Param, ParseIntPipe, Patch, Post, Query, UseGuards } from "@nestjs/common";
 import { CategoryService } from "../category.service";
-import { ApiBearerAuth, ApiCreatedResponse, ApiNoContentResponse, ApiOkResponse, ApiOperation } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiCreatedResponse, ApiNoContentResponse, ApiOkResponse, ApiOperation, ApiTags } from "@nestjs/swagger";
 import { GrpcAuthGuard } from "src/common/auth";
 import { CreateCategoryDto } from "../dto/create.category.dto";
 import { UpdateCategoryDto } from "../dto/update.category.dto";
@@ -10,6 +10,7 @@ import { AdminCategoryPaginationDto } from "../dto/admin/admin-category.paginati
 import { AdminFilterCategoriesDto } from "../dto/admin/admin-filter.categories.dto";
 
 @Controller('api/admin/categories')
+@ApiTags('Admin Categories')
 export class AdminCategoryController {
 
     constructor(private readonly categoryService: CategoryService) {}

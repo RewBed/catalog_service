@@ -1,4 +1,4 @@
-import { ApiOkResponse, ApiOperation } from '@nestjs/swagger';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { BranchProductService } from '../branch-product.service';
 import { BranchProductDto } from '../dto/branch-product.dto';
 import { BranchProductPaginationDto } from '../dto/branch-product.pagination.dto';
@@ -14,6 +14,7 @@ import {
 } from '@nestjs/common';
 
 @Controller('/api/branch-products')
+@ApiTags('Branch Products')
 export class BranchProductController {
     constructor(private readonly branchProductService: BranchProductService) {}
 

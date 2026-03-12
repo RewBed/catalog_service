@@ -51,6 +51,7 @@ model Product {
     category   Category @relation(fields: [categoryId], references: [id])
 
     branchProducts BranchProduct[]
+    collectionItems ProductCollectionItem[]
     images ProductImage[]
     variantGroups ProductVariantGroup[]
 
@@ -63,6 +64,40 @@ model Product {
     @@index([categoryId])
     @@index([sortOrder])
     @@index([deletedAt])
+}
+
+model ProductCollection {
+    id          Int     @id @default(autoincrement())
+    title       String  @db.VarChar(150)
+    description String? @db.Text
+
+    items ProductCollectionItem[]
+
+    deletedAt DateTime?
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@index([deletedAt])
+}
+
+model ProductCollectionItem {
+    id Int @id @default(autoincrement())
+
+    collectionId Int
+    collection   ProductCollection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+
+    productId Int
+    product   Product @relation(fields: [productId], references: [id], onDelete: Restrict)
+
+    sortOrder Int @default(0)
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@index([collectionId])
+    @@index([productId])
+    @@index([sortOrder])
+    @@unique([collectionId, productId])
 }
 
 model ProductVariantGroup {
