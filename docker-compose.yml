@@ -46,11 +46,13 @@ services:
       - VIRTUAL_PORT=${AUTO_SSL_VIRTUAL_PORT}
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+      - app_logs:/app/logs
     networks:
       - shop-net-v1
 
 volumes:
   postgres_data:
+  app_logs:
 
 networks:
   shop-net-v1:

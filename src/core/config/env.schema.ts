@@ -14,6 +14,8 @@ export const envSchema = z.object({
     GRPC_PORT: z.preprocess((val) => Number(val), z.number()),
     AUTH_GRPC_URL: z.string(),
     LOG_LEVEL: z.enum(['debug', 'info', 'warn', 'error']).default('info'),
+    LOG_TO_FILE: z.preprocess((val) => val === 'true' || val === true, z.boolean()).default(false),
+    LOG_FILE_PATH: z.string().default('logs/catalog-service.log'),
 
     POSTGRES_HOST: z.string(),
     POSTGRES_PORT: z.preprocess((val) => Number(val), z.number()),

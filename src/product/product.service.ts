@@ -1,4 +1,4 @@
-﻿import { BadRequestException, ConflictException, Injectable, NotFoundException } from "@nestjs/common";
+﻿import { BadRequestException, ConflictException, Injectable, Logger, NotFoundException } from "@nestjs/common";
 import { PrismaService } from "src/core/database/prisma.service";
 import { Prisma, Product, ProductImage } from "generated/prisma/client";
 import { ImageProductDto } from "./dto/image.product.dto";
@@ -11,14 +11,13 @@ import { AdminFilterProductDto } from "./controllers/admin-filter.product.dto";
 
 @Injectable()
 export class ProductService {
+    private readonly logger = new Logger(ProductService.name);
 
     constructor(private readonly prisma: PrismaService) {}
 
     // получения списка товаров по фильтру
     async getFilteredProducts(filter: AdminFilterProductDto): Promise<AdminProductPaginationDto> {
         const { page, limit, name, slug, description, minPrice, maxPrice, categoryId, isDeleted} = filter;
-
-        console.log(isDeleted);
 
         const where: ProductWhereInput = {};
 
@@ -43,32 +42,43 @@ export class ProductService {
 
         where.deletedAt = isDeleted ? { not: null } : null;
 
-        const products = await this.prisma.product.findMany({
-            where,
-            include: {
-                category: {
-                    select: {
-                        name: true,
+        try {
+            const [total, products] = await this.prisma.$transaction([
+                this.prisma.product.count({ where }),
+                this.prisma.product.findMany({
+                    where,
+                    include: {
+                        category: {
+                            select: {
+                                name: true,
+                            },
+                        },
+                        images: {
+                            orderBy: {
+                                sortOrder: 'asc',
+                            },
+                        },
                     },
-                },
-                images: {
-                    orderBy: {
-                        sortOrder: 'asc',
-                    },
-                },
-            },
-            skip: (page - 1) * limit,
-            take: limit,
-        });
+                    skip: (page - 1) * limit,
+                    take: limit,
+                }),
+            ]);
 
-        return {
-            items: products.map((product) => this.productToDto(product)),
-            meta: {
-                total: 0,
-                limit,
-                page,
-            },
-        };
+            return {
+                items: products.map((product) => this.productToDto(product)),
+                meta: {
+                    total,
+                    limit,
+                    page,
+                },
+            };
+        } catch (error) {
+            this.logger.error(
+                `Failed to fetch admin products page=${page} limit=${limit}`,
+                error instanceof Error ? error.stack : String(error),
+            );
+            throw error;
+        }
     }
 
     // получение товара по ID
@@ -506,4 +516,7 @@ export class ProductService {
         throw error;
     }
 }
+
+
+
 

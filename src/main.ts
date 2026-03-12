@@ -5,6 +5,7 @@ import { join } from 'path';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { createGlobalValidationPipe } from './common/pipes/global-validation.pipe';
 import { ConfigService } from '@nestjs/config';
+import { Logger } from 'nestjs-pino';
 
 async function bootstrap() {
     const app = await NestFactory.create(AppModule, {
@@ -12,6 +13,7 @@ async function bootstrap() {
     });
 
     const configService = app.get(ConfigService);
+    app.useLogger(app.get(Logger));
 
     // Подключаем глобальный валидатор входящих данных.
     app.useGlobalPipes(createGlobalValidationPipe());
