@@ -396,6 +396,7 @@ export class ProductService {
             name: product.name,
             fullName: product.fullName ?? undefined,
             sku: product.sku ?? undefined,
+            article: product.sku ?? undefined,
             slug: product.slug,
             description: product.description ?? undefined,
             price: product.price.toNumber(),

@@ -30,6 +30,9 @@ export class BranchProductDto {
   @ApiPropertyOptional({ description: 'Product SKU (article)', example: 'TBL-OAK-120' })
   sku?: string;
 
+  @ApiPropertyOptional({ description: 'Product article (alias of sku)', example: 'TBL-OAK-120' })
+  article?: string;
+
   @ApiPropertyOptional({
     description: 'Product description',
     example: 'Solid oak dining table, 120 cm width',

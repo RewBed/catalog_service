@@ -15,4 +15,10 @@ export class CollectionProductDto {
     example: 'TBL-OAK-120',
   })
   sku?: string;
+
+  @ApiPropertyOptional({
+    description: 'Product article (alias of sku)',
+    example: 'TBL-OAK-120',
+  })
+  article?: string;
 }

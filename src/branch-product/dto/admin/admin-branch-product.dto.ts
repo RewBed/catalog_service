@@ -14,6 +14,9 @@ export class AdminBranchProductDto {
   @ApiPropertyOptional({ description: 'Product SKU (article)', example: 'TBL-OAK-120' })
   sku?: string;
 
+  @ApiPropertyOptional({ description: 'Product article (alias of sku)', example: 'TBL-OAK-120' })
+  article?: string;
+
   @ApiProperty({ description: 'Branch id', example: 5 })
   branchId: number;
 

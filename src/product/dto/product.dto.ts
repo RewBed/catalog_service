@@ -20,6 +20,12 @@ export class ProductDto {
   })
   sku?: string;
 
+  @ApiPropertyOptional({
+    description: 'Product article (alias of sku)',
+    example: 'TBL-OAK-120',
+  })
+  article?: string;
+
   @ApiProperty({ description: 'Product slug', example: 'oak-dining-table-120' })
   slug: string;
 

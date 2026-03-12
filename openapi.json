@@ -3558,6 +3558,11 @@
             "description": "SKU (article)",
             "example": "TBL-OAK-120"
           },
+          "article": {
+            "type": "string",
+            "description": "Product article (alias of sku)",
+            "example": "TBL-OAK-120"
+          },
           "slug": {
             "type": "string",
             "description": "Product slug",
@@ -4800,6 +4805,11 @@
             "description": "Product SKU (article)",
             "example": "TBL-OAK-120"
           },
+          "article": {
+            "type": "string",
+            "description": "Product article (alias of sku)",
+            "example": "TBL-OAK-120"
+          },
           "description": {
             "type": "string",
             "description": "Product description",
@@ -4913,6 +4923,11 @@
           "sku": {
             "type": "string",
             "description": "Product SKU (article)",
+            "example": "TBL-OAK-120"
+          },
+          "article": {
+            "type": "string",
+            "description": "Product article (alias of sku)",
             "example": "TBL-OAK-120"
           },
           "branchId": {
@@ -5136,6 +5151,11 @@
           "sku": {
             "type": "string",
             "description": "Product SKU (article)",
+            "example": "TBL-OAK-120"
+          },
+          "article": {
+            "type": "string",
+            "description": "Product article (alias of sku)",
             "example": "TBL-OAK-120"
           }
         },
