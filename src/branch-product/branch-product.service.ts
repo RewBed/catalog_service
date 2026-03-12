@@ -16,7 +16,7 @@ export class BranchProductService {
     constructor(private readonly prisma: PrismaService) {}
 
     async getAll(filter?: FilterBranchProductDto): Promise<BranchProductPaginationDto> {
-        const { branchId, price, minPrice, maxPrice, name, description, categoryId } = filter ?? {};
+        const { branchId, price, minPrice, maxPrice, name, slug, description, categoryId } = filter ?? {};
         const page = filter?.page ?? 1;
         const limit = filter?.limit ?? 25;
 
@@ -26,6 +26,10 @@ export class BranchProductService {
 
         if (name) {
             productItemFilters.name = { contains: name, mode: 'insensitive' };
+        }
+
+        if (slug) {
+            productItemFilters.slug = { contains: slug, mode: 'insensitive' };
         }
 
         if (description) {
@@ -93,6 +97,9 @@ export class BranchProductService {
         const {
             id,
             productId,
+            name,
+            slug,
+            description,
             branchId,
             price,
             minPrice,
@@ -117,6 +124,24 @@ export class BranchProductService {
 
         if (productId !== undefined) {
             where.productId = productId;
+        }
+
+        if (name || slug || description) {
+            const productItemFilters: ProductWhereInput = {};
+
+            if (name) {
+                productItemFilters.name = { contains: name, mode: 'insensitive' };
+            }
+
+            if (slug) {
+                productItemFilters.slug = { contains: slug, mode: 'insensitive' };
+            }
+
+            if (description) {
+                productItemFilters.description = { contains: description, mode: 'insensitive' };
+            }
+
+            where.productItem = productItemFilters;
         }
 
         if (branchId !== undefined) {
@@ -345,6 +370,8 @@ export class BranchProductService {
     private toDto(item: BranchProduct & { productItem?: Product & { images?: ProductImage[] } }): BranchProductDto {
         return {
             id: item.id,
+            productId: item.productId ?? item.productItem?.id ?? 0,
+            categoryId: item.productItem?.categoryId ?? 0,
             branchId: item.branchId,
             price: item.price?.toNumber() ?? item.productItem?.price?.toNumber() ?? 0,
             stock: item.stock,

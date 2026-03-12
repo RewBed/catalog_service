@@ -16,14 +16,20 @@ export class ProductService {
 
     // получения списка товаров по фильтру
     async getFilteredProducts(filter: AdminFilterProductDto): Promise<AdminProductPaginationDto> {
-        const { page, limit, name, minPrice, maxPrice, categoryId, isDeleted} = filter;
+        const { page, limit, name, slug, description, minPrice, maxPrice, categoryId, isDeleted} = filter;
 
         console.log(isDeleted);
 
         const where: ProductWhereInput = {};
 
         if(name)
-            where.name = { contains: name };
+            where.name = { contains: name, mode: 'insensitive' };
+
+        if(slug)
+            where.slug = { contains: slug, mode: 'insensitive' };
+
+        if(description)
+            where.description = { contains: description, mode: 'insensitive' };
 
         if(minPrice || maxPrice) {
             where.price = {

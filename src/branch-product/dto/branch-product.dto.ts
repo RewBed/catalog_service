@@ -5,6 +5,12 @@ export class BranchProductDto {
   @ApiProperty({ description: 'Branch product id', example: 7001 })
   id: number;
 
+  @ApiProperty({ description: 'Product id', example: 301 })
+  productId: number;
+
+  @ApiProperty({ description: 'Product category id', example: 12 })
+  categoryId: number;
+
   @ApiProperty({ description: 'Branch id', example: 5 })
   branchId: number;
 

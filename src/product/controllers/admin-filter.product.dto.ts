@@ -11,6 +11,22 @@ export class AdminFilterProductDto {
   @IsString()
   name?: string;
 
+  @ApiPropertyOptional({
+    description: 'Filter by product slug (partial match)',
+    example: 'oak-dining',
+  })
+  @IsOptional()
+  @IsString()
+  slug?: string;
+
+  @ApiPropertyOptional({
+    description: 'Filter by product description (partial match)',
+    example: 'dining',
+  })
+  @IsOptional()
+  @IsString()
+  description?: string;
+
   @ApiPropertyOptional({ description: 'Minimum price', example: 10000 })
   @IsOptional()
   @Type(() => Number)

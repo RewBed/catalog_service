@@ -1,6 +1,6 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { Transform, Type } from 'class-transformer';
-import { IsBoolean, IsDate, IsInt, IsOptional, Min } from 'class-validator';
+import { IsBoolean, IsDate, IsInt, IsOptional, IsString, Min } from 'class-validator';
 
 export class AdminFilterBranchProductDto {
   @ApiPropertyOptional({ description: 'Branch product id', example: 7001 })
@@ -16,6 +16,30 @@ export class AdminFilterBranchProductDto {
   @IsInt()
   @Min(1)
   productId?: number;
+
+  @ApiPropertyOptional({
+    description: 'Product name filter (partial match, case-insensitive)',
+    example: 'oak',
+  })
+  @IsOptional()
+  @IsString()
+  name?: string;
+
+  @ApiPropertyOptional({
+    description: 'Product slug filter (partial match, case-insensitive)',
+    example: 'oak-dining',
+  })
+  @IsOptional()
+  @IsString()
+  slug?: string;
+
+  @ApiPropertyOptional({
+    description: 'Product description filter (partial match, case-insensitive)',
+    example: 'dining',
+  })
+  @IsOptional()
+  @IsString()
+  description?: string;
 
   @ApiPropertyOptional({ description: 'Branch id', example: 5 })
   @IsOptional()

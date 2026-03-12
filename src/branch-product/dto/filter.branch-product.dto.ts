@@ -43,6 +43,14 @@ export class FilterBranchProductDto {
   name?: string;
 
   @ApiPropertyOptional({
+    description: 'Product slug filter (partial match, case-insensitive)',
+    example: 'oak-dining',
+  })
+  @IsOptional()
+  @IsString()
+  slug?: string;
+
+  @ApiPropertyOptional({
     description: 'Product description filter',
     example: 'dining',
   })
