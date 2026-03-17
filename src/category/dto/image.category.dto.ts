@@ -11,6 +11,7 @@ export class ImageCategoryDto {
   type: string;
 
   @ApiPropertyOptional({
+    type: String,
     description: 'Image title',
     nullable: true,
     example: 'Category hero',
@@ -18,6 +19,7 @@ export class ImageCategoryDto {
   title?: string | null;
 
   @ApiPropertyOptional({
+    type: String,
     description: 'Image description',
     nullable: true,
     example: 'Banner for category listing page',

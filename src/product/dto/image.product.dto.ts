@@ -11,6 +11,7 @@ export class ImageProductDto {
   type: string;
 
   @ApiPropertyOptional({
+    type: String,
     description: 'Image title',
     nullable: true,
     example: 'Main view',
@@ -18,6 +19,7 @@ export class ImageProductDto {
   title?: string | null;
 
   @ApiPropertyOptional({
+    type: String,
     description: 'Image description',
     nullable: true,
     example: 'Front angle photo for product card',

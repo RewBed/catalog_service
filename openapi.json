@@ -3213,13 +3213,13 @@
             "example": "main"
           },
           "title": {
-            "type": "object",
+            "type": "string",
             "description": "Image title",
             "nullable": true,
             "example": "Category hero"
           },
           "description": {
-            "type": "object",
+            "type": "string",
             "description": "Image description",
             "nullable": true,
             "example": "Banner for category listing page"
@@ -3598,13 +3598,13 @@
             "example": "main"
           },
           "title": {
-            "type": "object",
+            "type": "string",
             "description": "Image title",
             "nullable": true,
             "example": "Main view"
           },
           "description": {
-            "type": "object",
+            "type": "string",
             "description": "Image description",
             "nullable": true,
             "example": "Front angle photo for product card"
