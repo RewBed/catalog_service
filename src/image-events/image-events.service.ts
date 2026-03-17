@@ -1,12 +1,16 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { Prisma } from 'generated/prisma/client';
 import { PrismaService } from 'src/core/database/prisma.service';
+import { ImageEventBindingsService } from './image-event-bindings.service';
 
 export type ImageEventData = {
     path?: string;
     externalId?: string;
     entityId: string;
-    entityType: string;
+    entityType?: string;
     imageType?: string;
+    title?: string | null;
+    description?: string | null;
 };
 
 export type ImageUploadedEvent = {
@@ -30,6 +34,10 @@ export type ImageUpdatedEventV1 = {
         entityId: string | null;
         previousImageType: string | null;
         imageType: string | null;
+        previousTitle?: string | null;
+        title?: string | null;
+        previousDescription?: string | null;
+        description?: string | null;
         updatedAt: string;
     };
 };
@@ -50,55 +58,93 @@ export type ImageUpdatedProcessResult = {
     updatedRecords?: number;
 };
 
+type ParsedCommonEventData = {
+    entityId: number;
+    entityType: string;
+    externalId: string;
+    type: string;
+    title: string | null;
+    description: string | null;
+};
+
+type ParsedUpdatedEventData = {
+    entityId: number;
+    entityType: string;
+    externalId: string;
+    type: string;
+    title?: string | null;
+    description?: string | null;
+    updatedAt: Date;
+};
+
+type EntityUpdateStats = {
+    updatedRecords: number;
+    totalFound: number;
+    staleSkips: number;
+};
+
+type ImageEntityHandler = {
+    upload: (data: ParsedCommonEventData) => Promise<void>;
+    delete: (data: ParsedCommonEventData) => Promise<void>;
+    update: (
+        tx: Prisma.TransactionClient,
+        data: ParsedUpdatedEventData,
+    ) => Promise<EntityUpdateStats>;
+};
+
 @Injectable()
 export class ImageEventsService {
     private readonly logger = new Logger(ImageEventsService.name);
 
-    constructor(private readonly prisma: PrismaService) {}
+    private readonly entityHandlers: Record<string, ImageEntityHandler> = {
+        'catalog.product': {
+            upload: (data) => this.saveProductImage(data),
+            delete: (data) => this.deleteProductImage(data),
+            update: (tx, data) => this.updateProductImages(tx, data),
+        },
+        'catalog.category': {
+            upload: (data) => this.saveCategoryImage(data),
+            delete: (data) => this.deleteCategoryImage(data),
+            update: (tx, data) => this.updateCategoryImages(tx, data),
+        },
+    };
 
-    async handleImageUploaded(event: ImageUploadedEvent): Promise<void> {
-        const parsed = this.parseCommonEventData(event.data);
+    constructor(
+        private readonly prisma: PrismaService,
+        private readonly bindingsService: ImageEventBindingsService,
+    ) {}
+
+    async handleImageUploaded(sourceTopic: string, event: ImageUploadedEvent): Promise<void> {
+        const parsed = this.parseCommonEventData(sourceTopic, event.data);
         if (!parsed) {
             return;
         }
 
-        const { entityId, entityType, externalId, type } = parsed;
-
-        if (entityType === 'catalog.product') {
-            await this.saveProductImage(entityId, externalId, type);
+        const handler = this.getEntityHandler(parsed.entityType);
+        if (!handler) {
+            this.logger.warn(`Skipped event with unsupported entityType=${parsed.entityType}`);
             return;
         }
 
-        if (entityType === 'catalog.category') {
-            await this.saveCategoryImage(entityId, externalId, type);
-            return;
-        }
-
-        this.logger.warn(`Skipped event with unsupported entityType=${entityType}`);
+        await handler.upload(parsed);
     }
 
-    async handleImageDeleted(event: ImageDeletedEvent): Promise<void> {
-        const parsed = this.parseCommonEventData(event.data);
+    async handleImageDeleted(sourceTopic: string, event: ImageDeletedEvent): Promise<void> {
+        const parsed = this.parseCommonEventData(sourceTopic, event.data);
         if (!parsed) {
             return;
         }
 
-        const { entityId, entityType, externalId, type } = parsed;
-
-        if (entityType === 'catalog.product') {
-            await this.deleteProductImage(entityId, externalId, type);
+        const handler = this.getEntityHandler(parsed.entityType);
+        if (!handler) {
+            this.logger.warn(`Skipped event with unsupported entityType=${parsed.entityType}`);
             return;
         }
 
-        if (entityType === 'catalog.category') {
-            await this.deleteCategoryImage(entityId, externalId, type);
-            return;
-        }
-
-        this.logger.warn(`Skipped event with unsupported entityType=${entityType}`);
+        await handler.delete(parsed);
     }
 
-    async processImageUpdated(topic: string, payload: unknown): Promise<ImageUpdatedProcessResult> {
+    async processImageUpdated(sourceTopic: string, payload: unknown): Promise<ImageUpdatedProcessResult> {
         const parsed = this.parseImageUpdatedPayload(payload);
 
         if (!parsed.ok) {
@@ -106,7 +152,7 @@ export class ImageEventsService {
                 try {
                     await this.registerInboxEvent(
                         parsed.eventId,
-                        topic,
+                        sourceTopic,
                         parsed.eventType || 'image.updated',
                         parsed.eventVersion ?? 0,
                         parsed.externalId,
@@ -137,7 +183,7 @@ export class ImageEventsService {
 
         const event = parsed.event;
 
-        if (event.eventType !== 'image.updated') {
+        if (!this.matchesUpdatedEventType(event.eventType)) {
             return {
                 status: 'ignored',
                 eventId: event.eventId,
@@ -157,9 +203,27 @@ export class ImageEventsService {
             };
         }
 
-        const externalId = event.data.externalId.trim();
-        const eventUpdatedAt = new Date(event.data.updatedAt);
-        const nextType = event.data.imageType?.trim() || 'default';
+        const parsedData = this.parseUpdatedEventData(sourceTopic, event.data);
+        if (!parsedData.ok) {
+            return {
+                status: 'invalid',
+                eventId: event.eventId,
+                externalId: event.data.externalId,
+                eventType: event.eventType,
+                reason: parsedData.reason,
+            };
+        }
+
+        const handler = this.getEntityHandler(parsedData.data.entityType);
+        if (!handler) {
+            return {
+                status: 'ignored',
+                eventId: event.eventId,
+                externalId: parsedData.data.externalId,
+                eventType: event.eventType,
+                reason: `Unsupported entityType=${parsedData.data.entityType}`,
+            };
+        }
 
         try {
             const transactionResult = await this.prisma.$transaction(async (tx) => {
@@ -178,80 +242,34 @@ export class ImageEventsService {
                     };
                 }
 
-                const productImages = await tx.productImage.findMany({
-                    where: { url: externalId },
-                    select: {
-                        id: true,
-                        updatedAt: true,
-                    },
-                });
-
-                const categoryImages = await tx.categoryImage.findMany({
-                    where: { url: externalId },
-                    select: {
-                        id: true,
-                        updatedAt: true,
-                    },
-                });
-
-                let updatedRecords = 0;
-                let staleSkips = 0;
-
-                for (const image of productImages) {
-                    if (eventUpdatedAt <= image.updatedAt) {
-                        staleSkips += 1;
-                        continue;
-                    }
-
-                    await tx.productImage.update({
-                        where: { id: image.id },
-                        data: {
-                            type: nextType,
-                        },
-                    });
-
-                    updatedRecords += 1;
-                }
-
-                for (const image of categoryImages) {
-                    if (eventUpdatedAt <= image.updatedAt) {
-                        staleSkips += 1;
-                        continue;
-                    }
-
-                    await tx.categoryImage.update({
-                        where: { id: image.id },
-                        data: {
-                            type: nextType,
-                        },
-                    });
-
-                    updatedRecords += 1;
-                }
+                const updateStats = await handler.update(tx, parsedData.data);
 
                 await tx.$executeRaw`
                     INSERT INTO "InboxEvent" ("eventId", "topic", "eventType", "eventVersion", "externalId")
-                    VALUES (${event.eventId}, ${topic}, ${event.eventType}, ${event.eventVersion}, ${externalId})
+                    VALUES (${event.eventId}, ${sourceTopic}, ${event.eventType}, ${event.eventVersion}, ${parsedData.data.externalId})
                 `;
 
-                const totalFound = productImages.length + categoryImages.length;
-                if (updatedRecords === 0 && totalFound > 0 && staleSkips > 0) {
+                if (
+                    updateStats.updatedRecords === 0 &&
+                    updateStats.totalFound > 0 &&
+                    updateStats.staleSkips > 0
+                ) {
                     return {
                         status: 'stale' as const,
-                        updatedRecords,
+                        updatedRecords: 0,
                     };
                 }
 
                 return {
                     status: 'processed' as const,
-                    updatedRecords,
+                    updatedRecords: updateStats.updatedRecords,
                 };
             });
 
             return {
                 ...transactionResult,
                 eventId: event.eventId,
-                externalId,
+                externalId: parsedData.data.externalId,
                 eventType: event.eventType,
             };
         } catch (error) {
@@ -259,7 +277,7 @@ export class ImageEventsService {
                 return {
                     status: 'duplicate',
                     eventId: event.eventId,
-                    externalId,
+                    externalId: parsedData.data.externalId,
                     eventType: event.eventType,
                     updatedRecords: 0,
                 };
@@ -275,6 +293,10 @@ export class ImageEventsService {
         }
 
         return (error as { code?: unknown }).code === 'P2002';
+    }
+
+    private matchesUpdatedEventType(eventType: string): boolean {
+        return eventType === 'image.updated' || eventType.endsWith('.image.updated');
     }
 
     private async registerInboxEvent(
@@ -421,11 +443,52 @@ export class ImageEventsService {
                     typeof dataCandidate.imageType === 'string' || dataCandidate.imageType === null
                         ? (dataCandidate.imageType as string | null)
                         : null,
+                previousTitle: this.parseNullableStringField(dataCandidate, 'previousTitle'),
+                title: this.parseNullableStringField(dataCandidate, 'title'),
+                previousDescription: this.parseNullableStringField(
+                    dataCandidate,
+                    'previousDescription',
+                ),
+                description: this.parseNullableStringField(dataCandidate, 'description'),
                 updatedAt: String(dataCandidate.updatedAt),
             },
         };
 
         return { ok: true, event };
+    }
+
+    private parseUpdatedEventData(
+        sourceTopic: string,
+        data: ImageUpdatedEventV1['data'],
+    ): { ok: true; data: ParsedUpdatedEventData } | { ok: false; reason: string } {
+        const entityTypeResolution = this.bindingsService.resolveEntityType(
+            sourceTopic,
+            data.entityType,
+        );
+        if (!entityTypeResolution.entityType) {
+            return { ok: false, reason: entityTypeResolution.reason || 'entityType is required' };
+        }
+
+        const entityId = this.parseIntegerId(data.entityId);
+        if (entityId === null) {
+            return {
+                ok: false,
+                reason: 'data.entityId must be integer',
+            };
+        }
+
+        return {
+            ok: true,
+            data: {
+                entityId,
+                entityType: entityTypeResolution.entityType,
+                externalId: data.externalId.trim(),
+                type: data.imageType?.trim() || 'default',
+                title: this.normalizeOptionalNullableText(data.title),
+                description: this.normalizeOptionalNullableText(data.description),
+                updatedAt: new Date(data.updatedAt),
+            },
+        };
     }
 
     private extractPayloadValue(payload: unknown): unknown {
@@ -458,6 +521,27 @@ export class ImageEventsService {
         return source as Record<string, unknown>;
     }
 
+    private parseNullableStringField(
+        source: Record<string, unknown>,
+        fieldName: string,
+    ): string | null | undefined {
+        if (!Object.prototype.hasOwnProperty.call(source, fieldName)) {
+            return undefined;
+        }
+
+        const value = source[fieldName];
+        if (value === null) {
+            return null;
+        }
+
+        if (typeof value !== 'string') {
+            return undefined;
+        }
+
+        const normalized = value.trim();
+        return normalized || null;
+    }
+
     private isIsoDateTime(value: unknown): boolean {
         if (typeof value !== 'string') {
             return false;
@@ -467,31 +551,80 @@ export class ImageEventsService {
         return !Number.isNaN(date.getTime());
     }
 
-    private parseCommonEventData(data: ImageEventData): { entityId: number; entityType: string; externalId: string; type: string } | null {
-        const externalId = data.externalId?.trim();
-
-        if (!externalId || !data.entityId || !data.entityType) {
-            this.logger.warn('Skipped event without required data.externalId/entityId/entityType');
+    private normalizeNullableText(value: unknown): string | null {
+        if (typeof value !== 'string') {
             return null;
         }
 
-        const entityId = Number(data.entityId);
-        if (!Number.isInteger(entityId)) {
+        const normalized = value.trim();
+        return normalized || null;
+    }
+
+    private normalizeOptionalNullableText(value: string | null | undefined): string | null | undefined {
+        if (value === undefined) {
+            return undefined;
+        }
+
+        if (value === null) {
+            return null;
+        }
+
+        const normalized = value.trim();
+        return normalized || null;
+    }
+
+    private parseCommonEventData(
+        sourceTopic: string,
+        data: ImageEventData,
+    ): ParsedCommonEventData | null {
+        const externalId = data.externalId?.trim();
+
+        if (!externalId || !data.entityId) {
+            this.logger.warn('Skipped event without required data.externalId/entityId');
+            return null;
+        }
+
+        const entityTypeResolution = this.bindingsService.resolveEntityType(
+            sourceTopic,
+            data.entityType,
+        );
+        if (!entityTypeResolution.entityType) {
+            this.logger.warn(entityTypeResolution.reason || 'entityType is required');
+            return null;
+        }
+
+        const entityId = this.parseIntegerId(data.entityId);
+        if (entityId === null) {
             this.logger.warn(`Skipped event with invalid entityId=${data.entityId}`);
             return null;
         }
 
         return {
             entityId,
-            entityType: data.entityType,
+            entityType: entityTypeResolution.entityType,
             externalId,
-            type: data.imageType || 'default',
+            type: data.imageType?.trim() || 'default',
+            title: this.normalizeNullableText(data.title),
+            description: this.normalizeNullableText(data.description),
         };
     }
 
-    private async saveProductImage(productId: number, url: string, type: string): Promise<void> {
+    private parseIntegerId(value: string | null | undefined): number | null {
+        if (!value) {
+            return null;
+        }
+
+        const parsed = Number(value);
+        return Number.isInteger(parsed) ? parsed : null;
+    }
+
+    private getEntityHandler(entityType: string): ImageEntityHandler | undefined {
+        return this.entityHandlers[entityType];
+    }
+
+    private async saveProductImage(data: ParsedCommonEventData): Promise<void> {
         const product = await this.prisma.product.findUnique({
-            where: { id: productId },
+            where: { id: data.entityId },
             select: {
                 id: true,
                 deletedAt: true,
@@ -499,65 +632,204 @@ export class ImageEventsService {
         });
 
         if (!product || product.deletedAt) {
-            this.logger.warn(`Product ${productId} not found, image is not stored`);
+            this.logger.warn(`Product ${data.entityId} not found, image is not stored`);
             return;
         }
 
-        const exists = await this.prisma.productImage.findFirst({
-            where: { productId, url, type },
-            select: { id: true },
+        const existingImage = await this.prisma.productImage.findFirst({
+            where: {
+                productId: data.entityId,
+                url: data.externalId,
+                type: data.type,
+            },
+            select: {
+                id: true,
+                title: true,
+                description: true,
+            },
         });
 
-        if (exists) {
+        if (existingImage) {
+            if (
+                existingImage.title !== data.title ||
+                existingImage.description !== data.description
+            ) {
+                await this.prisma.productImage.update({
+                    where: { id: existingImage.id },
+                    data: {
+                        title: data.title,
+                        description: data.description,
+                    },
+                });
+            }
+
             return;
         }
 
         await this.prisma.productImage.create({
             data: {
-                productId,
-                url,
-                type,
+                productId: data.entityId,
+                url: data.externalId,
+                type: data.type,
+                title: data.title,
+                description: data.description,
                 sortOrder: 0,
             },
         });
     }
 
-    private async saveCategoryImage(categoryId: number, url: string, type: string): Promise<void> {
+    private async saveCategoryImage(data: ParsedCommonEventData): Promise<void> {
         const category = await this.prisma.category.findUnique({
-            where: { id: categoryId },
-            select: { id: true },
+            where: { id: data.entityId },
+            select: {
+                id: true,
+                deletedAt: true,
+            },
         });
 
-        if (!category) {
-            this.logger.warn(`Category ${categoryId} not found, image is not stored`);
+        if (!category || category.deletedAt) {
+            this.logger.warn(`Category ${data.entityId} not found, image is not stored`);
             return;
         }
 
-        const exists = await this.prisma.categoryImage.findFirst({
-            where: { categoryId, url, type },
-            select: { id: true },
+        const existingImage = await this.prisma.categoryImage.findFirst({
+            where: {
+                categoryId: data.entityId,
+                url: data.externalId,
+                type: data.type,
+            },
+            select: {
+                id: true,
+                title: true,
+                description: true,
+            },
         });
 
-        if (exists) {
+        if (existingImage) {
+            if (
+                existingImage.title !== data.title ||
+                existingImage.description !== data.description
+            ) {
+                await this.prisma.categoryImage.update({
+                    where: { id: existingImage.id },
+                    data: {
+                        title: data.title,
+                        description: data.description,
+                    },
+                });
+            }
+
             return;
         }
 
         await this.prisma.categoryImage.create({
             data: {
-                categoryId,
-                url,
-                type,
+                categoryId: data.entityId,
+                url: data.externalId,
+                type: data.type,
+                title: data.title,
+                description: data.description,
                 sortOrder: 0,
             },
         });
     }
 
-    private async deleteProductImage(productId: number, url: string, type: string): Promise<void> {
+    private async updateProductImages(
+        tx: Prisma.TransactionClient,
+        data: ParsedUpdatedEventData,
+    ): Promise<EntityUpdateStats> {
+        const images = await tx.productImage.findMany({
+            where: {
+                productId: data.entityId,
+                url: data.externalId,
+            },
+            select: {
+                id: true,
+                updatedAt: true,
+            },
+        });
+
+        return this.applyImageUpdates(
+            images,
+            data,
+            (id, updateData) =>
+                tx.productImage.update({
+                    where: { id },
+                    data: updateData,
+                }),
+        );
+    }
+
+    private async updateCategoryImages(
+        tx: Prisma.TransactionClient,
+        data: ParsedUpdatedEventData,
+    ): Promise<EntityUpdateStats> {
+        const images = await tx.categoryImage.findMany({
+            where: {
+                categoryId: data.entityId,
+                url: data.externalId,
+            },
+            select: {
+                id: true,
+                updatedAt: true,
+            },
+        });
+
+        return this.applyImageUpdates(
+            images,
+            data,
+            (id, updateData) =>
+                tx.categoryImage.update({
+                    where: { id },
+                    data: updateData,
+                }),
+        );
+    }
+
+    private async applyImageUpdates(
+        images: Array<{ id: number; updatedAt: Date }>,
+        data: ParsedUpdatedEventData,
+        updateRow: (
+            id: number,
+            updateData: { type: string; title?: string | null; description?: string | null },
+        ) => Promise<unknown>,
+    ): Promise<EntityUpdateStats> {
+        let updatedRecords = 0;
+        let staleSkips = 0;
+
+        for (const image of images) {
+            if (data.updatedAt <= image.updatedAt) {
+                staleSkips += 1;
+                continue;
+            }
+
+            const updateData: { type: string; title?: string | null; description?: string | null } = {
+                type: data.type,
+            };
+            if (data.title !== undefined) {
+                updateData.title = data.title;
+            }
+            if (data.description !== undefined) {
+                updateData.description = data.description;
+            }
+
+            await updateRow(image.id, updateData);
+            updatedRecords += 1;
+        }
+
+        return {
+            updatedRecords,
+            staleSkips,
+            totalFound: images.length,
+        };
+    }
+
+    private async deleteProductImage(data: ParsedCommonEventData): Promise<void> {
         const deletedByType = await this.prisma.productImage.deleteMany({
             where: {
-                productId,
-                url,
-                type,
+                productId: data.entityId,
+                url: data.externalId,
+                type: data.type,
             },
         });
 
@@ -567,18 +839,18 @@ export class ImageEventsService {
 
         await this.prisma.productImage.deleteMany({
             where: {
-                productId,
-                url,
+                productId: data.entityId,
+                url: data.externalId,
             },
         });
     }
 
-    private async deleteCategoryImage(categoryId: number, url: string, type: string): Promise<void> {
+    private async deleteCategoryImage(data: ParsedCommonEventData): Promise<void> {
         const deletedByType = await this.prisma.categoryImage.deleteMany({
             where: {
-                categoryId,
-                url,
-                type,
+                categoryId: data.entityId,
+                url: data.externalId,
+                type: data.type,
             },
         });
 
@@ -588,8 +860,8 @@ export class ImageEventsService {
 
         await this.prisma.categoryImage.deleteMany({
             where: {
-                categoryId,
-                url,
+                categoryId: data.entityId,
+                url: data.externalId,
             },
         });
     }

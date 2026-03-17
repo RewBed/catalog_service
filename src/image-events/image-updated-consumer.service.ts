@@ -1,14 +1,32 @@
 import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Consumer, Kafka, Producer } from 'kafkajs';
+import { ImageEventBindingsService } from './image-event-bindings.service';
 import { ImageEventsMetrics } from './image-events.metrics';
-import { ImageEventsService } from './image-events.service';
+import {
+    ImageDeletedEvent,
+    ImageEventsService,
+    ImageUpdatedProcessResult,
+    ImageUploadedEvent,
+} from './image-events.service';
+
+type ProcessResult = ImageUpdatedProcessResult & {
+    sourceTopic?: string;
+};
+
+type EventEnvelope = {
+    eventType?: unknown;
+    eventId?: unknown;
+    data?: {
+        externalId?: unknown;
+    };
+};
 
 @Injectable()
 export class ImageUpdatedConsumerService implements OnModuleInit, OnModuleDestroy {
     private readonly logger = new Logger(ImageUpdatedConsumerService.name);
     private readonly kafkaEnabled: boolean;
-    private readonly topic: string;
+    private readonly topics: string[];
     private readonly dlqTopic: string;
     private readonly maxRetries: number;
     private readonly retryBaseMs: number;
@@ -18,11 +36,12 @@ export class ImageUpdatedConsumerService implements OnModuleInit, OnModuleDestro
 
     constructor(
         private readonly configService: ConfigService,
+        private readonly bindingsService: ImageEventBindingsService,
         private readonly imageEventsService: ImageEventsService,
         private readonly metrics: ImageEventsMetrics,
     ) {
         this.kafkaEnabled = this.configService.get<boolean>('KAFKA_ENABLED', false);
-        this.topic = this.configService.get<string>('KAFKA_TOPIC_IMAGE_UPDATED', 'image.updated');
+        this.topics = this.resolveTopics();
         this.dlqTopic = this.configService.get<string>(
             'KAFKA_TOPIC_IMAGE_UPDATED_DLQ',
             'image.updated.dlq',
@@ -39,7 +58,7 @@ export class ImageUpdatedConsumerService implements OnModuleInit, OnModuleDestro
 
     async onModuleInit(): Promise<void> {
         if (!this.kafkaEnabled) {
-            this.logger.log('Image updated consumer disabled (KAFKA_ENABLED=false)');
+            this.logger.log('Image events consumer disabled (KAFKA_ENABLED=false)');
             return;
         }
 
@@ -56,12 +75,17 @@ export class ImageUpdatedConsumerService implements OnModuleInit, OnModuleDestro
         const password = this.configService.get<string>('KAFKA_PASSWORD', '');
 
         if (!brokers.length) {
-            this.logger.warn('Image updated consumer is enabled, but KAFKA_BROKERS is empty');
+            this.logger.warn('Image events consumer is enabled, but KAFKA_BROKERS is empty');
             return;
         }
 
         if ((username && !password) || (!username && password)) {
             throw new Error('Kafka auth requires both KAFKA_USERNAME and KAFKA_PASSWORD');
+        }
+
+        if (!this.topics.length) {
+            this.logger.warn('Image events consumer is enabled, but no entity topics configured');
+            return;
         }
 
         const sasl = !username
@@ -74,8 +98,8 @@ export class ImageUpdatedConsumerService implements OnModuleInit, OnModuleDestro
 
         const clientId = this.configService.get<string>('KAFKA_CLIENT_ID', 'catalog-service');
         const groupId =
-            this.configService.get<string>('KAFKA_GROUP_ID_IMAGE_UPDATED', '').trim() ||
-            `${clientId}-image-updated-consumer`;
+            this.configService.get<string>('KAFKA_GROUP_ID_IMAGE_EVENTS', '').trim() ||
+            `${clientId}-image-events-consumer`;
 
         const kafka = new Kafka({
             clientId,
@@ -94,7 +118,10 @@ export class ImageUpdatedConsumerService implements OnModuleInit, OnModuleDestro
 
         await this.consumer.connect();
         await this.producer.connect();
-        await this.consumer.subscribe({ topic: this.topic, fromBeginning: false });
+
+        for (const topic of this.topics) {
+            await this.consumer.subscribe({ topic, fromBeginning: false });
+        }
 
         await this.consumer.run({
             autoCommit: false,
@@ -113,16 +140,18 @@ export class ImageUpdatedConsumerService implements OnModuleInit, OnModuleDestro
 
                     try {
                         const result = await this.processWithRetry(() =>
-                            this.imageEventsService.processImageUpdated(this.topic, payload),
+                            this.processImageEvent(batch.topic, payload),
                         );
 
                         if (result.status === 'invalid') {
                             await this.publishDlq({
                                 key,
+                                sourceTopic: batch.topic,
                                 payload,
                                 reason: result.reason || 'Invalid payload',
                                 eventId: result.eventId,
                                 externalId: result.externalId,
+                                eventType: result.eventType,
                             });
                         }
 
@@ -132,7 +161,7 @@ export class ImageUpdatedConsumerService implements OnModuleInit, OnModuleDestro
                         }
 
                         this.logger.log(
-                            `image.updated handled: status=${result.status} eventId=${result.eventId || '-'} externalId=${result.externalId || '-'} eventType=${result.eventType || '-'} updated=${result.updatedRecords ?? 0}`,
+                            `image event handled: topic=${batch.topic} status=${result.status} eventType=${result.eventType || '-'} eventId=${result.eventId || '-'} externalId=${result.externalId || '-'} updated=${result.updatedRecords ?? 0}`,
                         );
 
                         const nextOffset = (BigInt(message.offset) + 1n).toString();
@@ -148,7 +177,7 @@ export class ImageUpdatedConsumerService implements OnModuleInit, OnModuleDestro
                     } catch (error) {
                         this.metrics.incrementFailed();
                         this.logger.error(
-                            `image.updated failed: topic=${batch.topic} partition=${batch.partition} offset=${message.offset} key=${key || '-'} error=${this.stringifyError(error)}`,
+                            `image event failed: topic=${batch.topic} partition=${batch.partition} offset=${message.offset} key=${key || '-'} error=${this.stringifyError(error)}`,
                         );
                         throw error;
                     }
@@ -157,7 +186,7 @@ export class ImageUpdatedConsumerService implements OnModuleInit, OnModuleDestro
         });
 
         this.logger.log(
-            `Image updated consumer started topic=${this.topic} groupId=${groupId} dlq=${this.dlqTopic}`,
+            `Image events consumer started topics=[${this.topics.join(',') || '-'}] groupId=${groupId} dlq=${this.dlqTopic}`,
         );
     }
 
@@ -171,6 +200,92 @@ export class ImageUpdatedConsumerService implements OnModuleInit, OnModuleDestro
             await this.producer.disconnect();
             this.producer = null;
         }
+    }
+
+    private async processImageEvent(topic: string, payload: Buffer | null): Promise<ProcessResult> {
+        const envelope = this.parseEnvelope(payload);
+        if (!envelope) {
+            return {
+                status: 'invalid',
+                sourceTopic: topic,
+                reason: 'Payload is not valid JSON object',
+            };
+        }
+
+        const eventType = this.getStringField(envelope.eventType);
+        const eventId = this.getStringField(envelope.eventId);
+        const externalId = this.getStringField(envelope.data?.externalId);
+
+        if (!eventType) {
+            return {
+                status: 'invalid',
+                sourceTopic: topic,
+                eventId,
+                externalId,
+                reason: 'eventType is required',
+            };
+        }
+
+        if (this.matchesEventType(eventType, 'image.uploaded')) {
+            if (!envelope.data || typeof envelope.data !== 'object') {
+                return {
+                    status: 'invalid',
+                    sourceTopic: topic,
+                    eventId,
+                    externalId,
+                    eventType,
+                    reason: 'data object is required',
+                };
+            }
+
+            await this.imageEventsService.handleImageUploaded(topic, envelope as ImageUploadedEvent);
+            return {
+                status: 'processed',
+                sourceTopic: topic,
+                eventType,
+                eventId,
+                externalId,
+            };
+        }
+
+        if (this.matchesEventType(eventType, 'image.deleted')) {
+            if (!envelope.data || typeof envelope.data !== 'object') {
+                return {
+                    status: 'invalid',
+                    sourceTopic: topic,
+                    eventId,
+                    externalId,
+                    eventType,
+                    reason: 'data object is required',
+                };
+            }
+
+            await this.imageEventsService.handleImageDeleted(topic, envelope as ImageDeletedEvent);
+            return {
+                status: 'processed',
+                sourceTopic: topic,
+                eventType,
+                eventId,
+                externalId,
+            };
+        }
+
+        if (this.matchesEventType(eventType, 'image.updated')) {
+            const result = await this.imageEventsService.processImageUpdated(topic, payload);
+            return {
+                ...result,
+                sourceTopic: topic,
+            };
+        }
+
+        return {
+            status: 'ignored',
+            sourceTopic: topic,
+            eventId,
+            externalId,
+            eventType,
+            reason: `Unsupported eventType=${eventType}`,
+        };
     }
 
     private async processWithRetry<T>(handler: () => Promise<T>): Promise<T> {
@@ -187,7 +302,7 @@ export class ImageUpdatedConsumerService implements OnModuleInit, OnModuleDestro
 
                 const delayMs = Math.min(this.retryBaseMs * 2 ** (attempt - 1), 10_000);
                 this.logger.warn(
-                    `image.updated temporary error, retry in ${delayMs}ms (attempt=${attempt}/${this.maxRetries}) reason=${this.stringifyError(error)}`,
+                    `image event temporary error, retry in ${delayMs}ms (attempt=${attempt}/${this.maxRetries}) reason=${this.stringifyError(error)}`,
                 );
 
                 await this.sleep(delayMs);
@@ -197,10 +312,12 @@ export class ImageUpdatedConsumerService implements OnModuleInit, OnModuleDestro
 
     private async publishDlq(params: {
         key?: string;
+        sourceTopic: string;
         payload: Buffer | null;
         reason: string;
         eventId?: string;
         externalId?: string;
+        eventType?: string;
     }): Promise<void> {
         if (!this.producer) {
             throw new Error('DLQ producer is not initialized');
@@ -214,10 +331,11 @@ export class ImageUpdatedConsumerService implements OnModuleInit, OnModuleDestro
                 {
                     key: params.key || params.externalId || params.eventId || undefined,
                     value: JSON.stringify({
-                        sourceTopic: this.topic,
+                        sourceTopic: params.sourceTopic,
                         reason: params.reason,
                         eventId: params.eventId ?? null,
                         externalId: params.externalId ?? null,
+                        eventType: params.eventType ?? null,
                         receivedAt: new Date().toISOString(),
                         payload: rawPayload,
                     }),
@@ -249,5 +367,42 @@ export class ImageUpdatedConsumerService implements OnModuleInit, OnModuleDestro
         }
 
         return String(error);
+    }
+
+    private resolveTopics(): string[] {
+        return this.bindingsService.getTopics();
+    }
+
+    private parseEnvelope(payload: Buffer | null): EventEnvelope | null {
+        if (!payload) {
+            return null;
+        }
+
+        try {
+            const parsed = JSON.parse(payload.toString('utf-8')) as unknown;
+            if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
+                return null;
+            }
+
+            return parsed as EventEnvelope;
+        } catch {
+            return null;
+        }
+    }
+
+    private getStringField(value: unknown): string | undefined {
+        if (typeof value !== 'string') {
+            return undefined;
+        }
+
+        const normalized = value.trim();
+        return normalized || undefined;
+    }
+
+    private matchesEventType(
+        actualType: string,
+        baseType: 'image.uploaded' | 'image.deleted' | 'image.updated',
+    ): boolean {
+        return actualType === baseType || actualType.endsWith(`.${baseType}`);
     }
 }

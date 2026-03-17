@@ -342,12 +342,16 @@ export class CollectionService {
       sku: item.productItem?.sku ?? undefined,
       article: item.productItem?.sku ?? undefined,
       description: item.productItem?.description ?? undefined,
+      shortDescription: item.productItem?.shortDescription ?? undefined,
+      technicalDescription: item.productItem?.technicalDescription ?? undefined,
       slug: item.productItem?.slug ?? '',
       images: this.mapProductImages(item.productItem?.images),
     };
   }
 
-  private mapProductImages(images?: ProductImage[]): { url: string; type: string }[] {
+  private mapProductImages(
+    images?: ProductImage[],
+  ): { url: string; type: string; title?: string | null; description?: string | null }[] {
     if (!images || images.length === 0) {
       return [];
     }
@@ -355,6 +359,8 @@ export class CollectionService {
     return images.map((image) => ({
       url: image.url,
       type: image.type,
+      title: image.title,
+      description: image.description,
     }));
   }
 

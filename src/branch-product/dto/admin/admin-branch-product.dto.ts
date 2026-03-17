@@ -17,6 +17,24 @@ export class AdminBranchProductDto {
   @ApiPropertyOptional({ description: 'Product article (alias of sku)', example: 'TBL-OAK-120' })
   article?: string;
 
+  @ApiPropertyOptional({
+    description: 'Product description',
+    example: 'Solid oak dining table, 120 cm width',
+  })
+  description?: string;
+
+  @ApiPropertyOptional({
+    description: 'Short product description for cards and lists',
+    example: 'Compact oak dining table for 4 people',
+  })
+  shortDescription?: string;
+
+  @ApiPropertyOptional({
+    description: 'Technical product description with specifications and service details',
+    example: 'Material: oak. Dimensions: 120x80x75 cm. Weight: 32 kg. Finish: matte oil.',
+  })
+  technicalDescription?: string;
+
   @ApiProperty({ description: 'Branch id', example: 5 })
   branchId: number;
 

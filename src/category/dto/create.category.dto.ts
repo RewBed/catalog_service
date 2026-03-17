@@ -26,12 +26,28 @@ export class CreateCategoryDto {
   slug: string;
 
   @ApiPropertyOptional({
+    description: 'Short category description for cards and previews',
+    example: 'Solid wood tables for dining rooms',
+  })
+  @IsOptional()
+  @IsString()
+  shortDescription?: string;
+
+  @ApiPropertyOptional({
     description: 'Category description',
     example: 'Tables for kitchen and dining rooms',
   })
   @IsOptional()
   @IsString()
   description?: string;
+
+  @ApiPropertyOptional({
+    description: 'Category icon value. Can store icon id, emoji, SVG markup, or another frontend token',
+    example: '<svg viewBox="0 0 24 24"><path d="M4 6h16v12H4z"/></svg>',
+  })
+  @IsOptional()
+  @IsString()
+  icon?: string;
 
   @ApiPropertyOptional({
     description: 'Parent category id (0 means no parent)',

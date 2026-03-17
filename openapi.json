@@ -3123,7 +3123,7 @@
   "tags": [],
   "servers": [
     {
-      "url": "http://localhost:3002"
+      "url": "http://localhost:3102"
     }
   ],
   "components": {
@@ -3211,6 +3211,18 @@
             "type": "string",
             "description": "Image type",
             "example": "main"
+          },
+          "title": {
+            "type": "object",
+            "description": "Image title",
+            "nullable": true,
+            "example": "Category hero"
+          },
+          "description": {
+            "type": "object",
+            "description": "Image description",
+            "nullable": true,
+            "example": "Banner for category listing page"
           }
         },
         "required": [
@@ -3237,9 +3249,20 @@
             "type": "string",
             "example": "wooden-tables"
           },
+          "shortDescription": {
+            "type": "string",
+            "example": "Solid wood tables for dining rooms",
+            "description": "Short category description for cards and previews"
+          },
           "description": {
             "type": "string",
-            "example": "Tables for kitchen and dining rooms"
+            "example": "Tables for kitchen and dining rooms",
+            "description": "Full category description"
+          },
+          "icon": {
+            "type": "string",
+            "example": "tabler:table",
+            "description": "Category icon value for frontend rendering"
           },
           "parentId": {
             "type": "number",
@@ -3249,11 +3272,15 @@
             "example": [
               {
                 "url": "https://cdn.example.com/categories/wooden-tables/main.jpg",
-                "type": "main"
+                "type": "main",
+                "title": "Category hero",
+                "description": "Top banner image for category page"
               },
               {
                 "url": "https://cdn.example.com/categories/wooden-tables/banner.jpg",
-                "type": "banner"
+                "type": "banner",
+                "title": "Category promo banner",
+                "description": "Wide promotional banner for the category"
               }
             ],
             "type": "array",
@@ -3267,7 +3294,6 @@
           "name",
           "fullName",
           "slug",
-          "description",
           "parentId",
           "images"
         ]
@@ -3295,12 +3321,16 @@
                 "name": "Wooden Tables",
                 "fullName": "Dining Tables and Wooden Sets",
                 "slug": "wooden-tables",
+                "shortDescription": "Solid wood tables for dining rooms",
                 "description": "Tables for kitchen and dining rooms",
+                "icon": "tabler:table",
                 "parentId": 3,
                 "images": [
                   {
                     "url": "https://cdn.example.com/categories/wooden-tables/main.jpg",
-                    "type": "main"
+                    "type": "main",
+                    "title": "Category hero",
+                    "description": "Top banner image for category page"
                   }
                 ]
               }
@@ -3335,9 +3365,20 @@
             "type": "string",
             "example": "wooden-tables"
           },
+          "shortDescription": {
+            "type": "string",
+            "example": "Solid wood tables for dining rooms",
+            "description": "Short category description for cards and previews"
+          },
           "description": {
             "type": "string",
-            "example": "Tables for kitchen and dining rooms"
+            "example": "Tables for kitchen and dining rooms",
+            "description": "Full category description"
+          },
+          "icon": {
+            "type": "string",
+            "example": "tabler:table",
+            "description": "Category icon value for frontend rendering"
           },
           "parentId": {
             "type": "number",
@@ -3347,11 +3388,15 @@
             "example": [
               {
                 "url": "https://cdn.example.com/categories/wooden-tables/main.jpg",
-                "type": "main"
+                "type": "main",
+                "title": "Category hero",
+                "description": "Top banner image for category page"
               },
               {
                 "url": "https://cdn.example.com/categories/wooden-tables/banner.jpg",
-                "type": "banner"
+                "type": "banner",
+                "title": "Category promo banner",
+                "description": "Wide promotional banner for the category"
               }
             ],
             "type": "array",
@@ -3385,7 +3430,6 @@
           "name",
           "fullName",
           "slug",
-          "description",
           "parentId",
           "images",
           "sortOrder",
@@ -3417,7 +3461,9 @@
                 "name": "Wooden Tables",
                 "fullName": "Dining Tables and Wooden Sets",
                 "slug": "wooden-tables",
+                "shortDescription": "Solid wood tables for dining rooms",
                 "description": "Tables for kitchen and dining rooms",
+                "icon": "<svg viewBox=\"0 0 24 24\"><path d=\"M4 6h16v12H4z\"/></svg>",
                 "parentId": 3,
                 "sortOrder": 120,
                 "createdAt": "2026-03-10T08:15:20.000Z",
@@ -3426,7 +3472,9 @@
                 "images": [
                   {
                     "url": "https://cdn.example.com/categories/wooden-tables/main.jpg",
-                    "type": "main"
+                    "type": "main",
+                    "title": "Category hero",
+                    "description": "Top banner image for category page"
                   }
                 ]
               }
@@ -3460,10 +3508,20 @@
             "description": "Unique category slug",
             "example": "wooden-tables"
           },
+          "shortDescription": {
+            "type": "string",
+            "description": "Short category description for cards and previews",
+            "example": "Solid wood tables for dining rooms"
+          },
           "description": {
             "type": "string",
             "description": "Category description",
             "example": "Tables for kitchen and dining rooms"
+          },
+          "icon": {
+            "type": "string",
+            "description": "Category icon value. Can store icon id, emoji, SVG markup, or another frontend token",
+            "example": "<svg viewBox=\"0 0 24 24\"><path d=\"M4 6h16v12H4z\"/></svg>"
           },
           "parentId": {
             "type": "number",
@@ -3499,10 +3557,20 @@
             "description": "Unique category slug",
             "example": "wooden-tables-premium"
           },
+          "shortDescription": {
+            "type": "string",
+            "description": "Short category description for cards and previews",
+            "example": "Premium wooden tables for dining rooms"
+          },
           "description": {
             "type": "string",
             "description": "Category description",
             "example": "Updated collection of dining tables"
+          },
+          "icon": {
+            "type": "string",
+            "description": "Category icon value. Can store icon id, emoji, SVG markup, or another frontend token",
+            "example": "tabler:table"
           },
           "parentId": {
             "type": "number",
@@ -3528,6 +3596,18 @@
             "type": "string",
             "description": "Image type",
             "example": "main"
+          },
+          "title": {
+            "type": "object",
+            "description": "Image title",
+            "nullable": true,
+            "example": "Main view"
+          },
+          "description": {
+            "type": "object",
+            "description": "Image description",
+            "nullable": true,
+            "example": "Front angle photo for product card"
           }
         },
         "required": [
@@ -3568,10 +3648,20 @@
             "description": "Product slug",
             "example": "oak-dining-table-120"
           },
+          "shortDescription": {
+            "type": "string",
+            "description": "Short product description for cards and lists",
+            "example": "Compact oak dining table for 4 people"
+          },
           "description": {
             "type": "string",
             "description": "Product description",
             "example": "Natural solid oak dining table with matte finish"
+          },
+          "technicalDescription": {
+            "type": "string",
+            "description": "Technical product description with specifications and service details",
+            "example": "Material: oak. Dimensions: 120x80x75 cm. Weight: 32 kg. Finish: matte oil."
           },
           "price": {
             "type": "number",
@@ -3597,11 +3687,15 @@
             "example": [
               {
                 "url": "https://cdn.example.com/products/oak-dining-table-120/main.jpg",
-                "type": "main"
+                "type": "main",
+                "title": "Main view",
+                "description": "Front angle photo for product card"
               },
               {
                 "url": "https://cdn.example.com/products/oak-dining-table-120/icon.jpg",
-                "type": "icon"
+                "type": "icon",
+                "title": "Icon view",
+                "description": "Compact square image for listing cards"
               }
             ],
             "type": "array",
@@ -3643,15 +3737,22 @@
                 "id": 101,
                 "name": "Oak Dining Table 120",
                 "fullName": "Solid Oak Dining Table 120 x 80 cm",
+                "sku": "TBL-OAK-120",
+                "article": "TBL-OAK-120",
                 "slug": "oak-dining-table-120",
+                "shortDescription": "Compact oak dining table for 4 people",
                 "description": "Natural solid oak dining table with matte finish",
+                "technicalDescription": "Material: oak. Dimensions: 120x80x75 cm. Weight: 32 kg.",
                 "price": 24990,
                 "categoryId": 3,
+                "categoryName": "Dining Tables",
                 "sortOrder": 10,
                 "images": [
                   {
                     "url": "https://cdn.example.com/products/oak-dining-table-120/main.jpg",
-                    "type": "main"
+                    "type": "main",
+                    "title": "Main view",
+                    "description": "Front angle photo for product card"
                   }
                 ]
               }
@@ -3766,10 +3867,20 @@
             "description": "Product slug",
             "example": "oak-dining-table-120"
           },
+          "shortDescription": {
+            "type": "string",
+            "description": "Short product description for cards and lists",
+            "example": "Compact oak dining table for 4 people"
+          },
           "description": {
             "type": "string",
             "description": "Product description",
             "example": "Natural solid oak dining table with matte finish"
+          },
+          "technicalDescription": {
+            "type": "string",
+            "description": "Technical product description with specifications and service details",
+            "example": "Material: oak. Dimensions: 120x80x75 cm. Weight: 32 kg. Finish: matte oil."
           },
           "price": {
             "type": "number",
@@ -3934,10 +4045,20 @@
             "description": "Product slug",
             "example": "oak-dining-table-140"
           },
+          "shortDescription": {
+            "type": "string",
+            "description": "Short product description for cards and lists",
+            "example": "Larger oak dining table for 6 people"
+          },
           "description": {
             "type": "string",
             "description": "Product description",
             "example": "Updated model with larger top and reinforced legs"
+          },
+          "technicalDescription": {
+            "type": "string",
+            "description": "Technical product description with specifications and service details",
+            "example": "Material: oak. Dimensions: 140x80x75 cm. Weight: 36 kg. Finish: matte oil."
           },
           "price": {
             "type": "number",
@@ -4815,6 +4936,16 @@
             "description": "Product description",
             "example": "Solid oak dining table, 120 cm width"
           },
+          "shortDescription": {
+            "type": "string",
+            "description": "Short product description for cards and lists",
+            "example": "Compact oak dining table for 4 people"
+          },
+          "technicalDescription": {
+            "type": "string",
+            "description": "Technical product description with specifications and service details",
+            "example": "Material: oak. Dimensions: 120x80x75 cm. Weight: 32 kg. Finish: matte oil."
+          },
           "slug": {
             "type": "string",
             "description": "Product slug",
@@ -4824,11 +4955,15 @@
             "example": [
               {
                 "url": "https://cdn.example.com/products/oak-dining-table-120/main.jpg",
-                "type": "main"
+                "type": "main",
+                "title": "Main view",
+                "description": "Front angle photo for product card"
               },
               {
                 "url": "https://cdn.example.com/products/oak-dining-table-120/gallery-1.jpg",
-                "type": "gallery"
+                "type": "gallery",
+                "title": "Gallery view",
+                "description": "Interior lifestyle photo"
               }
             ],
             "type": "array",
@@ -4882,11 +5017,15 @@
                 "stock": 20,
                 "name": "Oak Dining Table 120",
                 "description": "Solid oak dining table, 120 cm width",
+                "shortDescription": "Compact oak dining table for 4 people",
+                "technicalDescription": "Material: oak. Dimensions: 120x80x75 cm. Weight: 32 kg.",
                 "slug": "oak-dining-table-120",
                 "images": [
                   {
                     "url": "https://cdn.example.com/products/oak-dining-table-120/main.jpg",
-                    "type": "main"
+                    "type": "main",
+                    "title": "Main view",
+                    "description": "Front angle photo for product card"
                   }
                 ]
               }
@@ -4929,6 +5068,21 @@
             "type": "string",
             "description": "Product article (alias of sku)",
             "example": "TBL-OAK-120"
+          },
+          "description": {
+            "type": "string",
+            "description": "Product description",
+            "example": "Solid oak dining table, 120 cm width"
+          },
+          "shortDescription": {
+            "type": "string",
+            "description": "Short product description for cards and lists",
+            "example": "Compact oak dining table for 4 people"
+          },
+          "technicalDescription": {
+            "type": "string",
+            "description": "Technical product description with specifications and service details",
+            "example": "Material: oak. Dimensions: 120x80x75 cm. Weight: 32 kg. Finish: matte oil."
           },
           "branchId": {
             "type": "number",
@@ -5003,6 +5157,12 @@
               {
                 "id": 7001,
                 "productId": 101,
+                "categoryName": "Dining Tables",
+                "sku": "TBL-OAK-120",
+                "article": "TBL-OAK-120",
+                "description": "Solid oak dining table, 120 cm width",
+                "shortDescription": "Compact oak dining table for 4 people",
+                "technicalDescription": "Material: oak. Dimensions: 120x80x75 cm. Weight: 32 kg.",
                 "branchId": 5,
                 "price": 25990,
                 "stock": 20,
@@ -5109,11 +5269,15 @@
                 "name": "Oak Dining Table 120",
                 "sku": "TBL-OAK-120",
                 "description": "Solid oak dining table, 120 cm width",
+                "shortDescription": "Compact oak dining table for 4 people",
+                "technicalDescription": "Material: oak. Dimensions: 120x80x75 cm. Weight: 32 kg.",
                 "slug": "oak-dining-table-120",
                 "images": [
                   {
                     "url": "https://cdn.example.com/products/oak-dining-table-120/main.jpg",
-                    "type": "main"
+                    "type": "main",
+                    "title": "Main view",
+                    "description": "Front angle photo for product card"
                   }
                 ]
               }

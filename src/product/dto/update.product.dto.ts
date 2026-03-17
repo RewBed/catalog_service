@@ -146,12 +146,28 @@ export class UpdateProductDto {
   slug?: string;
 
   @ApiPropertyOptional({
+    description: 'Short product description for cards and lists',
+    example: 'Larger oak dining table for 6 people',
+  })
+  @IsOptional()
+  @IsString()
+  shortDescription?: string;
+
+  @ApiPropertyOptional({
     description: 'Product description',
     example: 'Updated model with larger top and reinforced legs',
   })
   @IsOptional()
   @IsString()
   description?: string;
+
+  @ApiPropertyOptional({
+    description: 'Technical product description with specifications and service details',
+    example: 'Material: oak. Dimensions: 140x80x75 cm. Weight: 36 kg. Finish: matte oil.',
+  })
+  @IsOptional()
+  @IsString()
+  technicalDescription?: string;
 
   @ApiPropertyOptional({ description: 'Product price', example: 27990 })
   @IsOptional()

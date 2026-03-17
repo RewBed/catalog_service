@@ -121,7 +121,13 @@ export class ProductService {
                     categoryId: payload.categoryId,
                     ...(payload.fullName !== undefined ? { fullName: payload.fullName } : {}),
                     ...(payload.sku !== undefined ? { sku: payload.sku } : {}),
+                    ...(payload.shortDescription !== undefined
+                        ? { shortDescription: payload.shortDescription }
+                        : {}),
                     ...(payload.description !== undefined ? { description: payload.description } : {}),
+                    ...(payload.technicalDescription !== undefined
+                        ? { technicalDescription: payload.technicalDescription }
+                        : {}),
                     ...(payload.sortOrder !== undefined ? { sortOrder: payload.sortOrder } : {}),
                     ...(payload.variantGroups !== undefined
                         ? {
@@ -191,7 +197,13 @@ export class ProductService {
                         ...(payload.fullName !== undefined ? { fullName: payload.fullName } : {}),
                         ...(payload.sku !== undefined ? { sku: payload.sku } : {}),
                         ...(payload.slug !== undefined ? { slug: payload.slug } : {}),
+                        ...(payload.shortDescription !== undefined
+                            ? { shortDescription: payload.shortDescription }
+                            : {}),
                         ...(payload.description !== undefined ? { description: payload.description } : {}),
+                        ...(payload.technicalDescription !== undefined
+                            ? { technicalDescription: payload.technicalDescription }
+                            : {}),
                         ...(payload.price !== undefined ? { price: payload.price } : {}),
                         ...(payload.categoryId !== undefined ? { categoryId: payload.categoryId } : {}),
                         ...(payload.sortOrder !== undefined ? { sortOrder: payload.sortOrder } : {}),
@@ -389,6 +401,8 @@ export class ProductService {
         return {
             url: productImage.url,
             type: productImage.type,
+            title: productImage.title,
+            description: productImage.description,
         };
     }
 
@@ -408,7 +422,9 @@ export class ProductService {
             sku: product.sku ?? undefined,
             article: product.sku ?? undefined,
             slug: product.slug,
+            shortDescription: product.shortDescription ?? undefined,
             description: product.description ?? undefined,
+            technicalDescription: product.technicalDescription ?? undefined,
             price: product.price.toNumber(),
             categoryId: product.categoryId,
             categoryName: product.category?.name ?? '',

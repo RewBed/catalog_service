@@ -15,7 +15,9 @@ model Category {
     name        String  @db.VarChar(150)
     fullName    String? @db.VarChar(250)
     slug        String  @unique @db.VarChar(250)
+    shortDescription String? @db.Text
     description String? @db.Text
+    icon        String? @db.Text
     parentId    Int?
 
     sortOrder Int? @default(500)
@@ -43,7 +45,9 @@ model Product {
     sku      String? @unique @db.VarChar(100)
     slug     String  @unique @db.VarChar(250)
 
+    shortDescription String? @db.Text
     description String? @db.Text
+    technicalDescription String? @db.Text
 
     price Decimal @db.Decimal(10, 2)
 
@@ -192,6 +196,8 @@ model ProductImage {
 
     type      String  @db.VarChar(50)   // main, icon, gallery и т.д.
     url       String  @db.Text          // можно хранить ключ вместо полного URL
+    title     String? @db.VarChar(255)
+    description String? @db.Text
     sortOrder Int     @default(0)
 
     createdAt DateTime @default(now())
@@ -208,9 +214,11 @@ model CategoryImage {
     categoryId Int
     category   Category  @relation(fields: [categoryId], references: [id], onDelete: Cascade)
 
-    type       String    @db.VarChar(50) // main, icon, banner и т.д.
-    url        String    @db.Text
-    sortOrder  Int       @default(0)
+    type        String    @db.VarChar(50) // main, icon, banner и т.д.
+    url         String    @db.Text
+    title       String?   @db.VarChar(255)
+    description String?   @db.Text
+    sortOrder   Int       @default(0)
 
     createdAt  DateTime  @default(now())
     updatedAt  DateTime  @updatedAt

@@ -3,6 +3,7 @@ jest.mock('src/core/database/prisma.service', () => ({
 }));
 
 import { ImageEventsMetrics } from './image-events.metrics';
+import { ImageEventBindingsService } from './image-event-bindings.service';
 import { ImageEventsService } from './image-events.service';
 import { ImageUpdatedConsumerService } from './image-updated-consumer.service';
 
@@ -27,7 +28,7 @@ jest.mock('kafkajs', () => ({
     })),
 }));
 
-describe('ImageUpdatedConsumerService', () => {
+describe('ImageUpdatedConsumerService (universal image events)', () => {
     const createConfigService = (overrides?: Record<string, unknown>) => {
         const values: Record<string, unknown> = {
             KAFKA_ENABLED: true,
@@ -37,8 +38,9 @@ describe('ImageUpdatedConsumerService', () => {
             KAFKA_SASL_MECHANISM: 'plain',
             KAFKA_USERNAME: '',
             KAFKA_PASSWORD: '',
-            KAFKA_TOPIC_IMAGE_UPDATED: 'image.updated',
-            KAFKA_GROUP_ID_IMAGE_UPDATED: 'catalog-image-updated',
+            KAFKA_IMAGE_EVENT_ENTITY_TOPICS:
+                'catalog.product=catalog_product,catalog.category=catalog_category',
+            KAFKA_GROUP_ID_IMAGE_EVENTS: 'catalog-image-events',
             KAFKA_TOPIC_IMAGE_UPDATED_DLQ: 'image.updated.dlq',
             KAFKA_IMAGE_UPDATED_MAX_RETRIES: 3,
             KAFKA_IMAGE_UPDATED_RETRY_BASE_MS: 1,
@@ -52,9 +54,14 @@ describe('ImageUpdatedConsumerService', () => {
         } as any;
     };
 
-    const createBatchPayload = (value: Buffer | null) => ({
+    const createBindingsService = () =>
+        ({
+            getTopics: jest.fn(() => ['catalog_product', 'catalog_category']),
+        }) as unknown as ImageEventBindingsService;
+
+    const createBatchPayload = (topic: string, value: Buffer | null) => ({
         batch: {
-            topic: 'image.updated',
+            topic,
             partition: 0,
             highWatermark: '10',
             messages: [
@@ -84,15 +91,13 @@ describe('ImageUpdatedConsumerService', () => {
         mockProducer.disconnect.mockResolvedValue(undefined);
     });
 
-    it('sends invalid payload to DLQ and commits offset', async () => {
+    it('subscribes to configured entity topics', async () => {
         const configService = createConfigService();
+        const bindingsService = createBindingsService();
         const imageEventsService = {
-            processImageUpdated: jest.fn().mockResolvedValue({
-                status: 'invalid',
-                reason: 'eventId is required',
-                eventType: 'image.updated',
-                externalId: 'ext-1',
-            }),
+            processImageUpdated: jest.fn(),
+            handleImageUploaded: jest.fn(),
+            handleImageDeleted: jest.fn(),
         } as unknown as ImageEventsService;
         const metrics = {
             incrementConsumed: jest.fn(),
@@ -101,11 +106,49 @@ describe('ImageUpdatedConsumerService', () => {
             setConsumerLag: jest.fn(),
         } as unknown as ImageEventsMetrics;
 
-        const service = new ImageUpdatedConsumerService(configService, imageEventsService, metrics);
+        const service = new ImageUpdatedConsumerService(
+            configService,
+            bindingsService,
+            imageEventsService,
+            metrics,
+        );
+        await service.onModuleInit();
+
+        expect(mockConsumer.subscribe).toHaveBeenCalledWith({
+            topic: 'catalog_product',
+            fromBeginning: false,
+        });
+        expect(mockConsumer.subscribe).toHaveBeenCalledWith({
+            topic: 'catalog_category',
+            fromBeginning: false,
+        });
+    });
+
+    it('sends invalid payload to DLQ and commits offset', async () => {
+        const configService = createConfigService();
+        const bindingsService = createBindingsService();
+        const imageEventsService = {
+            processImageUpdated: jest.fn(),
+            handleImageUploaded: jest.fn(),
+            handleImageDeleted: jest.fn(),
+        } as unknown as ImageEventsService;
+        const metrics = {
+            incrementConsumed: jest.fn(),
+            incrementFailed: jest.fn(),
+            incrementDeduplicated: jest.fn(),
+            setConsumerLag: jest.fn(),
+        } as unknown as ImageEventsMetrics;
+
+        const service = new ImageUpdatedConsumerService(
+            configService,
+            bindingsService,
+            imageEventsService,
+            metrics,
+        );
         await service.onModuleInit();
 
         const runArgs = mockConsumer.run.mock.calls[0][0];
-        const payload = createBatchPayload(Buffer.from('{"bad":true}'));
+        const payload = createBatchPayload('catalog_product', Buffer.from('{"bad":true}'));
 
         await runArgs.eachBatch(payload);
 
@@ -116,7 +159,7 @@ describe('ImageUpdatedConsumerService', () => {
         );
         expect(mockConsumer.commitOffsets).toHaveBeenCalledWith([
             {
-                topic: 'image.updated',
+                topic: 'catalog_product',
                 partition: 0,
                 offset: '6',
             },
@@ -125,21 +168,13 @@ describe('ImageUpdatedConsumerService', () => {
         expect((metrics.incrementFailed as jest.Mock)).not.toHaveBeenCalled();
     });
 
-    it('retries temporary processing error', async () => {
-        const configService = createConfigService({
-            KAFKA_IMAGE_UPDATED_MAX_RETRIES: 2,
-        });
+    it('routes uploaded event to uploaded handler', async () => {
+        const configService = createConfigService();
+        const bindingsService = createBindingsService();
         const imageEventsService = {
-            processImageUpdated: jest
-                .fn()
-                .mockRejectedValueOnce(new Error('temporary db error'))
-                .mockResolvedValue({
-                    status: 'processed',
-                    eventId: 'evt-1',
-                    externalId: 'ext-1',
-                    eventType: 'image.updated',
-                    updatedRecords: 1,
-                }),
+            processImageUpdated: jest.fn(),
+            handleImageUploaded: jest.fn().mockResolvedValue(undefined),
+            handleImageDeleted: jest.fn(),
         } as unknown as ImageEventsService;
         const metrics = {
             incrementConsumed: jest.fn(),
@@ -148,20 +183,104 @@ describe('ImageUpdatedConsumerService', () => {
             setConsumerLag: jest.fn(),
         } as unknown as ImageEventsMetrics;
 
-        const service = new ImageUpdatedConsumerService(configService, imageEventsService, metrics);
+        const service = new ImageUpdatedConsumerService(
+            configService,
+            bindingsService,
+            imageEventsService,
+            metrics,
+        );
+        await service.onModuleInit();
+
+        const runArgs = mockConsumer.run.mock.calls[0][0];
+        const payload = createBatchPayload(
+            'catalog_product',
+            Buffer.from(
+                JSON.stringify({
+                    eventType: 'catalog_product.image.uploaded',
+                    data: {
+                        externalId: 'ext-1',
+                        entityId: '10',
+                        entityType: 'catalog.product',
+                        imageType: 'main',
+                    },
+                }),
+            ),
+        );
+
+        await runArgs.eachBatch(payload);
+
+        expect(imageEventsService.handleImageUploaded).toHaveBeenCalledWith(
+            'catalog_product',
+            expect.objectContaining({
+                eventType: 'catalog_product.image.uploaded',
+            }),
+        );
+        expect(imageEventsService.processImageUpdated).not.toHaveBeenCalled();
+    });
+
+    it('retries temporary processing error for updated event', async () => {
+        const configService = createConfigService({
+            KAFKA_IMAGE_UPDATED_MAX_RETRIES: 2,
+        });
+        const bindingsService = createBindingsService();
+        const imageEventsService = {
+            processImageUpdated: jest
+                .fn()
+                .mockRejectedValueOnce(new Error('temporary db error'))
+                .mockResolvedValue({
+                    status: 'processed',
+                    eventId: 'evt-1',
+                    externalId: 'ext-1',
+                    eventType: 'catalog_product.image.updated',
+                    updatedRecords: 1,
+                }),
+            handleImageUploaded: jest.fn(),
+            handleImageDeleted: jest.fn(),
+        } as unknown as ImageEventsService;
+        const metrics = {
+            incrementConsumed: jest.fn(),
+            incrementFailed: jest.fn(),
+            incrementDeduplicated: jest.fn(),
+            setConsumerLag: jest.fn(),
+        } as unknown as ImageEventsMetrics;
+
+        const service = new ImageUpdatedConsumerService(
+            configService,
+            bindingsService,
+            imageEventsService,
+            metrics,
+        );
         jest.spyOn(service as any, 'sleep').mockResolvedValue(undefined);
 
         await service.onModuleInit();
 
         const runArgs = mockConsumer.run.mock.calls[0][0];
-        const payload = createBatchPayload(Buffer.from('{"eventId":"evt-1"}'));
+        const payload = createBatchPayload(
+            'catalog_product',
+            Buffer.from(
+                JSON.stringify({
+                    eventId: 'evt-1',
+                    eventType: 'catalog_product.image.updated',
+                    eventVersion: 1,
+                    occurredAt: '2026-03-10T10:15:30.000Z',
+                    data: {
+                        externalId: 'ext-1',
+                        entityType: 'catalog.product',
+                        entityId: '1',
+                        previousImageType: 'main',
+                        imageType: 'gallery',
+                        updatedAt: '2026-03-10T10:15:30.000Z',
+                    },
+                }),
+            ),
+        );
 
         await runArgs.eachBatch(payload);
 
         expect((imageEventsService.processImageUpdated as jest.Mock).mock.calls.length).toBe(2);
         expect(mockConsumer.commitOffsets).toHaveBeenCalledWith([
             {
-                topic: 'image.updated',
+                topic: 'catalog_product',
                 partition: 0,
                 offset: '6',
             },

@@ -174,3 +174,28 @@ Optional flags:
 - Always make sure `DATABASE_URL` in `.env` points to the correct database.
 - gRPC port must be available locally (`50051`) for development testing.
 - For production, configure proper ports and TLS if needed.
+
+---
+
+## Kafka image events (entity topic bindings)
+
+Catalog uses a single KafkaJS consumer for image lifecycle events and subscribes to entity topics from env configuration.
+
+Supported event types in message payload:
+
+- `image.uploaded` and `<topic>.image.uploaded`
+- `image.deleted` and `<topic>.image.deleted`
+- `image.updated` and `<topic>.image.updated`
+
+Configuration options:
+
+- `KAFKA_IMAGE_EVENT_ENTITY_TOPICS` - comma-separated `entityType=topic` bindings.
+  Example: `catalog.product=catalog_product,catalog.category=catalog_category`
+- `KAFKA_GROUP_ID_IMAGE_EVENTS` - consumer group for universal image events consumer.
+
+Behavior:
+
+- Consumer subscribes only to configured topics and does not auto-create Kafka topics.
+- Uploaded events create local image rows for the target entity and store `type`, `title`, `description`.
+- Updated events change local image metadata for the target entity with stale-event protection by `updatedAt`.
+- Deleted events remove local image rows for the target entity.

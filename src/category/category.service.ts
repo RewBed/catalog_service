@@ -157,7 +157,11 @@ export class CategoryService {
                     name: payload.name,
                     slug: payload.slug,
                     ...(payload.fullName !== undefined ? { fullName: payload.fullName } : {}),
+                    ...(payload.shortDescription !== undefined
+                        ? { shortDescription: payload.shortDescription }
+                        : {}),
                     ...(payload.description !== undefined ? { description: payload.description } : {}),
+                    ...(payload.icon !== undefined ? { icon: payload.icon } : {}),
                     ...(parentId !== undefined ? { parentId } : {}),
                     ...(payload.sortOrder !== undefined ? { sortOrder: payload.sortOrder } : {}),
                 },
@@ -196,7 +200,11 @@ export class CategoryService {
                     ...(payload.name !== undefined ? { name: payload.name } : {}),
                     ...(payload.fullName !== undefined ? { fullName: payload.fullName } : {}),
                     ...(payload.slug !== undefined ? { slug: payload.slug } : {}),
+                    ...(payload.shortDescription !== undefined
+                        ? { shortDescription: payload.shortDescription }
+                        : {}),
                     ...(payload.description !== undefined ? { description: payload.description } : {}),
+                    ...(payload.icon !== undefined ? { icon: payload.icon } : {}),
                     ...(payload.parentId !== undefined ? { parentId: normalizedParentId } : {}),
                     ...(payload.sortOrder !== undefined ? { sortOrder: payload.sortOrder } : {}),
                 },
@@ -272,7 +280,9 @@ export class CategoryService {
             name: category.name,
             fullName: category.fullName ?? undefined,
             slug: category.slug,
+            shortDescription: category.shortDescription ?? undefined,
             description: category.description ?? undefined,
+            icon: category.icon ?? undefined,
             parentId: category.parentId ?? 0,
             images: category?.images?.map(img => this.categoryImageToDto(img)) ?? [],
             sortOrder: category?.sortOrder ?? 0,
@@ -288,7 +298,9 @@ export class CategoryService {
             name: category.name,
             fullName: category.fullName ?? undefined,
             slug: category.slug,
+            shortDescription: category.shortDescription ?? undefined,
             description: category.description ?? undefined,
+            icon: category.icon ?? undefined,
             parentId: category.parentId ?? 0,
             images: category?.images?.map(img => this.categoryImageToDto(img)) ?? []
         }
@@ -297,7 +309,9 @@ export class CategoryService {
     private categoryImageToDto(categoryImage: CategoryImage): ImageCategoryDto {
         return {
             url: categoryImage.url,
-            type: categoryImage.type
+            type: categoryImage.type,
+            title: categoryImage.title,
+            description: categoryImage.description,
         }
     }
 

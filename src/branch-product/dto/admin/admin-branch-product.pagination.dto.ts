@@ -9,6 +9,12 @@ export class AdminBranchProductPaginationDto extends PaginationDto {
       {
         id: 7001,
         productId: 101,
+        categoryName: 'Dining Tables',
+        sku: 'TBL-OAK-120',
+        article: 'TBL-OAK-120',
+        description: 'Solid oak dining table, 120 cm width',
+        shortDescription: 'Compact oak dining table for 4 people',
+        technicalDescription: 'Material: oak. Dimensions: 120x80x75 cm. Weight: 32 kg.',
         branchId: 5,
         price: 25990,
         stock: 20,

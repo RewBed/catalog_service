@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class ImageProductDto {
   @ApiProperty({
@@ -9,4 +9,18 @@ export class ImageProductDto {
 
   @ApiProperty({ description: 'Image type', example: 'main' })
   type: string;
+
+  @ApiPropertyOptional({
+    description: 'Image title',
+    nullable: true,
+    example: 'Main view',
+  })
+  title?: string | null;
+
+  @ApiPropertyOptional({
+    description: 'Image description',
+    nullable: true,
+    example: 'Front angle photo for product card',
+  })
+  description?: string | null;
 }

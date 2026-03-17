@@ -31,12 +31,28 @@ export class UpdateCategoryDto {
   slug?: string;
 
   @ApiPropertyOptional({
+    description: 'Short category description for cards and previews',
+    example: 'Premium wooden tables for dining rooms',
+  })
+  @IsOptional()
+  @IsString()
+  shortDescription?: string;
+
+  @ApiPropertyOptional({
     description: 'Category description',
     example: 'Updated collection of dining tables',
   })
   @IsOptional()
   @IsString()
   description?: string;
+
+  @ApiPropertyOptional({
+    description: 'Category icon value. Can store icon id, emoji, SVG markup, or another frontend token',
+    example: 'tabler:table',
+  })
+  @IsOptional()
+  @IsString()
+  icon?: string;
 
   @ApiPropertyOptional({
     description: 'Parent category id (0 means no parent)',

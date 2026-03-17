@@ -39,6 +39,18 @@ export class BranchProductDto {
   })
   description?: string;
 
+  @ApiPropertyOptional({
+    description: 'Short product description for cards and lists',
+    example: 'Compact oak dining table for 4 people',
+  })
+  shortDescription?: string;
+
+  @ApiPropertyOptional({
+    description: 'Technical product description with specifications and service details',
+    example: 'Material: oak. Dimensions: 120x80x75 cm. Weight: 32 kg. Finish: matte oil.',
+  })
+  technicalDescription?: string;
+
   @ApiProperty({ description: 'Product slug', example: 'oak-dining-table-120' })
   slug: string;
 
@@ -48,10 +60,14 @@ export class BranchProductDto {
       {
         url: 'https://cdn.example.com/products/oak-dining-table-120/main.jpg',
         type: 'main',
+        title: 'Main view',
+        description: 'Front angle photo for product card',
       },
       {
         url: 'https://cdn.example.com/products/oak-dining-table-120/gallery-1.jpg',
         type: 'gallery',
+        title: 'Gallery view',
+        description: 'Interior lifestyle photo',
       },
     ],
   })

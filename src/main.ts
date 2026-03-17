@@ -28,48 +28,6 @@ async function bootstrap() {
         },
     });
 
-    const kafkaEnabled = configService.get<boolean>('KAFKA_ENABLED', false);
-    if (kafkaEnabled) {
-        const brokers = (configService.get<string>('KAFKA_BROKERS', '') || '')
-            .split(',')
-            .map((broker) => broker.trim())
-            .filter(Boolean);
-        const ssl = configService.get<boolean>('KAFKA_SSL', false);
-        const saslMechanism = configService.get<'plain' | 'scram-sha-256' | 'scram-sha-512'>(
-            'KAFKA_SASL_MECHANISM',
-            'plain',
-        );
-        const username = configService.get<string>('KAFKA_USERNAME', '').trim();
-        const password = configService.get<string>('KAFKA_PASSWORD', '');
-
-        const sasl = !username
-            ? undefined
-            : saslMechanism === 'plain'
-              ? { mechanism: 'plain' as const, username, password }
-              : saslMechanism === 'scram-sha-256'
-                ? { mechanism: 'scram-sha-256' as const, username, password }
-                : { mechanism: 'scram-sha-512' as const, username, password };
-
-        if (brokers.length > 0) {
-            // Поднимаем транспорт для входящих Kafka-сообщений.
-            app.connectMicroservice<MicroserviceOptions>({
-                transport: Transport.KAFKA,
-                options: {
-                    client: {
-                        brokers,
-                        clientId: configService.get<string>('KAFKA_CLIENT_ID', 'catalog-service'),
-                        ssl,
-                        sasl,
-                    },
-                    consumer: {
-                        // Для каталога используем свою consumer group.
-                        groupId: `${configService.get<string>('KAFKA_CLIENT_ID', 'catalog-service')}-consumer`,
-                    },
-                },
-            });
-        }
-    }
-
     const config = new DocumentBuilder()
         .setTitle(`${configService.get<string>('SERVICE_NAME')} API`)
         .setDescription('REST API + GRPC endpoints')
