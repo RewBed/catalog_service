@@ -21,7 +21,7 @@ services:
       timeout: 5s
       retries: 5
     networks:
-      - shop-net-v1
+      - catalog-internal-net
 
   app:
     build:
@@ -48,6 +48,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - app_logs:/app/logs
     networks:
+      - catalog-internal-net
       - shop-net-v1
 
 volumes:
@@ -55,6 +56,8 @@ volumes:
   app_logs:
 
 networks:
+  catalog-internal-net:
+    driver: bridge
   shop-net-v1:
     name: shop-net-v1
     driver: bridge
