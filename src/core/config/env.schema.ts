@@ -1,43 +1,64 @@
 import { z } from 'zod';
 
 const toOptionalNumber = (val: unknown) => {
-    if (val === undefined || val === null || val === '') {
-        return undefined;
-    }
+  if (val === undefined || val === null || val === '') {
+    return undefined;
+  }
 
-    return Number(val);
+  return Number(val);
 };
 
 export const envSchema = z.object({
-    SERVICE_NAME: z.string(),
-    SERVICE_PORT: z.preprocess((val) => Number(val), z.number()),
-    GRPC_PORT: z.preprocess((val) => Number(val), z.number()),
-    AUTH_GRPC_URL: z.string(),
-    LOG_LEVEL: z.enum(['debug', 'info', 'warn', 'error']).default('info'),
-    LOG_TO_FILE: z.preprocess((val) => val === 'true' || val === true, z.boolean()).default(false),
-    LOG_FILE_PATH: z.string().default('logs/catalog-service.log'),
+  NODE_ENV: z
+    .enum(['development', 'test', 'production'])
+    .default('development'),
+  SERVICE_NAME: z.string(),
+  SERVICE_PORT: z.preprocess((val) => Number(val), z.number()),
+  GRPC_PORT: z.preprocess((val) => Number(val), z.number()),
+  AUTH_GRPC_URL: z.string(),
+  LOG_LEVEL: z.enum(['debug', 'info', 'warn', 'error']).default('info'),
+  LOG_TO_FILE: z
+    .preprocess((val) => val === 'true' || val === true, z.boolean())
+    .default(false),
+  LOG_FILE_PATH: z.string().default('logs/catalog-service.log'),
 
-    POSTGRES_HOST: z.string(),
-    POSTGRES_PORT: z.preprocess((val) => Number(val), z.number()),
-    POSTGRES_DB: z.string(),
-    POSTGRES_USER: z.string(),
-    POSTGRES_PASSWORD: z.string(),
+  POSTGRES_HOST: z.string(),
+  POSTGRES_PORT: z.preprocess((val) => Number(val), z.number()),
+  POSTGRES_DB: z.string(),
+  POSTGRES_USER: z.string(),
+  POSTGRES_PASSWORD: z.string(),
 
-    KAFKA_ENABLED: z.preprocess((val) => val === 'true' || val === true, z.boolean()).default(false),
-    KAFKA_BROKERS: z.string().default(''),
-    KAFKA_CLIENT_ID: z.string().default('catalog-service'),
-    KAFKA_SSL: z.preprocess((val) => val === 'true' || val === true, z.boolean()).default(false),
-    KAFKA_SASL_MECHANISM: z.enum(['plain', 'scram-sha-256', 'scram-sha-512']).default('plain'),
-    KAFKA_USERNAME: z.string().default(''),
-    KAFKA_PASSWORD: z.string().default(''),
-    KAFKA_IMAGE_EVENT_ENTITY_TOPICS: z.string().default(''),
-    KAFKA_GROUP_ID_IMAGE_EVENTS: z.string().default(''),
-    KAFKA_TOPIC_IMAGE_UPDATED_DLQ: z.string().default('image.updated.dlq'),
-    KAFKA_IMAGE_UPDATED_MAX_RETRIES: z.preprocess(toOptionalNumber, z.number()).default(5),
-    KAFKA_IMAGE_UPDATED_RETRY_BASE_MS: z.preprocess(toOptionalNumber, z.number()).default(300),
-    KAFKA_OUTBOX_POLL_INTERVAL_MS: z.preprocess(toOptionalNumber, z.number()).default(2000),
-    KAFKA_OUTBOX_BATCH_SIZE: z.preprocess(toOptionalNumber, z.number()).default(100),
-    KAFKA_OUTBOX_MAX_ATTEMPTS: z.preprocess(toOptionalNumber, z.number()).default(10),
+  KAFKA_ENABLED: z
+    .preprocess((val) => val === 'true' || val === true, z.boolean())
+    .default(false),
+  KAFKA_BROKERS: z.string().default(''),
+  KAFKA_CLIENT_ID: z.string().default('catalog-service'),
+  KAFKA_SSL: z
+    .preprocess((val) => val === 'true' || val === true, z.boolean())
+    .default(false),
+  KAFKA_SASL_MECHANISM: z
+    .enum(['plain', 'scram-sha-256', 'scram-sha-512'])
+    .default('plain'),
+  KAFKA_USERNAME: z.string().default(''),
+  KAFKA_PASSWORD: z.string().default(''),
+  KAFKA_IMAGE_EVENT_ENTITY_TOPICS: z.string().default(''),
+  KAFKA_GROUP_ID_IMAGE_EVENTS: z.string().default(''),
+  KAFKA_TOPIC_IMAGE_UPDATED_DLQ: z.string().default('image.updated.dlq'),
+  KAFKA_IMAGE_UPDATED_MAX_RETRIES: z
+    .preprocess(toOptionalNumber, z.number())
+    .default(5),
+  KAFKA_IMAGE_UPDATED_RETRY_BASE_MS: z
+    .preprocess(toOptionalNumber, z.number())
+    .default(300),
+  KAFKA_OUTBOX_POLL_INTERVAL_MS: z
+    .preprocess(toOptionalNumber, z.number())
+    .default(2000),
+  KAFKA_OUTBOX_BATCH_SIZE: z
+    .preprocess(toOptionalNumber, z.number())
+    .default(100),
+  KAFKA_OUTBOX_MAX_ATTEMPTS: z
+    .preprocess(toOptionalNumber, z.number())
+    .default(10),
 });
 
 export type EnvConfig = z.infer<typeof envSchema>;

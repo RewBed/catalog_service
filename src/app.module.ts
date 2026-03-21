@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { APP_FILTER } from '@nestjs/core';
 import { ConfigModule } from './core/config/config.module';
 import { DatabaseModule } from './core/database/database.module';
 import { HealthModule } from './health/health.module';
@@ -11,28 +10,24 @@ import { OutboxModule } from './core/outbox/outbox.module';
 import { ImageEventsModule } from './image-events/image-events.module';
 import { BranchProductModule } from './branch-product/branch-product.module';
 import { CollectionModule } from './collection/collection.module';
-import { HttpExceptionLoggingFilter } from './common/filters/http-exception-logging.filter';
+import { AppExceptionLoggingFilter } from './common/filters/app-exception-logging.filter';
+import { HttpLoggerErrorInterceptor } from './common/interceptors/http-logger-error.interceptor';
 
 @Module({
-    imports: [
-        ConfigModule, 
-        DatabaseModule, 
-        HealthModule, 
-        LoggerModule, 
-        CategoryModule, 
-        ProductModule,
-        BranchModule,
-        BranchProductModule,
-        CollectionModule,
-        OutboxModule,
-        ImageEventsModule,
-    ],
-    controllers: [],
-    providers: [
-        {
-            provide: APP_FILTER,
-            useClass: HttpExceptionLoggingFilter,
-        },
-    ],
+  imports: [
+    ConfigModule,
+    DatabaseModule,
+    HealthModule,
+    LoggerModule,
+    CategoryModule,
+    ProductModule,
+    BranchModule,
+    BranchProductModule,
+    CollectionModule,
+    OutboxModule,
+    ImageEventsModule,
+  ],
+  controllers: [],
+  providers: [AppExceptionLoggingFilter, HttpLoggerErrorInterceptor],
 })
 export class AppModule {}
