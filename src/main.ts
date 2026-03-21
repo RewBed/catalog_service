@@ -5,7 +5,7 @@ import { join } from 'path';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { createGlobalValidationPipe } from './common/pipes/global-validation.pipe';
 import { ConfigService } from '@nestjs/config';
-import { Logger, PinoLogger } from 'nestjs-pino';
+import { Logger } from 'nestjs-pino';
 import { AppExceptionLoggingFilter } from './common/filters/app-exception-logging.filter';
 import { HttpLoggerErrorInterceptor } from './common/interceptors/http-logger-error.interceptor';
 import { registerProcessErrorHandlers } from './core/logger/process-error-handlers';
@@ -19,7 +19,7 @@ async function bootstrap() {
   app.useLogger(app.get(Logger));
   app.useGlobalFilters(app.get(AppExceptionLoggingFilter));
   app.useGlobalInterceptors(app.get(HttpLoggerErrorInterceptor));
-  registerProcessErrorHandlers(app.get(PinoLogger), app);
+  registerProcessErrorHandlers(app.get(Logger), app);
 
   // Подключаем глобальный валидатор входящих данных.
   app.useGlobalPipes(createGlobalValidationPipe());

@@ -1,11 +1,11 @@
 import type { INestApplication } from '@nestjs/common';
-import { PinoLogger } from 'nestjs-pino';
+import { Logger } from 'nestjs-pino';
 import { serializeUnknownError } from './logging.utils';
 
 let handlersRegistered = false;
 
 export function registerProcessErrorHandlers(
-  logger: PinoLogger,
+  logger: Logger,
   app: INestApplication,
 ): void {
   if (handlersRegistered) {
@@ -13,7 +13,6 @@ export function registerProcessErrorHandlers(
   }
 
   handlersRegistered = true;
-  logger.setContext('Process');
 
   let shuttingDown = false;
 
@@ -35,6 +34,7 @@ export function registerProcessErrorHandlers(
       logger.error(
         { exception: serializeUnknownError(closeError) },
         'Failed to close app after uncaught exception',
+        'Process',
       );
     } finally {
       clearTimeout(forceExitTimer);
@@ -46,6 +46,7 @@ export function registerProcessErrorHandlers(
     logger.error(
       { exception: serializeUnknownError(reason) },
       'Unhandled promise rejection',
+      'Process',
     );
   });
 
@@ -56,6 +57,7 @@ export function registerProcessErrorHandlers(
         exception: serializeUnknownError(error),
       },
       'Uncaught exception',
+      'Process',
     );
 
     void shutdown();
