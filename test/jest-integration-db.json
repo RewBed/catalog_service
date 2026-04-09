@@ -1,0 +1,16 @@
+{
+  "moduleFileExtensions": ["js", "json", "ts"],
+  "rootDir": "..",
+  "testRegex": "test/integration-db/.*\\.spec\\.ts$",
+  "transform": {
+    "^.+\\.(t|j)s$": "ts-jest"
+  },
+  "moduleNameMapper": {
+    "^src/(.*)$": "<rootDir>/src/$1",
+    "^generated/(.*)$": "<rootDir>/generated/$1",
+    "^(\\.{1,2}/.*)\\.js$": "$1"
+  },
+  "globalSetup": "<rootDir>/test/integration-db/global-setup.ts",
+  "setupFilesAfterEnv": ["<rootDir>/test/integration-db/setup-after-env.ts"],
+  "testEnvironment": "node"
+}
